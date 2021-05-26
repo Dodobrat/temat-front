@@ -1,0 +1,10 @@
+html {
+	@import "~@dodobrat/react-ui-kit/build/assets/app.scss";
+	@import "main";
+
+	&[dark="true"] {
+		@import "~@dodobrat/react-ui-kit/build/assets/themes/dark";
+		@import "~@dodobrat/react-ui-kit/build/assets/app.scss";
+		@import "main";
+	}
+}
