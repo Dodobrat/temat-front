@@ -4,10 +4,20 @@ import "./assets/app.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ConfigProvider } from "@dodobrat/react-ui-kit";
+import AuthProvider from "./context/AuthContext";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
 	<ConfigProvider>
-		<App />
+		<QueryClientProvider client={queryClient}>
+			<AuthProvider>
+				<App />
+			</AuthProvider>
+			<ReactQueryDevtools initialIsOpen={false} />
+		</QueryClientProvider>
 	</ConfigProvider>,
 	document.getElementById("root")
 );
