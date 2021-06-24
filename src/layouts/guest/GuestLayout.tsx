@@ -17,7 +17,7 @@ const GuestLayout = () => {
 		themeConfig: { dark, setDark },
 	} = useConfig();
 
-	if (token) return <Redirect to='/app/dashboard' />;
+	if (token) return <Redirect to='/app' />;
 	return (
 		<Container className='px--4' sizing='lg'>
 			<Flex direction='column' className='auth__wrapper'>

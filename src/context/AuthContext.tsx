@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import setAuthHeader from "../helpers/setAuthHeader";
 
 const AuthContext = createContext(null);
 
@@ -16,18 +17,30 @@ const validToken = () => {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [token, setToken] = useState<string | null>(validToken());
 	const [user, setUser] = useState<Object | null>(null);
-
-	const resetToken = () => setToken(null);
+	const [userPermissions, setUserPermissions] = useState<Object | null>(null);
 
 	const tokenValue = useMemo(() => ({ token, setToken }), [token, setToken]);
 	const userValue = useMemo(() => ({ user, setUser }), [user, setUser]);
+	const userPermissionsValue = useMemo(() => ({ userPermissions, setUserPermissions }), [userPermissions, setUserPermissions]);
+
+	const logout = () => {
+		localStorage.removeItem(process.env.REACT_APP_TOKEN_KEY);
+		tokenValue.setToken(null);
+		userValue.setUser(null);
+		userPermissionsValue.setUserPermissions(null);
+	};
+
+	useEffect(() => {
+		setAuthHeader(tokenValue.token);
+	}, [tokenValue.token]);
 
 	return (
 		<AuthContext.Provider
 			value={{
 				tokenValue,
 				userValue,
-				resetToken,
+				userPermissionsValue,
+				logout,
 			}}>
 			{children}
 		</AuthContext.Provider>

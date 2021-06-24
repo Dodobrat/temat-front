@@ -3,3 +3,36 @@
 * {
 	@include scrollbar();
 }
+
+.dui__admin {
+	&__sidebar {
+		&__item {
+			&::before {
+				transition: $normalTrans;
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				background-color: darken($sidebarBg, 5%);
+				pointer-events: none;
+				transform: translateX(-100%);
+				z-index: 0;
+			}
+			&.active {
+				&::before {
+					transform: translateX(0);
+				}
+				&:hover {
+					background-color: darken($sidebarBg, 7.5%);
+				}
+			}
+		}
+	}
+}
+
+.dui__back-top.dui__back-top--bottom-right {
+	bottom: 3rem;
+	right: 1rem;
+}
