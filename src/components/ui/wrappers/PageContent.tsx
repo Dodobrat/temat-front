@@ -1,9 +1,17 @@
 import React from "react";
+import cn from "classnames";
 
-interface Props {}
+interface Props {
+	className?: string;
+	children?: React.ReactNode;
+}
 
-const PageContent = (props: Props) => {
-	return <div>Content</div>;
+const PageContent = ({ children, className, ...rest }: Props) => {
+	return (
+		<article className={cn(className)} {...rest}>
+			{children}
+		</article>
+	);
 };
 
 export default PageContent;

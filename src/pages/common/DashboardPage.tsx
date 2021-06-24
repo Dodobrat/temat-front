@@ -1,11 +1,10 @@
 import React from "react";
 import PageWrapper from "../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../components/ui/wrappers/PageHeader";
-import { Heading } from "@dodobrat/react-ui-kit";
+import { Heading, Text } from "@dodobrat/react-ui-kit";
+import PageContent from "../../components/ui/wrappers/PageContent";
 
-interface Props {}
-
-const DashboardPage = (props: Props) => {
+const DashboardPage = () => {
 	return (
 		<PageWrapper>
 			<PageHeader>
@@ -13,6 +12,9 @@ const DashboardPage = (props: Props) => {
 					Dashboard
 				</Heading>
 			</PageHeader>
+			<PageContent>
+				<Text>Page Content</Text>
+			</PageContent>
 		</PageWrapper>
 	);
 };

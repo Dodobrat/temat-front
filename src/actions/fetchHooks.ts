@@ -17,7 +17,7 @@ export const useLoadUser: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 	return useQuery(
 		["logged_user", specialKey],
 		async () => {
-			const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/user/profile`);
+			const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/users/profile`);
 			return data;
 		},
 		{
