@@ -5,15 +5,15 @@ import PageContent from "../../components/ui/wrappers/PageContent";
 import { Heading, Text } from "@dodobrat/react-ui-kit";
 import { Helmet } from "react-helmet";
 
-const DashboardPage = () => {
+const UsersPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Dashboard</title>
+				<title>Temat | Permissions</title>
 			</Helmet>
 			<PageHeader>
 				<Heading as='h6' className='mb--0'>
-					Dashboard
+					Permissions
 				</Heading>
 			</PageHeader>
 			<PageContent>
@@ -23,4 +23,4 @@ const DashboardPage = () => {
 	);
 };
 
-export default DashboardPage;
+export default UsersPage;
