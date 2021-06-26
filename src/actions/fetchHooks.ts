@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useQuery, UseQueryResult } from "react-query";
-
-// const day = Number(1000 * 60 * 60 * 24);
+import { parseParams } from "../helpers/urlHelpers";
 
 type FetchQueryType = ({
 	specs,
@@ -10,8 +9,10 @@ type FetchQueryType = ({
 }: {
 	specs?: any;
 	queryConfig?: any;
-	specialKey: any;
+	specialKey?: any;
 }) => UseQueryResult<any, unknown>;
+
+const halfDay = 1000 * 60 * 60 * 12;
 
 export const useLoadUser: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
@@ -25,6 +26,23 @@ export const useLoadUser: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 			enabled: queryConfig?.enabled ?? true,
 			cacheTime: Infinity,
 			staleTime: Infinity,
+		}
+	);
+};
+
+export const usePermissions: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["permissions", specialKey],
+		async () => {
+			const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/permissions?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
 		}
 	);
 };

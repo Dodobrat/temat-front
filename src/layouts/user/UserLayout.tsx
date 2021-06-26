@@ -21,21 +21,21 @@ const pages: PagesOptionsType[] = [
 		component: DashboardPage,
 		icon: <IconClock className='dui__icon' />,
 		label: "Dashboard",
-		permission: "dashboardView",
+		permission: "routeDashboard",
 	},
 	{
 		path: "/app/users",
 		component: UsersPage,
 		icon: <IconUsers className='dui__icon' />,
 		label: "Users",
-		permission: "userReadMulti",
+		permission: "routeUsers",
 	},
 	{
 		path: "/app/permissions",
 		component: PermissionsPage,
 		icon: <IconUsers className='dui__icon' />,
 		label: "Permissions",
-		permission: "permissionReadMulti",
+		permission: "routePermissions",
 	},
 ];
 
