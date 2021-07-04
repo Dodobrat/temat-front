@@ -25,17 +25,6 @@ export const useLogin = ({ specs, queryConfig }: MutateHookType) => {
 };
 
 // PERMISSIONS
-export const usePermissionDelete = ({ specs, queryConfig }: MutateHookType) => {
-	return useMutation(
-		async (data: any) => {
-			return await axios.delete(`${apiUrl}/permissions/${data}`, config).then((res) => res.data);
-		},
-		{
-			...queryConfig,
-		}
-	);
-};
-
 export const usePermissionAdd = ({ specs, queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
@@ -58,7 +47,40 @@ export const usePermissionUpdate = ({ specs, queryConfig }: MutateHookType) => {
 	);
 };
 
+export const usePermissionDelete = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/permissions/${data}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 //ROLES
+export const useRoleAdd = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/users/roles`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useRoleUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/users/roles${data.id}`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 export const useRoleDelete = ({ specs, queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {

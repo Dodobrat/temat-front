@@ -1,15 +1,21 @@
-import { useState } from "react";
-import { AsyncPaginate } from "react-select-async-paginate";
+import { withAsyncPaginate } from "react-select-async-paginate";
+import WindowedSelect from "react-windowed-select";
+import cn from "classnames";
+import { useStateWithPromise } from "../../hooks/useStateWithPromise";
+
+const WindowedAsyncPaginate = withAsyncPaginate(WindowedSelect);
 
 interface Props {
 	useFetch: any;
+	valueKey?: string;
+	labelKey?: string;
 	[key: string]: any;
 }
 
 const AsyncSelect = (props: Props) => {
-	const { useFetch, ...rest } = props;
+	const { useFetch, valueKey = "id", labelKey = "name", className, ...rest } = props;
 
-	const [queryParams, setQueryParams] = useState({
+	const [queryParams, setQueryParams] = useStateWithPromise({
 		filters: {
 			withColumns: "false",
 			page: 0,
@@ -37,8 +43,8 @@ const AsyncSelect = (props: Props) => {
 		}));
 	};
 
-	const loadOptions = async (search: string, loadedOptions: Array<any>, { page }: any) => {
-		if (search.length < 3 && search.length !== 0)
+	const loadOptions = async (search: string, page: number) => {
+		if (search.length < 3 && search.length !== 0) {
 			return {
 				options: [{ value: "min_char", label: "Min 3 characters", isDisabled: true }],
 				hasMore: false,
@@ -46,16 +52,17 @@ const AsyncSelect = (props: Props) => {
 					page: page + 1,
 				},
 			};
-		await updateQueryPage({ page, searchString: search });
+		}
 		const { data } = await refetch();
+		// queryClient.getQueryData([queryMainKey, ["select", queryParams]]);
 		const fetchedData = await data;
 
 		const responseData = await fetchedData?.data?.reduce(
-			(final: any, item: { id: number; name: string }) => [
+			(final: any, item: any) => [
 				...final,
 				{
-					value: item.id,
-					label: item.name,
+					value: item[valueKey],
+					label: item[labelKey],
 				},
 			],
 			[]
@@ -66,7 +73,7 @@ const AsyncSelect = (props: Props) => {
 
 		return {
 			options: responseData ?? [],
-			hasMore: nextPage < lastPage,
+			hasMore: nextPage <= lastPage,
 			additional: {
 				page: page + 1,
 			},
@@ -74,11 +81,17 @@ const AsyncSelect = (props: Props) => {
 	};
 
 	return (
-		<AsyncPaginate
+		<WindowedAsyncPaginate
+			className={cn("temat__select__container", className)}
+			classNamePrefix='temat__select'
 			debounceTimeout={300}
-			loadOptions={loadOptions}
+			loadOptions={async (search, _, { page }) => {
+				await updateQueryPage({ page, searchString: search });
+				const result = await loadOptions(search, page);
+
+				return result;
+			}}
 			{...rest}
-			// isOptionDisabled={(option) => option.value === "min_char"}
 			additional={{
 				page: 0,
 			}}

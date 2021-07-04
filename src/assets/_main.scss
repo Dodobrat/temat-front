@@ -4,6 +4,8 @@
 	@include scrollbar();
 }
 
+@import "forms";
+
 svg {
 	fill: currentColor;
 }

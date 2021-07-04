@@ -1,0 +1,73 @@
+@mixin select($bg: $primaryBg, $color: $primaryFont) {
+	.temat__select {
+		&__control {
+			caret-color: $mainFont;
+			background-color: darken($bgCard, 7.5%);
+			color: $mainFont;
+			border: none;
+			outline: none;
+			border-radius: $smBorderRadius;
+			box-shadow: none;
+			&:hover {
+				border: none;
+				box-shadow: 0 0 0 0.0625rem rgba($bg, 0.2);
+			}
+			&--is-focused {
+				border: none;
+				@include focusVisibleStyles($bg, $bg);
+				&:hover {
+					@include focusVisibleStyles($bg, $bg);
+				}
+			}
+		}
+		&__menu {
+			border-radius: $smBorderRadius;
+			background-color: $bgCard;
+			color: $mainFont;
+			box-shadow: map-get($elevations, "light"), 0 0 0 0.0625rem rgba($bg, 0.5);
+			&-list {
+				padding: 0.3125rem;
+				position: relative;
+				& > div {
+					position: relative;
+				}
+			}
+		}
+		&__option {
+			border-radius: $smBorderRadius;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			&:active {
+				background-color: rgba($bg, 0.2);
+			}
+			&--is-focused {
+				background-color: darken($bgCard, 5%);
+			}
+			&--is-selected {
+				background-color: $bg;
+				color: $color;
+				&:active {
+					background-color: $bg;
+				}
+			}
+			&--is-disabled {
+				color: rgba($bg, 0.75);
+			}
+		}
+		&__indicator-separator {
+			background-color: rgba($subFont, 0.5);
+		}
+		&__single-value {
+			color: $mainFont;
+		}
+		svg {
+			fill: rgba($subFont, 0.75);
+		}
+	}
+}
+.temat__select__container {
+	@include select();
+	&--danger {
+		@include select($dangerBg, $dangerFont);
+	}
+}

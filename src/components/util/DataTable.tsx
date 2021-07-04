@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useEffect } from "react";
 import { useTable, usePagination, useSortBy, Row, HeaderGroup } from "react-table";
-import { Table, Card, Flex, Text, Badge, Button, Select, SwitchComponent } from "@dodobrat/react-ui-kit";
+import { Table, Card, Flex, Text, Badge, Button, SwitchComponent } from "@dodobrat/react-ui-kit";
 import {
 	IconUserManage,
 	IconEdit,
@@ -16,6 +16,7 @@ import {
 } from "../ui/icons/index";
 import { parseDate } from "../../helpers/dateHelpers";
 import NoDataRow from "../ui/tables/NoDataRow";
+import WindowedSelect from "react-windowed-select";
 
 interface Props {
 	columns: any[];
@@ -225,18 +226,16 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 							</Text>
 						</Flex.Col>
 						<Flex.Col col='auto'>
-							<Select
-								className='temat__table__sizes__select'
-								value={pageSize}
-								onChange={(e: { target: { value: any } }) => {
-									setPageSize(Number(e.target.value));
-								}}>
-								{[10, 20, 30, 40, 50, 100].map((pageSize) => (
-									<option key={pageSize} value={pageSize}>
-										Show {pageSize}
-									</option>
-								))}
-							</Select>
+							<WindowedSelect
+								className='temat__select__container temat__table__sizes__select'
+								classNamePrefix='temat__select'
+								menuPlacement='auto'
+								options={[10, 20, 30, 40, 50, 100].map((pageSize) => ({ value: pageSize, label: `Show ${pageSize}` }))}
+								value={{ value: pageSize, label: `Show ${pageSize}` }}
+								onChange={(option) => {
+									setPageSize(Number(option.value));
+								}}
+							/>
 						</Flex.Col>
 					</Flex>
 				</Card.Body>

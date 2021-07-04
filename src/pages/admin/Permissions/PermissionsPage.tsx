@@ -207,6 +207,7 @@ const UsersPage = () => {
 								placeholder='Search by name...'
 								value={searchString}
 								onChange={handleOnSearchChange}
+								pigment={searchStringError ? "danger" : "primary"}
 								suffix={
 									searchStringError && (
 										<Tooltip content={"Minimum 2 characters"}>

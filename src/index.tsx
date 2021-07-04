@@ -6,7 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { ConfigProvider } from "@dodobrat/react-ui-kit";
 import AuthProvider from "./context/AuthContext";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+// import { ReactQueryDevtools } from "react-query/devtools";
 import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 
 const queryClient = new QueryClient();
@@ -21,7 +21,7 @@ ReactDOM.render(
 			<AuthProvider>
 				<App />
 			</AuthProvider>
-			<ReactQueryDevtools initialIsOpen={false} />
+			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</QueryClientProvider>
 	</ConfigProvider>,
 	document.getElementById("root")

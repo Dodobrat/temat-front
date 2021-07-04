@@ -7,6 +7,7 @@ import cn from "classnames";
 import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
 import { useRoles } from "../../../actions/fetchHooks";
+import { useState } from "react";
 
 interface Props {
 	onClose: () => void;
@@ -20,17 +21,18 @@ const PermissionsForm = (props: Props) => {
 
 	const {
 		register,
-		watch,
-		getValues,
 		setValue,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
 			...payload,
-			roleId: { value: payload?.roleId, label: payload?.roleName },
+			roleId: payload ? { value: payload?.roleId, label: payload?.roleName } : null,
 		},
 	});
+
+	const [selectValue, setSelectValue] = useState(() => (payload ? { value: payload?.roleId, label: payload?.roleName } : null));
+	const [selectError, setSelectError] = useState(null);
 
 	const { mutate: addPermission, isLoading: isLoadingAdd } = usePermissionAdd({
 		queryConfig: {
@@ -54,12 +56,16 @@ const PermissionsForm = (props: Props) => {
 		},
 	});
 
-	console.log(errors, watch());
-
 	const onSubmit = (data: any) => {
+		if (!data.roleId?.value) {
+			return setSelectError({ message: "Field is required" });
+		} else {
+			setSelectError(null);
+		}
+		console.log(data, errors);
 		const sanitizedData = {
 			name: data.name,
-			roleId: data.roleId.value,
+			roleId: data.roleId?.value,
 			description: data.description,
 		};
 		if (payload) {
@@ -69,9 +75,11 @@ const PermissionsForm = (props: Props) => {
 		return addPermission(sanitizedData);
 	};
 
-	const handleOnChangeRoleId = (option) => {
-		if (option) {
-			setValue("roleId", option);
+	const handleOnChangeRoleId = (option: any) => {
+		setValue("roleId", option);
+		setSelectValue(option);
+		if (selectError && option) {
+			setSelectError(null);
 		}
 	};
 
@@ -118,8 +126,22 @@ const PermissionsForm = (props: Props) => {
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
-								<FormControl label='Role' htmlFor='roleId'>
-									<AsyncSelect useFetch={useRoles} value={getValues("roleId")} onChange={handleOnChangeRoleId} />
+								<FormControl
+									label='Role'
+									htmlFor='roleId'
+									className={cn({
+										"text--danger": selectError,
+									})}
+									hintMsg={selectError?.message}>
+									<AsyncSelect
+										useFetch={useRoles}
+										value={selectValue}
+										onChange={handleOnChangeRoleId}
+										className={cn({
+											"temat__select__container--danger": selectError,
+										})}
+										placeholder='Select Role'
+									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col='12'>

@@ -1,9 +1,10 @@
 import { Form } from "@dodobrat/react-ui-kit";
 import { Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { IconClose } from "../../../components/ui/icons/index";
-import AsyncSelect from "../../../components/forms/AsyncSelect";
 import cn from "classnames";
+import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
+import { useQueryClient } from "react-query";
 
 interface Props {
 	onClose: () => void;
@@ -13,31 +14,62 @@ interface Props {
 const RolesForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
-	// const {
-	// 	register,
-	// 	control,
-	// 	handleSubmit,
-	// 	formState: { errors },
-	// } = useForm({
-	// 	defaultValues: {
-	// 		...payload,
-	// 	},
-	// });
+	const queryClient = useQueryClient();
 
-	// const onSubmit = (data: any) => {
-	// 	console.log(data);
-	// };
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			...payload,
+		},
+	});
 
-	// const { ref: innerRefName, ...restName } = register("name", {
-	// 	required: "Field is required",
-	// 	minLength: { value: 6, message: "Min 6 characters" },
-	// 	maxLength: { value: 99, message: "Max 99 characters" },
-	// });
-	// const { ref: innerRefDescription, ...restDescription } = register("description", {
-	// 	required: "Field is required",
-	// 	minLength: { value: 6, message: "Min 6 characters" },
-	// 	maxLength: { value: 250, message: "Max 250 characters" },
-	// });
+	const { mutate: addRole, isLoading: isLoadingAdd } = useRoleAdd({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				console.log(res);
+				queryClient.invalidateQueries("roles");
+				onClose();
+			},
+			onError: (err: any) => console.log(err),
+		},
+	});
+
+	const { mutate: updateRole, isLoading: isLoadingUpdate } = useRoleUpdate({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				console.log(res);
+				queryClient.invalidateQueries("roles");
+				onClose();
+			},
+			onError: (err: any) => console.log(err),
+		},
+	});
+
+	const onSubmit = (data: any) => {
+		const sanitizedData = {
+			name: data.name,
+			description: data.description,
+		};
+		if (payload) {
+			sanitizedData["id"] = payload.id;
+			return updateRole(sanitizedData);
+		}
+		return addRole(sanitizedData);
+	};
+
+	const { ref: innerRefName, ...restName } = register("name", {
+		required: "Field is required",
+		minLength: { value: 3, message: "Min 3 characters" },
+		maxLength: { value: 39, message: "Max 39 characters" },
+	});
+	const { ref: innerRefDescription, ...restDescription } = register("description", {
+		required: "Field is required",
+		minLength: { value: 3, message: "Min 3 characters" },
+		maxLength: { value: 150, message: "Max 150 characters" },
+	});
 
 	return (
 		<Portal onClose={onClose} isOpen animation='none' {...rest}>
@@ -51,9 +83,9 @@ const RolesForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? "Edit" : "Add"} Role</Text>
 				</Card.Header>
 				<Card.Body>
-					{/* <Form id='permissions-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='roles-add-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
+							<Flex.Col col='12'>
 								<FormControl
 									label='Name'
 									htmlFor='name'
@@ -70,15 +102,6 @@ const RolesForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
-								<FormControl label='Role' htmlFor='role'>
-									<Controller
-										control={control}
-										name='test'
-										render={({ field: { ref, ...rest } }) => <AsyncSelect {...rest} ref={ref} />}
-									/>
-								</FormControl>
-							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
 									label='Description'
@@ -92,16 +115,16 @@ const RolesForm = (props: Props) => {
 										placeholder='Enter Description'
 										{...restDescription}
 										innerRef={innerRefDescription}
-										maxLength={250}
+										maxLength={150}
 										pigment={errors?.description ? "danger" : "primary"}
 									/>
 								</FormControl>
 							</Flex.Col>
 						</Flex>
-					</Form> */}
+					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='permissions-add-form' className='ml--2'>
+					<Button type='submit' form='roles-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
 						{payload ? "Update" : "Submit"}
 					</Button>
 				</Card.Footer>
