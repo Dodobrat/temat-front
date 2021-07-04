@@ -1,6 +1,7 @@
 import { useAdminLayout } from "@dodobrat/react-ui-kit";
-import { AdminLayout, Button, IconHamburger, Text, IconUser, Skeleton } from "@dodobrat/react-ui-kit";
-import React from "react";
+import { AdminLayout, Button, Text, Skeleton } from "@dodobrat/react-ui-kit";
+import { IconUserCircle, IconMenu, IconHamburger } from "../../components/ui/icons/index";
+import { forwardRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { PagesOptionsType } from "../../types/global.types";
@@ -9,21 +10,24 @@ interface Props {
 	pages: PagesOptionsType[];
 }
 
-const SidebarContent = ({ pages = [] }: Props) => {
+const SidebarContent = forwardRef(({ pages = [] }: Props, ref) => {
 	const {
 		userValue: { user },
 		userPermissionsValue: { userPermissions },
 	} = useAuth();
 
-	const { toggleSidebar } = useAdminLayout();
+	const {
+		toggleSidebar,
+		sidebarValue: { sidebarState },
+	} = useAdminLayout();
 
 	return (
-		<AdminLayout.Sidebar>
+		<AdminLayout.Sidebar ref={ref}>
 			<AdminLayout.Sidebar.Item
 				className='py--2'
 				main={
-					<Button onClick={toggleSidebar} flavor='round' pigment='default'>
-						<IconHamburger className='dui__icon' />
+					<Button onClick={toggleSidebar} flavor='rounded' equalDimensions pigment='default'>
+						{sidebarState ? <IconMenu /> : <IconHamburger />}
 					</Button>
 				}
 				extended={<Text className='mb--0'>Temat</Text>}
@@ -33,8 +37,8 @@ const SidebarContent = ({ pages = [] }: Props) => {
 				to={`/app/users/${user?.id}`}
 				className='py--3'
 				main={
-					<Button flavor='round' pigment='secondary'>
-						<IconUser className='dui__icon' />
+					<Button flavor='rounded' equalDimensions pigment='secondary'>
+						<IconUserCircle />
 					</Button>
 				}
 				extended={
@@ -69,7 +73,7 @@ const SidebarContent = ({ pages = [] }: Props) => {
 			})}
 		</AdminLayout.Sidebar>
 	);
-};
+});
 
 SidebarContent.displayName = "AdminLayoutSidebar";
 

@@ -1,7 +1,7 @@
 import React from "react";
-import PageWrapper from "../../components/ui/wrappers/PageWrapper";
-import PageHeader from "../../components/ui/wrappers/PageHeader";
-import PageContent from "../../components/ui/wrappers/PageContent";
+import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
+import PageHeader from "../../../components/ui/wrappers/PageHeader";
+import PageContent from "../../../components/ui/wrappers/PageContent";
 import { Heading, Text } from "@dodobrat/react-ui-kit";
 import { Helmet } from "react-helmet";
 

@@ -1,17 +1,19 @@
-import React, { useEffect, Suspense, lazy } from "react";
-import { AdminLayout, IconUsers, BackTop, IconClock, Container } from "@dodobrat/react-ui-kit";
+import { useEffect, Suspense, lazy } from "react";
+import { AdminLayout, BackTop, Container } from "@dodobrat/react-ui-kit";
+import { IconDashboard, IconUsers, IconRule, IconArrowUp, IconBadge } from "../../components/ui/icons/index";
 import { useLoadUser } from "../../actions/fetchHooks";
 import { useAuth } from "../../context/AuthContext";
 import { useIsFetching } from "react-query";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import SidebarContent from "./SidebarContent";
 import TopbarContent from "./TopbarContent";
 import FooterContent from "./FooterContent";
 import { PagesOptionsType } from "../../types/global.types";
 
-const DashboardPage = lazy(() => import("../../pages/common/DashboardPage"));
-const UsersPage = lazy(() => import("../../pages/admin/UsersPage"));
-const PermissionsPage = lazy(() => import("../../pages/admin/PermissionsPage"));
+const DashboardPage = lazy(() => import("../../pages/common/Dashboard/DashboardPage"));
+const UsersPage = lazy(() => import("../../pages/admin/Users/UsersPage"));
+const PermissionsPage = lazy(() => import("../../pages/admin/Permissions/PermissionsPage"));
+const RolesPage = lazy(() => import("../../pages/admin/Roles/RolesPage"));
 // FALLBACK
 const NotFoundPage = lazy(() => import("../../pages/common/NotFoundPage"));
 
@@ -19,23 +21,30 @@ const pages: PagesOptionsType[] = [
 	{
 		path: "/app/dashboard",
 		component: DashboardPage,
-		icon: <IconClock className='dui__icon' />,
+		icon: <IconDashboard />,
 		label: "Dashboard",
 		permission: "routeDashboard",
 	},
 	{
 		path: "/app/users",
 		component: UsersPage,
-		icon: <IconUsers className='dui__icon' />,
+		icon: <IconUsers />,
 		label: "Users",
 		permission: "routeUsers",
 	},
 	{
 		path: "/app/permissions",
 		component: PermissionsPage,
-		icon: <IconUsers className='dui__icon' />,
+		icon: <IconRule />,
 		label: "Permissions",
 		permission: "routePermissions",
+	},
+	{
+		path: "/app/roles",
+		component: RolesPage,
+		icon: <IconBadge />,
+		label: "Roles",
+		permission: "routeRoles",
 	},
 ];
 
@@ -44,6 +53,7 @@ const UserLayout = () => {
 		tokenValue: { token },
 		userValue: { user, setUser },
 		userPermissionsValue: { userPermissions, setUserPermissions },
+		userCan,
 	} = useAuth();
 
 	const isFetching = useIsFetching();
@@ -71,12 +81,16 @@ const UserLayout = () => {
 							<Suspense fallback={<div />}>
 								<Switch>
 									{pages.map((page) => {
-										if (userPermissions.some((permission) => permission.name === page.permission)) {
+										if (userCan(page.permission)) {
 											return <Route key={page.path} path={page.path} exact component={page.component} />;
 										}
 										return null;
 									})}
-									<Route component={NotFoundPage} />
+									{!!userPermissions.find((permission) => permission.name === "routeDashboard" && !!permission.status) ? (
+										<Redirect push to='/app/dashboard' />
+									) : (
+										<Route component={NotFoundPage} />
+									)}
 								</Switch>
 							</Suspense>
 						</Container>
@@ -84,7 +98,9 @@ const UserLayout = () => {
 					<FooterContent />
 				</AdminLayout>
 			)}
-			<BackTop />
+			<BackTop>
+				<IconArrowUp />
+			</BackTop>
 		</Router>
 	);
 };

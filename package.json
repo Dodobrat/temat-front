@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"@dodobrat/react-ui-kit": "^0.3.1",
+		"@dodobrat/react-ui-kit": "^0.4.0",
 		"@testing-library/jest-dom": "^5.12.0",
 		"@testing-library/react": "^11.2.7",
 		"@testing-library/user-event": "^12.8.3",
@@ -17,11 +17,15 @@
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-helmet": "^6.1.0",
-		"react-query": "^3.17.2",
+		"react-hook-form": "^7.9.0",
+		"react-query": "^3.18.1",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "^4.0.3",
+		"react-select": "^4.3.1",
+		"react-select-async-paginate": "^0.5.3",
 		"react-table": "^7.7.0",
 		"react-transition-group": "^4.4.2",
+		"react-windowed-select": "^3.1.2",
 		"typescript": "^4.3.4",
 		"web-vitals": "^1.1.2"
 	},
@@ -29,7 +33,8 @@
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"mkicons": "npx @svgr/cli -d src/components/ui/icons src/components/ui/icons --ref --memo --title-prop --svg-props aria-label=icon --icon --replace-attr-values #000=currentColor --typescript"
 	},
 	"eslintConfig": {
 		"extends": [

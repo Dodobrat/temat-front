@@ -11,7 +11,11 @@ export const parseParams: (params: any) => string = (params) => {
 			);
 		}
 		if (params.sortBy?.length > 0) {
-			urlParams.push(`sortBy=${params.sortBy?.map((sortItem) => `${sortItem.desc ? "-" : "+"}${sortItem.id}`).join(",")}` ?? "");
+			urlParams.push(
+				`sortBy=${params.sortBy
+					?.map((sortItem: { desc: boolean; id: string }) => `${sortItem.desc ? "-" : "+"}${sortItem.id}`)
+					.join(",")}` ?? ""
+			);
 		}
 		return urlParams
 			.filter((val) => val)

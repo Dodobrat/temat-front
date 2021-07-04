@@ -4,6 +4,16 @@
 	@include scrollbar();
 }
 
+svg {
+	fill: currentColor;
+}
+
+.dui__btn {
+	svg {
+		font-size: 1.25em;
+	}
+}
+
 .dui__admin {
 	&__sidebar {
 		&__item {
@@ -32,7 +42,35 @@
 	}
 }
 
+.temat__table {
+	&__search {
+		max-width: 15rem;
+		width: 100%;
+	}
+	&__sizes__select {
+		min-width: 7.5rem;
+	}
+}
+
+.temat__card__stack {
+	max-width: 100%;
+	& > * {
+		border-radius: 0;
+		&:first-child {
+			border-radius: $smBorderRadius $smBorderRadius 0 0;
+		}
+		&:last-child {
+			border-radius: 0 0 $smBorderRadius $smBorderRadius;
+		}
+	}
+}
+
 .dui__back-top.dui__back-top--bottom-right {
 	bottom: 3rem;
 	right: 1rem;
+}
+
+.ellipsis {
+	text-overflow: ellipsis;
+	overflow: hidden;
 }

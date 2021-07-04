@@ -17,11 +17,14 @@ const validToken = () => {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [token, setToken] = useState<string | null>(validToken());
 	const [user, setUser] = useState<Object | null>(null);
-	const [userPermissions, setUserPermissions] = useState<Object | null>(null);
+	const [userPermissions, setUserPermissions] = useState(null);
 
 	const tokenValue = useMemo(() => ({ token, setToken }), [token, setToken]);
 	const userValue = useMemo(() => ({ user, setUser }), [user, setUser]);
 	const userPermissionsValue = useMemo(() => ({ userPermissions, setUserPermissions }), [userPermissions, setUserPermissions]);
+
+	const userCan: (permissionKey: string) => boolean = (permissionKey) =>
+		userPermissionsValue.userPermissions.some((permission: any) => permission.name === permissionKey && !!permission.status);
 
 	const logout = () => {
 		localStorage.removeItem(process.env.REACT_APP_TOKEN_KEY);
@@ -40,6 +43,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				tokenValue,
 				userValue,
 				userPermissionsValue,
+				userCan,
 				logout,
 			}}>
 			{children}
