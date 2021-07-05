@@ -1,17 +1,16 @@
-import { Form } from "@dodobrat/react-ui-kit";
-import { Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import { useForm } from "react-hook-form";
-import { IconClose } from "../../../components/ui/icons";
-import cn from "classnames";
-import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
+import { Portal, Card, Button, Text, Form, Flex, FormControl, Input } from "@dodobrat/react-ui-kit";
+import { IconClose } from "../../../components/ui/icons";
+import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
+import cn from "classnames";
 
 interface Props {
 	onClose: () => void;
 	payload?: any;
 }
 
-const RolesForm = (props: Props) => {
+const ProductsForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
 	const queryClient = useQueryClient();
@@ -26,22 +25,22 @@ const RolesForm = (props: Props) => {
 		},
 	});
 
-	const { mutate: addRole, isLoading: isLoadingAdd } = useRoleAdd({
+	const { mutate: addProduct, isLoading: isLoadingAdd } = useProductAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
 				console.log(res);
-				queryClient.invalidateQueries("roles");
+				queryClient.invalidateQueries("products");
 				onClose();
 			},
 			onError: (err: any) => console.log(err),
 		},
 	});
 
-	const { mutate: updateRole, isLoading: isLoadingUpdate } = useRoleUpdate({
+	const { mutate: updateProduct, isLoading: isLoadingUpdate } = useProductUpdate({
 		queryConfig: {
 			onSuccess: (res: any) => {
 				console.log(res);
-				queryClient.invalidateQueries("roles");
+				queryClient.invalidateQueries("products");
 				onClose();
 			},
 			onError: (err: any) => console.log(err),
@@ -51,24 +50,20 @@ const RolesForm = (props: Props) => {
 	const onSubmit = (data: any) => {
 		const sanitizedData = {
 			name: data.name,
+			roleId: data.roleId?.value,
 			description: data.description,
 		};
 		if (payload) {
 			sanitizedData["id"] = payload.id;
-			return updateRole(sanitizedData);
+			return updateProduct(sanitizedData);
 		}
-		return addRole(sanitizedData);
+		return addProduct(sanitizedData);
 	};
 
 	const { ref: innerRefName, ...restName } = register("name", {
 		required: "Field is required",
-		minLength: { value: 3, message: "Min 3 characters" },
-		maxLength: { value: 39, message: "Max 39 characters" },
-	});
-	const { ref: innerRefDescription, ...restDescription } = register("description", {
-		required: "Field is required",
-		minLength: { value: 3, message: "Min 3 characters" },
-		maxLength: { value: 150, message: "Max 150 characters" },
+		minLength: { value: 6, message: "Min 6 characters" },
+		maxLength: { value: 99, message: "Max 99 characters" },
 	});
 
 	return (
@@ -80,12 +75,12 @@ const RolesForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? "Edit" : "Add"} Role</Text>
+					<Text className='mb--0'>{payload ? "Edit" : "Add"} Product</Text>
 				</Card.Header>
 				<Card.Body>
-					<Form id='roles-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='permissions-add-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
-							<Flex.Col col='12'>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
 									label='Name'
 									htmlFor='name'
@@ -102,29 +97,11 @@ const RolesForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col='12'>
-								<FormControl
-									label='Description'
-									htmlFor='description'
-									className={cn({
-										"text--danger": errors?.description,
-									})}
-									hintMsg={errors?.description?.message}>
-									<TextArea
-										name='description'
-										placeholder='Enter Description'
-										{...restDescription}
-										innerRef={innerRefDescription}
-										maxLength={150}
-										pigment={errors?.description ? "danger" : "primary"}
-									/>
-								</FormControl>
-							</Flex.Col>
 						</Flex>
 					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='roles-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
+					<Button type='submit' form='permissions-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
 						{payload ? "Update" : "Submit"}
 					</Button>
 				</Card.Footer>
@@ -133,4 +110,4 @@ const RolesForm = (props: Props) => {
 	);
 };
 
-export default RolesForm;
+export default ProductsForm;

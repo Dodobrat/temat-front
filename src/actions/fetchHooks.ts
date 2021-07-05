@@ -50,7 +50,7 @@ export const usePermissions: FetchQueryType = ({ specs, queryConfig, specialKey 
 	);
 };
 
-//Roles
+//ROLES
 export const useRoles: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
 		["roles", specialKey],
@@ -62,6 +62,40 @@ export const useRoles: FetchQueryType = ({ specs, queryConfig, specialKey }) => 
 			...queryConfig,
 			keepPreviousData: true,
 			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+//PRODUCTS
+export const useProducts: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["products", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/products?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+export const useProductById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["productById", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/products/${specs.param}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			enabled: queryConfig?.enabled ?? true,
 			cacheTime: halfDay,
 			staleTime: halfDay,
 		}

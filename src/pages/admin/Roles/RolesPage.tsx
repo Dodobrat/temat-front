@@ -5,12 +5,13 @@ import PageContent from "../../../components/ui/wrappers/PageContent";
 import { useQueryClient } from "react-query";
 import { useRoles } from "../../../actions/fetchHooks";
 import { useAuth } from "../../../context/AuthContext";
-import { IconAdd } from "../../../components/ui/icons/index";
+import { IconAdd } from "../../../components/ui/icons";
 import { SlideIn } from "@dodobrat/react-ui-kit";
 import DataTable from "../../../components/util/DataTable";
 import { Helmet } from "react-helmet";
 import { Heading, Flex, Button, ZoomPortal } from "@dodobrat/react-ui-kit";
 import { useRoleDelete } from "../../../actions/mutateHooks";
+import { ResponseColumnType } from "../../../types/global.types";
 
 const RolesForm = lazy(() => import("./RolesForm"));
 const RolesViewDrawer = lazy(() => import("./RolesViewDrawer"));
@@ -57,7 +58,7 @@ const RolesPage = () => {
 
 	const columns = useMemo(() => {
 		if (data) {
-			return data.columns.map((col: { accessor: string; title: string; canSort: boolean; type?: string; id?: string }) => {
+			return data.columns.map((col: ResponseColumnType) => {
 				return {
 					Header: col.title,
 					accessor: col.accessor,

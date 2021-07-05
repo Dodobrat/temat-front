@@ -13,7 +13,8 @@ import {
 	IconLastPage,
 	IconArrowDown,
 	IconArrowUp,
-} from "../ui/icons/index";
+} from "../ui/icons";
+import Image from "../ui/Image";
 import { parseDate } from "../../helpers/dateHelpers";
 import NoDataRow from "../ui/tables/NoDataRow";
 import WindowedSelect from "react-windowed-select";
@@ -142,6 +143,26 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 							</Table.Cell>
 						);
 					}
+					if (cell.column.type === "WithImage") {
+						return (
+							<Table.Cell {...cell.getCellProps()}>
+								<Flex align='center'>
+									<Flex.Col className='temat__table__img'>
+										<Image
+											imgSrc={cell.row.original?.image}
+											alt={cell.row.original?.description ?? cell.row.original?.name}
+										/>
+									</Flex.Col>
+									<Flex.Col>{cell.value}</Flex.Col>
+								</Flex>
+								{/* <SwitchComponent
+									defaultChecked={cell.value}
+									onChange={(e: any) => cell.column.action({ value: e.target.checked, entry: cell.row.original })}
+									sizing='lg'
+								/> */}
+							</Table.Cell>
+						);
+					}
 					if (cell.column.type === "Switch") {
 						return (
 							<Table.Cell {...cell.getCellProps()}>
@@ -162,7 +183,8 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 											<Button
 												equalDimensions
 												pigment={selectActionPigment(action.type)}
-												onClick={() => action.action(cell.row.original)}>
+												{...action?.props?.(cell.row.original)}
+												onClick={() => action?.action?.(cell.row.original)}>
 												{selectActionIcon(action.type)}
 											</Button>
 										</Flex.Col>

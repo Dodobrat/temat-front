@@ -1,7 +1,7 @@
 import { Form } from "@dodobrat/react-ui-kit";
 import { Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import { useForm } from "react-hook-form";
-import { IconClose } from "../../../components/ui/icons/index";
+import { IconClose } from "../../../components/ui/icons";
 import AsyncSelect from "../../../components/forms/AsyncSelect";
 import cn from "classnames";
 import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHooks";
@@ -62,7 +62,6 @@ const PermissionsForm = (props: Props) => {
 		} else {
 			setSelectError(null);
 		}
-		console.log(data, errors);
 		const sanitizedData = {
 			name: data.name,
 			roleId: data.roleId?.value,

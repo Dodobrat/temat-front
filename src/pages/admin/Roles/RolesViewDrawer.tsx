@@ -1,5 +1,5 @@
 import { Drawer, Card, Button, Text, Flex, Badge } from "@dodobrat/react-ui-kit";
-import { IconClose } from "../../../components/ui/icons/index";
+import { IconClose } from "../../../components/ui/icons";
 import { parseDate } from "../../../helpers/dateHelpers";
 
 interface Props {
@@ -47,7 +47,7 @@ const RolesViewDrawer = (props: Props) => {
 							<Badge pigment='secondary'>Created</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
-							<Text className='mb--0'>{parseDate(payload?.dateAdded, true)}</Text>
+							<Text className='mb--0'>{parseDate(payload?.dateCreated, true)}</Text>
 						</Flex.Col>
 					</Flex>
 				</Card.Body>

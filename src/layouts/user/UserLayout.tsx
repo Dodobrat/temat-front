@@ -1,6 +1,6 @@
 import { useEffect, Suspense, lazy } from "react";
 import { AdminLayout, BackTop, Container } from "@dodobrat/react-ui-kit";
-import { IconDashboard, IconUsers, IconRule, IconArrowUp, IconBadge } from "../../components/ui/icons/index";
+import { IconDashboard, IconUsers, IconRule, IconArrowUp, IconBadge, IconInventory } from "../../components/ui/icons";
 import { useLoadUser } from "../../actions/fetchHooks";
 import { useAuth } from "../../context/AuthContext";
 import { useIsFetching } from "react-query";
@@ -9,11 +9,16 @@ import SidebarContent from "./SidebarContent";
 import TopbarContent from "./TopbarContent";
 import FooterContent from "./FooterContent";
 import { PagesOptionsType } from "../../types/global.types";
+import React from "react";
 
-const DashboardPage = lazy(() => import("../../pages/common/Dashboard/DashboardPage"));
+//ADMIN PAGES
 const UsersPage = lazy(() => import("../../pages/admin/Users/UsersPage"));
 const PermissionsPage = lazy(() => import("../../pages/admin/Permissions/PermissionsPage"));
 const RolesPage = lazy(() => import("../../pages/admin/Roles/RolesPage"));
+//COMMON PAGES
+const DashboardPage = lazy(() => import("../../pages/common/Dashboard/DashboardPage"));
+const ProductsPage = lazy(() => import("../../pages/common/Products/ProductsPage"));
+const ProductsViewPage = lazy(() => import("../../pages/common/Products/ProductsViewPage"));
 // FALLBACK
 const NotFoundPage = lazy(() => import("../../pages/common/NotFoundPage"));
 
@@ -45,6 +50,20 @@ const pages: PagesOptionsType[] = [
 		icon: <IconBadge />,
 		label: "Roles",
 		permission: "routeRoles",
+	},
+	{
+		path: "/app/products",
+		component: ProductsPage,
+		icon: <IconInventory />,
+		label: "Products",
+		permission: "routeProducts",
+		subPages: [
+			{
+				path: "/app/products/:id",
+				component: ProductsViewPage,
+				permission: "productReadSingle",
+			},
+		],
 	},
 ];
 
@@ -82,15 +101,46 @@ const UserLayout = () => {
 								<Switch>
 									{pages.map((page) => {
 										if (userCan(page.permission)) {
-											return <Route key={page.path} path={page.path} exact component={page.component} />;
+											if (page?.subPages) {
+												return (
+													<React.Fragment key={page.path}>
+														<Suspense fallback={<div />}>
+															<Switch>
+																<Route
+																	path={page.path}
+																	exact={page?.exact ?? true}
+																	component={page.component}
+																/>
+																{page?.subPages?.map((subPage) => {
+																	if (userCan(subPage.permission)) {
+																		return (
+																			<Route
+																				key={subPage.path}
+																				path={subPage.path}
+																				exact={subPage?.exact ?? true}
+																				component={subPage.component}
+																			/>
+																		);
+																	}
+																	return null;
+																})}
+															</Switch>
+														</Suspense>
+													</React.Fragment>
+												);
+											}
+											return (
+												<Route
+													key={page.path}
+													path={page.path}
+													exact={page?.exact ?? true}
+													component={page.component}
+												/>
+											);
 										}
 										return null;
 									})}
-									{!!userPermissions.find((permission) => permission.name === "routeDashboard" && !!permission.status) ? (
-										<Redirect push to='/app/dashboard' />
-									) : (
-										<Route component={NotFoundPage} />
-									)}
+									{userCan("routeDashboard") ? <Redirect push to='/app/dashboard' /> : <Route component={NotFoundPage} />}
 								</Switch>
 							</Suspense>
 						</Container>

@@ -1,5 +1,5 @@
 import { Drawer, Card, Button, Text, Flex, Badge } from "@dodobrat/react-ui-kit";
-import { IconClose } from "../../../components/ui/icons/index";
+import { IconClose } from "../../../components/ui/icons";
 import cn from "classnames";
 import { parseDate } from "../../../helpers/dateHelpers";
 
@@ -67,7 +67,7 @@ const PermissionsViewDrawer = (props: Props) => {
 							<Badge pigment='secondary'>Created</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
-							<Text className='mb--0'>{parseDate(payload?.dateAdded, true)}</Text>
+							<Text className='mb--0'>{parseDate(payload?.dateCreated, true)}</Text>
 						</Flex.Col>
 					</Flex>
 				</Card.Body>
