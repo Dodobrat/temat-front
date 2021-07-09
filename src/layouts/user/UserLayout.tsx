@@ -57,13 +57,11 @@ const pages: PagesOptionsType[] = [
 		icon: <IconInventory />,
 		label: "Products",
 		permission: "routeProducts",
-		subPages: [
-			{
-				path: "/app/products/:id",
-				component: ProductsViewPage,
-				permission: "productReadSingle",
-			},
-		],
+	},
+	{
+		path: "/app/products/:id",
+		component: ProductsViewPage,
+		permission: "productReadSingle",
 	},
 ];
 
@@ -101,34 +99,6 @@ const UserLayout = () => {
 								<Switch>
 									{pages.map((page) => {
 										if (userCan(page.permission)) {
-											if (page?.subPages) {
-												return (
-													<React.Fragment key={page.path}>
-														<Suspense fallback={<div />}>
-															<Switch>
-																<Route
-																	path={page.path}
-																	exact={page?.exact ?? true}
-																	component={page.component}
-																/>
-																{page?.subPages?.map((subPage) => {
-																	if (userCan(subPage.permission)) {
-																		return (
-																			<Route
-																				key={subPage.path}
-																				path={subPage.path}
-																				exact={subPage?.exact ?? true}
-																				component={subPage.component}
-																			/>
-																		);
-																	}
-																	return null;
-																})}
-															</Switch>
-														</Suspense>
-													</React.Fragment>
-												);
-											}
 											return (
 												<Route
 													key={page.path}

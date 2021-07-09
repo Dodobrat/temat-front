@@ -1,0 +1,21 @@
+{
+	"common": {},
+	"auth": {
+		"login": "Вход"
+	},
+	"pages": {
+		"dashboard": "Контролен Панел",
+		"users": "Потребители",
+		"permissions": "Права",
+		"roles": "Роли",
+		"products": "Продукти"
+	},
+	"dashboard": {},
+	"users": {},
+	"permissions": {},
+	"roles": {},
+	"products": {
+		"addProduct": "Добави Продукт",
+		"updateProduct": "АктуализираЙ Продукт"
+	}
+}

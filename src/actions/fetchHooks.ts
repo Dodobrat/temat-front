@@ -101,3 +101,21 @@ export const useProductById: FetchQueryType = ({ specs, queryConfig, specialKey 
 		}
 	);
 };
+
+//COMPANIES
+export const useCompanies: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["companies", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/companies?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};

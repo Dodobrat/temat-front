@@ -101,6 +101,11 @@ svg {
 }
 
 .ellipsis {
+	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
+}
+
+.rotate-90 {
+	transform: rotate(90deg);
 }

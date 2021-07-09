@@ -9,6 +9,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 // import { ReactQueryDevtools } from "react-query/devtools";
 import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 
+import "./i18n";
+
 const queryClient = new QueryClient();
 
 const appConfig: GlobalOptions = {

@@ -1,0 +1,30 @@
+{
+	"common": {
+		"submit": "Submit",
+		"update": "Update"
+	},
+	"auth": {
+		"login": "Login"
+	},
+	"pages": {
+		"dashboard": "Dashboard",
+		"users": "Users",
+		"permissions": "Permissions",
+		"roles": "Roles",
+		"products": "Products"
+	},
+	"dashboard": {},
+	"users": {},
+	"permissions": {},
+	"roles": {},
+	"products": {
+		"addProduct": "Add Product",
+		"updateProduct": "Update Product",
+		"description": "Description",
+		"name": "Name",
+		"company": "Company",
+		"minQty": "Min. Qty",
+		"sku": "SKU",
+		"barcode": "Barcode"
+	}
+}

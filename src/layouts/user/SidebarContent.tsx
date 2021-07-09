@@ -13,7 +13,7 @@ interface Props {
 const SidebarContent = forwardRef(({ pages = [] }: Props, ref) => {
 	const {
 		userValue: { user },
-		userPermissionsValue: { userPermissions },
+		userCan,
 	} = useAuth();
 
 	const {
@@ -57,7 +57,7 @@ const SidebarContent = forwardRef(({ pages = [] }: Props, ref) => {
 				}
 			/>
 			{pages.map((page) => {
-				if (userPermissions?.some((permission) => permission.name === page.permission)) {
+				if (userCan(page.permission) && (page.icon || page.label)) {
 					return (
 						<AdminLayout.Sidebar.Item
 							as={NavLink}

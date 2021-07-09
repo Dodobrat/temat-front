@@ -13,11 +13,15 @@ import {
 	IconLastPage,
 	IconArrowDown,
 	IconArrowUp,
+	IconHeight,
+	IconLength,
+	IconWeight,
 } from "../ui/icons";
 import Image from "../ui/Image";
 import { parseDate } from "../../helpers/dateHelpers";
 import NoDataRow from "../ui/tables/NoDataRow";
 import WindowedSelect from "react-windowed-select";
+import CopyCell from "./CopyCell";
 
 interface Props {
 	columns: any[];
@@ -137,29 +141,46 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 					if (cell.column.type === "DateTime" || cell.column.type === "Date") {
 						return (
 							<Table.Cell {...cell.getCellProps()}>
-								<Badge pigment='secondary' className='mx--auto'>
-									{parseDate(cell.value, cell.column.type === "DateTime")}
-								</Badge>
+								<Badge pigment='secondary'>{parseDate(cell.value, cell.column.type === "DateTime")}</Badge>
+							</Table.Cell>
+						);
+					}
+					if (cell.column.type === "CopyToClipboard") {
+						return <CopyCell cell={cell} {...cell.getCellProps()} />;
+					}
+					if (cell.column.type === "ProductDetails") {
+						const rowValues = cell.row.original;
+						return (
+							<Table.Cell {...cell.getCellProps()}>
+								<Flex align='center' spacingY={null}>
+									<Flex.Col col='6'>
+										<IconHeight /> {rowValues?.height ?? "N/A"}
+									</Flex.Col>
+									<Flex.Col col='6'>
+										<IconHeight className='rotate-90' /> {rowValues?.width ?? "N/A"}
+									</Flex.Col>
+									<Flex.Col col='6'>
+										<IconLength /> {rowValues?.length ?? "N/A"}
+									</Flex.Col>
+									<Flex.Col col='6'>
+										<IconWeight /> {rowValues?.weight ?? "N/A"}
+									</Flex.Col>
+								</Flex>
 							</Table.Cell>
 						);
 					}
 					if (cell.column.type === "WithImage") {
 						return (
 							<Table.Cell {...cell.getCellProps()}>
-								<Flex align='center'>
+								<Flex align='center' wrap='nowrap'>
 									<Flex.Col className='temat__table__img'>
 										<Image
 											imgSrc={cell.row.original?.image}
 											alt={cell.row.original?.description ?? cell.row.original?.name}
 										/>
 									</Flex.Col>
-									<Flex.Col>{cell.value}</Flex.Col>
+									<Flex.Col className='ellipsis'>{cell.value}</Flex.Col>
 								</Flex>
-								{/* <SwitchComponent
-									defaultChecked={cell.value}
-									onChange={(e: any) => cell.column.action({ value: e.target.checked, entry: cell.row.original })}
-									sizing='lg'
-								/> */}
 							</Table.Cell>
 						);
 					}
@@ -193,7 +214,7 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 							</Table.Cell>
 						);
 					}
-					return <Table.Cell {...cell.getCellProps()}>{cell.render("Cell")}</Table.Cell>;
+					return <Table.Cell {...cell.getCellProps()}>{cell.value ?? "N/A"}</Table.Cell>;
 				})}
 			</Table.Row>
 		);
