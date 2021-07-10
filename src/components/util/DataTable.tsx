@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect, lazy } from "react";
 import { useTable, usePagination, useSortBy, Row, HeaderGroup } from "react-table";
 import { Table, Card, Flex, Text, Badge, Button, SwitchComponent } from "@dodobrat/react-ui-kit";
 import {
@@ -22,6 +22,11 @@ import { parseDate } from "../../helpers/dateHelpers";
 import NoDataRow from "../ui/tables/NoDataRow";
 import WindowedSelect from "react-windowed-select";
 import CopyCell from "./CopyCell";
+import cn from "classnames";
+import { ZoomPortal } from "@dodobrat/react-ui-kit";
+import { useState } from "react";
+
+const ActionConfirmation = lazy(() => import("./ActionConfirmation"));
 
 interface Props {
 	columns: any[];
@@ -109,6 +114,10 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 		usePagination
 	);
 
+	const [confirmation, setConfirmation] = useState({ state: false, payload: null });
+
+	const closeConfirmation = () => setConfirmation((prev) => ({ ...prev, state: false }));
+
 	useEffect(() => {
 		fetchData({ pageIndex, pageSize, sortBy });
 	}, [fetchData, pageIndex, pageSize, sortBy]);
@@ -146,24 +155,34 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 						);
 					}
 					if (cell.column.type === "CopyToClipboard") {
-						return <CopyCell cell={cell} {...cell.getCellProps()} />;
+						return cell.value && <CopyCell cell={cell} {...cell.getCellProps()} />;
 					}
 					if (cell.column.type === "ProductDetails") {
 						const rowValues = cell.row.original;
 						return (
-							<Table.Cell {...cell.getCellProps()}>
-								<Flex align='center' spacingY={null}>
+							<Table.Cell {...cell.getCellProps()} className='temat__table__product__details'>
+								<Flex align='center' wrap='nowrap'>
 									<Flex.Col col='6'>
-										<IconHeight /> {rowValues?.height ?? "N/A"}
+										<span className={cn({ "text--opaque": !rowValues?.height })}>
+											<IconHeight /> {rowValues?.height ?? "N/A"}
+										</span>
 									</Flex.Col>
 									<Flex.Col col='6'>
-										<IconHeight className='rotate-90' /> {rowValues?.width ?? "N/A"}
+										<span className={cn({ "text--opaque": !rowValues?.width })}>
+											<IconHeight className='rotate-90' /> {rowValues?.width ?? "N/A"}
+										</span>
+									</Flex.Col>
+								</Flex>
+								<Flex align='center' wrap='nowrap'>
+									<Flex.Col col='6'>
+										<span className={cn({ "text--opaque": !rowValues?.length })}>
+											<IconLength /> {rowValues?.length ?? "N/A"}
+										</span>
 									</Flex.Col>
 									<Flex.Col col='6'>
-										<IconLength /> {rowValues?.length ?? "N/A"}
-									</Flex.Col>
-									<Flex.Col col='6'>
-										<IconWeight /> {rowValues?.weight ?? "N/A"}
+										<span className={cn({ "text--opaque": !rowValues?.weight })}>
+											<IconWeight /> {rowValues?.weight ?? "N/A"}
+										</span>
 									</Flex.Col>
 								</Flex>
 							</Table.Cell>
@@ -205,7 +224,15 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 												equalDimensions
 												pigment={selectActionPigment(action.type)}
 												{...action?.props?.(cell.row.original)}
-												onClick={() => action?.action?.(cell.row.original)}>
+												onClick={
+													action?.withConfirmation
+														? () =>
+																setConfirmation({
+																	state: true,
+																	payload: () => action?.action?.(cell.row.original),
+																})
+														: () => action?.action?.(cell.row.original)
+												}>
 												{selectActionIcon(action.type)}
 											</Button>
 										</Flex.Col>
@@ -214,7 +241,11 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 							</Table.Cell>
 						);
 					}
-					return <Table.Cell {...cell.getCellProps()}>{cell.value ?? "N/A"}</Table.Cell>;
+					return (
+						<Table.Cell {...cell.getCellProps()}>
+							<span className={cn({ "text--opaque": !cell.value })}>{cell.value ?? "N/A"}</span>
+						</Table.Cell>
+					);
 				})}
 			</Table.Row>
 		);
@@ -225,7 +256,7 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 			<Card>
 				<Card.Body id='datatable__header' className='pb--0 pt--2 px--2'></Card.Body>
 			</Card>
-			<Table {...getTableProps()} elevation='none'>
+			<Table {...getTableProps()} elevation='none' className='px--3'>
 				<Table.Head>
 					{headerGroups.map((headerGroup: HeaderGroup<object>, idx: React.Key) => (
 						<Header key={idx} headerGroup={headerGroup} />
@@ -284,6 +315,11 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 					</Flex>
 				</Card.Body>
 			</Card>
+			<Suspense>
+				<ZoomPortal in={confirmation.state}>
+					<ActionConfirmation onClose={closeConfirmation} payload={confirmation.payload} />
+				</ZoomPortal>
+			</Suspense>
 		</div>
 	);
 };

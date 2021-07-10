@@ -6,7 +6,7 @@ import { useQueryClient } from "react-query";
 import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
 import { useCompanies } from "../../../actions/fetchHooks";
 
-import { Portal, Card, Button, Text, Form, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
+import { Portal, Card, Collapse, Button, Text, Form, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import { IconClose } from "../../../components/ui/icons";
 
 import AsyncSelect from "../../../components/forms/AsyncSelect";
@@ -51,6 +51,7 @@ const ProductsForm = (props: Props) => {
 	});
 
 	const { mutate: updateProduct, isLoading: isLoadingUpdate } = useProductUpdate({
+		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
 				console.log(res);
@@ -67,19 +68,28 @@ const ProductsForm = (props: Props) => {
 		} else {
 			setSelectError(null);
 		}
-		const sanitizedData = {
-			// barcode: data.barcode,
-			name: data.name,
-			companyId: data.companyId?.value,
-			description: data.description,
-			sku: data.sku,
-			minQty: data.minQty,
-		};
+
+		const formData = new FormData();
+
+		formData.append("barcode", data.barcode);
+		formData.append("name", data.name);
+		formData.append("companyId", data.companyId?.value);
+		formData.append("description", data.description);
+		formData.append("sku", data.sku);
+		formData.append("minQty", data.minQty);
+
+		// if (true) {
+		// 	formData.append("image", data.image[0]);
+		// 	formData.append("width", data.width);
+		// 	formData.append("height", data.height);
+		// 	formData.append("weight", data.weight);
+		// 	formData.append("lenght", data.lenght);
+		// }
+
 		if (payload) {
-			sanitizedData["id"] = payload.id;
-			return updateProduct(sanitizedData);
+			return updateProduct(formData);
 		}
-		return addProduct(sanitizedData);
+		return addProduct(formData);
 	};
 
 	const handleOnChangeCompanyId = (option: any) => {
@@ -91,23 +101,33 @@ const ProductsForm = (props: Props) => {
 	};
 
 	const { ref: innerRefName, ...restName } = register("name", {
-		required: "Field is required",
-		// minLength: { value: 6, message: "Min 6 characters" },
-		// maxLength: { value: 99, message: "Max 99 characters" },
+		required: `${t("validation.fieldRequired")}`,
+		minLength: { value: 6, message: `${t("validation.min6Chars")}` },
+		maxLength: { value: 99, message: `${t("validation.max99Chars")}` },
 	});
 	const { ref: innerRefDescription, ...restDescription } = register("description", {
-		// required: "Field is required",
-		// minLength: { value: 6, message: "Min 6 characters" },
-		// maxLength: { value: 250, message: "Max 250 characters" },
+		minLength: { value: 6, message: `${t("validation.min6Chars")}` },
+		maxLength: { value: 250, message: `${t("validation.max250Chars")}` },
 	});
 	const { ref: innerRefBarcode, ...restBarcode } = register("barcode", {
-		// required: "Field is required",
+		maxLength: { value: 14, message: `${t("validation.max14Chars")}` },
 	});
 	const { ref: innerRefSku, ...restSku } = register("sku", {
-		// required: "Field is required",
+		maxLength: { value: 99, message: `${t("validation.max99Chars")}` },
 	});
 	const { ref: innerRefQty, ...restQty } = register("minQty", {
-		// required: "Field is required",
+		maxLength: { value: 9, message: `${t("validation.max9Chars")}` },
+	});
+	const { ref: innerRefImage, ...restImage } = register("image");
+	const { ref: innerRefWeight, ...restWeight } = register("weight");
+	const { ref: innerRefLenght, ...restLenght } = register("lenght", {
+		maxLength: { value: 6, message: `${t("validation.max6Chars")}` },
+	});
+	const { ref: innerRefWidth, ...restWidth } = register("width", {
+		maxLength: { value: 6, message: `${t("validation.max6Chars")}` },
+	});
+	const { ref: innerRefHeight, ...restHeight } = register("height", {
+		maxLength: { value: 6, message: `${t("validation.max6Chars")}` },
 	});
 
 	return (
@@ -229,6 +249,107 @@ const ProductsForm = (props: Props) => {
 										pigment={errors?.description ? "danger" : "primary"}
 									/>
 								</FormControl>
+							</Flex.Col>
+							<Flex.Col col='12'>
+								<Collapse elevation='none' className='temat__form__collapse'>
+									<Collapse.Toggle collapseIndicator={false} className='justify--center'>
+										<Text className='mb--0'>{t("products.addAdditionalData")}</Text>
+									</Collapse.Toggle>
+									<Collapse.Content className='temat__form__collapse__content'>
+										<Flex spacingY='md'>
+											<Flex.Col col='12'>
+												<FormControl
+													label={t("products.image")}
+													htmlFor='image'
+													className={cn({
+														"text--danger": errors?.image,
+													})}
+													hintMsg={errors?.image?.message}>
+													<Input
+														type='file'
+														name='image'
+														placeholder={t("products.image")}
+														{...restImage}
+														innerRef={innerRefImage}
+														pigment={errors?.image ? "danger" : "primary"}
+													/>
+												</FormControl>
+											</Flex.Col>
+											<Flex.Col col={{ base: "12", sm: "6" }}>
+												<FormControl
+													label={t("products.width")}
+													htmlFor='width'
+													className={cn({
+														"text--danger": errors?.width,
+													})}
+													hintMsg={errors?.width?.message}>
+													<Input
+														type='number'
+														name='width'
+														placeholder={t("products.widthCm")}
+														{...restWidth}
+														innerRef={innerRefWidth}
+														pigment={errors?.width ? "danger" : "primary"}
+													/>
+												</FormControl>
+											</Flex.Col>
+											<Flex.Col col={{ base: "12", sm: "6" }}>
+												<FormControl
+													label={t("products.height")}
+													htmlFor='height'
+													className={cn({
+														"text--danger": errors?.height,
+													})}
+													hintMsg={errors?.height?.message}>
+													<Input
+														type='number'
+														name='height'
+														placeholder={t("products.heightCm")}
+														{...restHeight}
+														innerRef={innerRefHeight}
+														pigment={errors?.height ? "danger" : "primary"}
+													/>
+												</FormControl>
+											</Flex.Col>
+											<Flex.Col col={{ base: "12", sm: "6" }}>
+												<FormControl
+													label={t("products.weight")}
+													htmlFor='weight'
+													className={cn({
+														"text--danger": errors?.weight,
+													})}
+													hintMsg={errors?.weight?.message}>
+													<Input
+														type='number'
+														name='weight'
+														placeholder={t("products.weightKg")}
+														{...restWeight}
+														innerRef={innerRefWeight}
+														pigment={errors?.weight ? "danger" : "primary"}
+													/>
+												</FormControl>
+											</Flex.Col>
+											<Flex.Col col={{ base: "12", sm: "6" }}>
+												<FormControl
+													label={t("products.lenght")}
+													htmlFor='length'
+													className={cn({
+														"text--danger": errors?.lenght,
+													})}
+													hintMsg={errors?.lenght?.message}>
+													<Input
+														type='number'
+														name='lenght'
+														placeholder={t("products.lenghtCm")}
+														{...restLenght}
+														innerRef={innerRefLenght}
+														pigment={errors?.lenght ? "danger" : "primary"}
+													/>
+												</FormControl>
+											</Flex.Col>
+										</Flex>
+									</Collapse.Content>
+								</Collapse>
 							</Flex.Col>
 						</Flex>
 					</Form>

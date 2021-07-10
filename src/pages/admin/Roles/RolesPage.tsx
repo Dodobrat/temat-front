@@ -90,6 +90,7 @@ const RolesPage = () => {
 			if (userCan("userRoleDelete")) {
 				permittedActions.push({
 					type: "delete",
+					withConfirmation: true,
 					action: (entry: any) => deleteRole(entry.id),
 				});
 			}

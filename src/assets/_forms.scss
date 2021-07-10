@@ -63,6 +63,12 @@
 		&__input {
 			color: $mainFont;
 		}
+		&__multi-value {
+			background-color: $bgCard;
+			&__label {
+				color: $mainFont;
+			}
+		}
 		svg {
 			fill: rgba($subFont, 0.75);
 		}

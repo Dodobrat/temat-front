@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useMemo, useState, Suspense, lazy } from "react";
-import { useQueryClient } from "react-query";
-import { useDebounce, Flex, Heading, Button, PortalWrapper, Input, Tooltip, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
-import { useProducts } from "../../../actions/fetchHooks";
-import { useProductDelete } from "../../../actions/mutateHooks";
-import { useAuth } from "../../../context/AuthContext";
-import { ResponseColumnType } from "../../../types/global.types";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
-import { IconAdd, IconFilter, IconErrorCircle } from "../../../components/ui/icons";
-import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
+import { useQueryClient } from "react-query";
+import { useCompanies } from "../../../actions/fetchHooks";
+import { useAuth } from "../../../context/AuthContext";
+import { IconAdd, IconErrorCircle, IconFilter } from "../../../components/ui/icons";
+import { SlideIn } from "@dodobrat/react-ui-kit";
+import DataTable from "../../../components/util/DataTable";
+import { Helmet } from "react-helmet";
+import { Heading, Flex, Button, ZoomPortal } from "@dodobrat/react-ui-kit";
+import { useCompanyDelete } from "../../../actions/mutateHooks";
+import { ResponseColumnType } from "../../../types/global.types";
+import { Link } from "react-router-dom";
+import { useDebounce } from "@dodobrat/react-ui-kit";
+import { PortalWrapper } from "@dodobrat/react-ui-kit";
+import { Input } from "@dodobrat/react-ui-kit";
+import { Tooltip } from "@dodobrat/react-ui-kit";
 
-const ProductsForm = lazy(() => import("./ProductsForm"));
-const ProductsDrawer = lazy(() => import("./ProductsDrawer"));
+const CompaniesForm = lazy(() => import("./CompaniesForm"));
+const CompaniesDrawer = lazy(() => import("./CompaniesDrawer"));
 
-const ProductsPage = () => {
+const CompaniesPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
 	const queryClient = useQueryClient();
@@ -30,16 +35,15 @@ const ProductsPage = () => {
 			searchString: "",
 		},
 	});
-
 	const [searchString, setSearchString] = useState("");
 	const [searchStringError, setSearchStringError] = useState(false);
+	const [showCompaniesForm, setShowCompaniesForm] = useState({ state: false, payload: null });
 	const [showFilters, setShowFilters] = useState(false);
-	const [showProductForm, setShowProductForm] = useState({ state: false, payload: null });
 
+	const closeCompaniesForm = () => setShowCompaniesForm((prev) => ({ ...prev, state: false }));
 	const closeFilters = () => setShowFilters(false);
-	const closeProductsForm = () => setShowProductForm((prev) => ({ ...prev, state: false }));
 
-	const { data, refetch, isFetching, isStale } = useProducts({
+	const { data, refetch, isFetching, isStale } = useCompanies({
 		specs: queryParams,
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
@@ -48,11 +52,11 @@ const ProductsPage = () => {
 		specialKey: queryParams,
 	});
 
-	const { mutate: deleteProduct } = useProductDelete({
+	const { mutate: deleteCompany } = useCompanyDelete({
 		queryConfig: {
 			onSuccess: (res: any) => {
 				console.log(res);
-				queryClient.invalidateQueries("products");
+				queryClient.invalidateQueries("companies");
 			},
 			onError: (err: any) => console.log(err),
 		},
@@ -93,32 +97,32 @@ const ProductsPage = () => {
 		if (data) {
 			const permittedActions = [];
 
-			if (userCan("productReadSingle")) {
+			if (userCan("companyReadSingle")) {
 				permittedActions.push({
 					type: "view",
 					props: (entry) => ({
 						as: Link,
-						to: `/app/products/${entry.id}`,
+						to: `/app/companies/${entry.id}`,
 					}),
 				});
 			}
-			if (userCan("productUpdate")) {
+			if (userCan("companyUpdate")) {
 				permittedActions.push({
 					type: "edit",
-					action: (entry: any) => setShowProductForm({ state: true, payload: entry }),
+					action: (entry: any) => setShowCompaniesForm({ state: true, payload: entry }),
 				});
 			}
-			if (userCan("productDelete")) {
+			if (userCan("companyDelete")) {
 				permittedActions.push({
 					type: "delete",
 					withConfirmation: true,
-					action: (entry: any) => deleteProduct(entry.id),
+					action: (entry: any) => deleteCompany(entry.id),
 				});
 			}
 			return permittedActions;
 		}
 		return [];
-	}, [data, userCan, deleteProduct]);
+	}, [data, userCan, deleteCompany]);
 
 	const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
 		setQueryParams((prev) => ({
@@ -151,18 +155,18 @@ const ProductsPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Products</title>
+				<title>Temat | Companies</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Products
+							Companies
 						</Heading>
 					</Flex.Col>
-					{userCan("productCreate") && (
+					{userCan("companyCreate") && (
 						<Flex.Col col='auto'>
-							<Button onClick={() => setShowProductForm({ state: true, payload: null })} iconStart={<IconAdd />}>
+							<Button onClick={() => setShowCompaniesForm({ state: true, payload: null })} iconStart={<IconAdd />}>
 								Add New
 							</Button>
 						</Flex.Col>
@@ -207,15 +211,15 @@ const ProductsPage = () => {
 				/>
 			</PageContent>
 			<Suspense fallback={<div />}>
-				<ZoomPortal in={showProductForm.state}>
-					<ProductsForm onClose={closeProductsForm} payload={showProductForm.payload} />
+				<ZoomPortal in={showCompaniesForm.state}>
+					<CompaniesForm onClose={closeCompaniesForm} payload={showCompaniesForm.payload} />
 				</ZoomPortal>
 				<SlideIn position='right' in={showFilters}>
-					<ProductsDrawer onClose={closeFilters} />
+					<CompaniesDrawer onClose={closeFilters} />
 				</SlideIn>
 			</Suspense>
 		</PageWrapper>
 	);
 };
 
-export default ProductsPage;
+export default CompaniesPage;

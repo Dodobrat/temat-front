@@ -14,7 +14,7 @@ import "./i18n";
 const queryClient = new QueryClient();
 
 const appConfig: GlobalOptions = {
-	containerSize: "xl",
+	containerSize: "fhd",
 };
 
 ReactDOM.render(

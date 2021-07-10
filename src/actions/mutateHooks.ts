@@ -92,6 +92,40 @@ export const useRoleDelete = ({ specs, queryConfig }: MutateHookType) => {
 	);
 };
 
+//COMPANIES
+export const useCompanyAdd = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/users/roles`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useCompanyUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/users/roles/${data.id}`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useCompanyDelete = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/companies/${data}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 //PRODUCTS
 export const useProductAdd = ({ specs, queryConfig }: MutateHookType) => {
 	return useMutation(
@@ -107,7 +141,9 @@ export const useProductAdd = ({ specs, queryConfig }: MutateHookType) => {
 export const useProductUpdate = ({ specs, queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
-			return await axios.patch(`${apiUrl}/products/${data.id}`, data, config).then((res) => res.data);
+			console.log(data);
+
+			return await axios.patch(`${apiUrl}/products/${specs?.id}`, data, config).then((res) => res.data);
 		},
 		{
 			...queryConfig,

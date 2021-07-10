@@ -1,6 +1,8 @@
+import React from "react";
+
 export type PagesOptionsType = {
 	path: string;
-	component: React.LazyExoticComponent<() => JSX.Element>;
+	component: React.LazyExoticComponent<() => JSX.Element> | any;
 	icon?: React.ReactNode;
 	label?: string;
 	permission: string | null;

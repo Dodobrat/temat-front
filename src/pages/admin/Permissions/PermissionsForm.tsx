@@ -134,6 +134,8 @@ const PermissionsForm = (props: Props) => {
 									hintMsg={selectError?.message}>
 									<AsyncSelect
 										useFetch={useRoles}
+										// isMulti
+										// closeMenuOnSelect={false}
 										value={selectValue}
 										onChange={handleOnChangeRoleId}
 										className={cn({

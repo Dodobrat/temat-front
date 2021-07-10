@@ -1,22 +1,53 @@
 {
 	"common": {
 		"submit": "Submit",
-		"update": "Update"
+		"update": "Update",
+		"yes": "Yes",
+		"no": "No",
+		"confirm": "Confirm",
+		"confirmAction": "Are you sure you wish to continue?",
+		"actionIrrevirsible": "This cannot be undone!"
 	},
 	"auth": {
 		"login": "Login"
+	},
+	"validation": {
+		"fieldRequired": "Field is required",
+		"min3Chars": "Min 3 characters",
+		"min6Chars": "Min 6 characters",
+		"max6Chars": "Max 6 characters",
+		"max9Chars": "Max 9 characters",
+		"max14Chars": "Max 14 characters",
+		"max99Chars": "Max 99 characters",
+		"max250Chars": "Max 250 characters"
 	},
 	"pages": {
 		"dashboard": "Dashboard",
 		"users": "Users",
 		"permissions": "Permissions",
 		"roles": "Roles",
-		"products": "Products"
+		"companies": "Companies",
+		"products": "Products",
+		"settings": "Settings"
 	},
 	"dashboard": {},
 	"users": {},
 	"permissions": {},
 	"roles": {},
+	"companies": {
+		"addCompany": "Add Company",
+		"updateCompany": "Update Company",
+		"name": "Name",
+		"bulstat": "Bulstat",
+		"streetName": "Street Name",
+		"streetNumber": "Street Number",
+		"city": "City",
+		"postCode": "Post Code",
+		"country": "Country",
+		"molFirstName": "Mol First Name",
+		"molLastName": "Mol Last Name",
+		"image": "Image"
+	},
 	"products": {
 		"addProduct": "Add Product",
 		"updateProduct": "Update Product",
@@ -25,6 +56,22 @@
 		"company": "Company",
 		"minQty": "Min. Qty",
 		"sku": "SKU",
-		"barcode": "Barcode"
+		"barcode": "Barcode",
+		"addAdditionalData": "Add Additional Data",
+		"image": "Image",
+		"width": "Width",
+		"widthCm": "Width in cm",
+		"height": "Height",
+		"heightCm": "Height in cm",
+		"lenght": "Lenght",
+		"lenghtCm": "Lenght in cm",
+		"weight": "Weight",
+		"weightKg": "Weight in Kg",
+		"kg": "Kg"
+	},
+	"settings": {
+		"appearance": "Appearance",
+		"changeTheme": "Change Theme",
+		"changeRoundness": "Change Roundness"
 	}
 }

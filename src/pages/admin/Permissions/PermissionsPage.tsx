@@ -141,6 +141,7 @@ const UsersPage = () => {
 			if (userCan("permissionDelete")) {
 				permittedActions.push({
 					type: "delete",
+					withConfirmation: true,
 					action: (entry: any) => deletePermission(entry.id),
 				});
 			}
