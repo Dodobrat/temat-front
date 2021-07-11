@@ -14,6 +14,7 @@ import { useDebounce } from "@dodobrat/react-ui-kit";
 import { IconAdd, IconFilter, IconErrorCircle } from "../../../components/ui/icons";
 import { SlideIn } from "@dodobrat/react-ui-kit";
 import { ResponseColumnType } from "../../../types/global.types";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const PermissionsForm = lazy(() => import("./PermissionsForm"));
 const PermissionsDrawer = lazy(() => import("./PermissionsDrawer"));
@@ -47,7 +48,7 @@ const UsersPage = () => {
 		specs: queryParams,
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 		specialKey: queryParams,
 	});
@@ -55,20 +56,20 @@ const UsersPage = () => {
 	const { mutate: deletePermission } = usePermissionDelete({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("permissions");
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const { mutate: updatePermissionStatus } = usePermissionUpdate({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("permissions");
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 

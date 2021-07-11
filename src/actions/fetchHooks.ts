@@ -119,3 +119,21 @@ export const useCompanies: FetchQueryType = ({ specs, queryConfig, specialKey })
 		}
 	);
 };
+
+//USERS
+export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["users", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/users?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};

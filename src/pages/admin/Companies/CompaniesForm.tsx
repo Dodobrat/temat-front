@@ -6,6 +6,7 @@ import { useCompanyAdd, useCompanyUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 interface Props {
 	onClose: () => void;
@@ -31,11 +32,11 @@ const CompaniesForm = (props: Props) => {
 	const { mutate: addCompany, isLoading: isLoadingAdd } = useCompanyAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("companies");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -43,19 +44,20 @@ const CompaniesForm = (props: Props) => {
 		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("companies");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const onSubmit = (data: any) => {
-		console.log(data);
 		const formData = new FormData();
 
 		formData.append("name", data.name);
+		formData.append("phone", data.phone);
+		formData.append("email", data.email);
 		formData.append("bulstat", data.bulstat);
 		formData.append("image", data.image[0]);
 		formData.append("streetNumber", data.streetNumber);
@@ -80,6 +82,8 @@ const CompaniesForm = (props: Props) => {
 	const { ref: innerRefBulstat, ...restBulstat } = register("bulstat", {
 		required: `${t("validation.fieldRequired")}`,
 	});
+	const { ref: innerRefPhone, ...restPhone } = register("phone");
+	const { ref: innerRefEmail, ...restEmail } = register("email");
 	const { ref: innerRefImage, ...restImage } = register("image");
 	const { ref: innerRefStreetNumber, ...restStreetNumber } = register("streetNumber");
 	const { ref: innerRefStreetName, ...restStreetName } = register("streetName");
@@ -175,6 +179,42 @@ const CompaniesForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
+								<FormControl
+									label={t("companies.phone")}
+									htmlFor='phone'
+									className={cn({
+										"text--danger": errors?.phone,
+									})}
+									hintMsg={errors?.phone?.message}>
+									<Input
+										name='phone'
+										type='tel'
+										placeholder={t("companies.phone")}
+										{...restPhone}
+										innerRef={innerRefPhone}
+										pigment={errors?.phone ? "danger" : "primary"}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
+								<FormControl
+									label={t("companies.email")}
+									htmlFor='email'
+									className={cn({
+										"text--danger": errors?.email,
+									})}
+									hintMsg={errors?.email?.message}>
+									<Input
+										name='email'
+										type='email'
+										placeholder={t("companies.email")}
+										{...restEmail}
+										innerRef={innerRefEmail}
+										pigment={errors?.email ? "danger" : "primary"}
+									/>
+								</FormControl>
+							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
 									label={t("companies.image")}
@@ -229,7 +269,7 @@ const CompaniesForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "4" }}>
 								<FormControl
-									label={t("companies.postCode")}
+									label={t("companies.zipCode")}
 									htmlFor='zipCode'
 									className={cn({
 										"text--danger": errors?.zipCode,
@@ -237,7 +277,7 @@ const CompaniesForm = (props: Props) => {
 									hintMsg={errors?.zipCode?.message}>
 									<Input
 										name='zipCode'
-										placeholder={t("companies.postCode")}
+										placeholder={t("companies.zipCode")}
 										{...restZipCode}
 										innerRef={innerRefZipCode}
 										pigment={errors?.zipCode ? "danger" : "primary"}

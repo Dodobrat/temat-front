@@ -1,32 +1,20 @@
 // @ts-nocheck
-import React, { Suspense, useEffect, lazy } from "react";
+import React, { useEffect } from "react";
 import { useTable, usePagination, useSortBy, Row, HeaderGroup } from "react-table";
-import { Table, Card, Flex, Text, Badge, Button, SwitchComponent } from "@dodobrat/react-ui-kit";
-import {
-	IconUserManage,
-	IconEdit,
-	IconTrash,
-	IconEye,
-	IconFirstPage,
-	IconBackPage,
-	IconNextPage,
-	IconLastPage,
-	IconArrowDown,
-	IconArrowUp,
-	IconHeight,
-	IconLength,
-	IconWeight,
-} from "../ui/icons";
-import Image from "../ui/Image";
-import { parseDate } from "../../helpers/dateHelpers";
+import { Table, Card, Flex, Text, Button } from "@dodobrat/react-ui-kit";
+import { IconFirstPage, IconBackPage, IconNextPage, IconLastPage, IconArrowDown, IconArrowUp } from "../ui/icons";
 import NoDataRow from "../ui/tables/NoDataRow";
 import WindowedSelect from "react-windowed-select";
-import CopyCell from "./CopyCell";
+import CopyCell from "./table_cells/CopyCell";
 import cn from "classnames";
-import { ZoomPortal } from "@dodobrat/react-ui-kit";
-import { useState } from "react";
-
-const ActionConfirmation = lazy(() => import("./ActionConfirmation"));
+import ProductDetailsCell from "./table_cells/ProductDetailsCell";
+import WithImageCell from "./table_cells/WithImageCell";
+import SwitchCell from "./table_cells/SwitchCell";
+import ActionsCell from "./table_cells/ActionsCell";
+import DateCell from "./table_cells/DateCell";
+import AddressCell from "./table_cells/AddressCell";
+import CompanyMolCell from "./table_cells/CompanyMolCell";
+import ContactsCell from "./table_cells/ContactsCell";
 
 interface Props {
 	columns: any[];
@@ -37,40 +25,6 @@ interface Props {
 	serverPageCount: number;
 	serverTotalResults: number;
 }
-
-const selectActionPigment = (type: string) => {
-	switch (type) {
-		case "view":
-			return "info";
-		case "edit":
-			return "warning";
-		case "edit-users":
-			return "success";
-		case "delete":
-			return "danger";
-		case "restore":
-			return "warning";
-		default:
-			return "secondary";
-	}
-};
-
-const selectActionIcon = (type: string) => {
-	switch (type) {
-		case "view":
-			return <IconEye />;
-		case "edit":
-			return <IconEdit />;
-		case "edit-users":
-			return <IconUserManage />;
-		case "delete":
-			return <IconTrash />;
-		case "restore":
-			return "warning";
-		default:
-			return "secondary";
-	}
-};
 
 const paginationBtnProps = {
 	equalDimensions: true,
@@ -114,10 +68,6 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 		usePagination
 	);
 
-	const [confirmation, setConfirmation] = useState({ state: false, payload: null });
-
-	const closeConfirmation = () => setConfirmation((prev) => ({ ...prev, state: false }));
-
 	useEffect(() => {
 		fetchData({ pageIndex, pageSize, sortBy });
 	}, [fetchData, pageIndex, pageSize, sortBy]);
@@ -147,105 +97,43 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 		return (
 			<Table.Row {...row.getRowProps()}>
 				{row.cells.map((cell) => {
-					if (cell.column.type === "DateTime" || cell.column.type === "Date") {
-						return (
-							<Table.Cell {...cell.getCellProps()}>
-								<Badge pigment='secondary'>{parseDate(cell.value, cell.column.type === "DateTime")}</Badge>
-							</Table.Cell>
-						);
+					switch (cell.column.type) {
+						case "DateTime":
+						case "Date": {
+							return <DateCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "CopyToClipboard": {
+							return cell.value && <CopyCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "ProductDetails": {
+							return <ProductDetailsCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "WithImage": {
+							return <WithImageCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "Switch": {
+							return <SwitchCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "Address": {
+							return <AddressCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "CompanyMol": {
+							return <CompanyMolCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "Contact": {
+							return <ContactsCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "Actions": {
+							return actions.length > 0 && <ActionsCell cell={cell} actions={actions} {...cell.getCellProps()} />;
+						}
+						default: {
+							return (
+								<Table.Cell {...cell.getCellProps()}>
+									<span className={cn({ "text--opaque": !cell.value })}>{cell.value ?? "N/A"}</span>
+								</Table.Cell>
+							);
+						}
 					}
-					if (cell.column.type === "CopyToClipboard") {
-						return cell.value && <CopyCell cell={cell} {...cell.getCellProps()} />;
-					}
-					if (cell.column.type === "ProductDetails") {
-						const rowValues = cell.row.original;
-						return (
-							<Table.Cell {...cell.getCellProps()} className='temat__table__product__details'>
-								<Flex align='center' wrap='nowrap'>
-									<Flex.Col col='6'>
-										<span className={cn({ "text--opaque": !rowValues?.height })}>
-											<IconHeight /> {rowValues?.height ?? "N/A"}
-										</span>
-									</Flex.Col>
-									<Flex.Col col='6'>
-										<span className={cn({ "text--opaque": !rowValues?.width })}>
-											<IconHeight className='rotate-90' /> {rowValues?.width ?? "N/A"}
-										</span>
-									</Flex.Col>
-								</Flex>
-								<Flex align='center' wrap='nowrap'>
-									<Flex.Col col='6'>
-										<span className={cn({ "text--opaque": !rowValues?.length })}>
-											<IconLength /> {rowValues?.length ?? "N/A"}
-										</span>
-									</Flex.Col>
-									<Flex.Col col='6'>
-										<span className={cn({ "text--opaque": !rowValues?.weight })}>
-											<IconWeight /> {rowValues?.weight ?? "N/A"}
-										</span>
-									</Flex.Col>
-								</Flex>
-							</Table.Cell>
-						);
-					}
-					if (cell.column.type === "WithImage") {
-						return (
-							<Table.Cell {...cell.getCellProps()}>
-								<Flex align='center' wrap='nowrap'>
-									<Flex.Col className='temat__table__img'>
-										<Image
-											imgSrc={cell.row.original?.image}
-											alt={cell.row.original?.description ?? cell.row.original?.name}
-										/>
-									</Flex.Col>
-									<Flex.Col className='ellipsis'>{cell.value}</Flex.Col>
-								</Flex>
-							</Table.Cell>
-						);
-					}
-					if (cell.column.type === "Switch") {
-						return (
-							<Table.Cell {...cell.getCellProps()}>
-								<SwitchComponent
-									defaultChecked={cell.value}
-									onChange={(e: any) => cell.column.action({ value: e.target.checked, entry: cell.row.original })}
-									sizing='lg'
-								/>
-							</Table.Cell>
-						);
-					}
-					if (actions.length > 0 && cell.column.type === "Actions") {
-						return (
-							<Table.Cell {...cell.getCellProps()}>
-								<Flex wrap='nowrap' align='center' justify='flex-end'>
-									{actions.map((action, idx) => (
-										<Flex.Col col='auto' key={`${action.type}_${idx}`}>
-											<Button
-												equalDimensions
-												pigment={selectActionPigment(action.type)}
-												{...action?.props?.(cell.row.original)}
-												onClick={
-													action?.withConfirmation
-														? () =>
-																setConfirmation({
-																	state: true,
-																	payload: () => action?.action?.(cell.row.original),
-																})
-														: () => action?.action?.(cell.row.original)
-												}>
-												{selectActionIcon(action.type)}
-											</Button>
-										</Flex.Col>
-									))}
-								</Flex>
-							</Table.Cell>
-						);
-					}
-					return (
-						<Table.Cell {...cell.getCellProps()}>
-							<span className={cn({ "text--opaque": !cell.value })}>{cell.value ?? "N/A"}</span>
-						</Table.Cell>
-					);
 				})}
 			</Table.Row>
 		);
@@ -315,11 +203,6 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 					</Flex>
 				</Card.Body>
 			</Card>
-			<Suspense>
-				<ZoomPortal in={confirmation.state}>
-					<ActionConfirmation onClose={closeConfirmation} payload={confirmation.payload} />
-				</ZoomPortal>
-			</Suspense>
 		</div>
 	);
 };

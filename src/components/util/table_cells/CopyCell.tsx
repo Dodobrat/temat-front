@@ -1,7 +1,7 @@
 import { Badge, Table } from "@dodobrat/react-ui-kit";
 import { useState } from "react";
-import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
-import { IconClipboardCheck, IconClipboard } from "../../components/ui/icons";
+import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
+import { IconClipboardCheck, IconClipboard } from "../../ui/icons";
 import { useEffect } from "react";
 
 interface Props {

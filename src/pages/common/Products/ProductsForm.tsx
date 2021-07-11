@@ -5,12 +5,14 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
 import { useCompanies } from "../../../actions/fetchHooks";
+import { useAuth } from "../../../context/AuthContext";
 
 import { Portal, Card, Collapse, Button, Text, Form, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import { IconClose } from "../../../components/ui/icons";
 
 import AsyncSelect from "../../../components/forms/AsyncSelect";
 import cn from "classnames";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 interface Props {
 	onClose: () => void;
@@ -19,7 +21,7 @@ interface Props {
 
 const ProductsForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
-
+	const { userCan } = useAuth();
 	const { t } = useTranslation();
 
 	const queryClient = useQueryClient();
@@ -42,11 +44,11 @@ const ProductsForm = (props: Props) => {
 	const { mutate: addProduct, isLoading: isLoadingAdd } = useProductAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("products");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -54,11 +56,11 @@ const ProductsForm = (props: Props) => {
 		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("products");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -78,13 +80,23 @@ const ProductsForm = (props: Props) => {
 		formData.append("sku", data.sku);
 		formData.append("minQty", data.minQty);
 
-		// if (true) {
-		// 	formData.append("image", data.image[0]);
-		// 	formData.append("width", data.width);
-		// 	formData.append("height", data.height);
-		// 	formData.append("weight", data.weight);
-		// 	formData.append("lenght", data.lenght);
-		// }
+		if (userCan("productAddAdditionalDetails")) {
+			if (data?.image?.length > 0) {
+				formData.append("image", data.image[0]);
+			}
+			if (data.width) {
+				formData.append("width", data.width);
+			}
+			if (data.height) {
+				formData.append("height", data.height);
+			}
+			if (data.weight) {
+				formData.append("weight", data.weight);
+			}
+			if (data.length) {
+				formData.append("length", data.length);
+			}
+		}
 
 		if (payload) {
 			return updateProduct(formData);
@@ -111,6 +123,7 @@ const ProductsForm = (props: Props) => {
 	});
 	const { ref: innerRefBarcode, ...restBarcode } = register("barcode", {
 		maxLength: { value: 14, message: `${t("validation.max14Chars")}` },
+		minLength: { value: 13, message: `${t("validation.min13Chars")}` },
 	});
 	const { ref: innerRefSku, ...restSku } = register("sku", {
 		maxLength: { value: 99, message: `${t("validation.max99Chars")}` },
@@ -120,7 +133,7 @@ const ProductsForm = (props: Props) => {
 	});
 	const { ref: innerRefImage, ...restImage } = register("image");
 	const { ref: innerRefWeight, ...restWeight } = register("weight");
-	const { ref: innerRefLenght, ...restLenght } = register("lenght", {
+	const { ref: innerReflength, ...restlength } = register("length", {
 		maxLength: { value: 6, message: `${t("validation.max6Chars")}` },
 	});
 	const { ref: innerRefWidth, ...restWidth } = register("width", {
@@ -250,107 +263,109 @@ const ProductsForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col='12'>
-								<Collapse elevation='none' className='temat__form__collapse'>
-									<Collapse.Toggle collapseIndicator={false} className='justify--center'>
-										<Text className='mb--0'>{t("products.addAdditionalData")}</Text>
-									</Collapse.Toggle>
-									<Collapse.Content className='temat__form__collapse__content'>
-										<Flex spacingY='md'>
-											<Flex.Col col='12'>
-												<FormControl
-													label={t("products.image")}
-													htmlFor='image'
-													className={cn({
-														"text--danger": errors?.image,
-													})}
-													hintMsg={errors?.image?.message}>
-													<Input
-														type='file'
-														name='image'
-														placeholder={t("products.image")}
-														{...restImage}
-														innerRef={innerRefImage}
-														pigment={errors?.image ? "danger" : "primary"}
-													/>
-												</FormControl>
-											</Flex.Col>
-											<Flex.Col col={{ base: "12", sm: "6" }}>
-												<FormControl
-													label={t("products.width")}
-													htmlFor='width'
-													className={cn({
-														"text--danger": errors?.width,
-													})}
-													hintMsg={errors?.width?.message}>
-													<Input
-														type='number'
-														name='width'
-														placeholder={t("products.widthCm")}
-														{...restWidth}
-														innerRef={innerRefWidth}
-														pigment={errors?.width ? "danger" : "primary"}
-													/>
-												</FormControl>
-											</Flex.Col>
-											<Flex.Col col={{ base: "12", sm: "6" }}>
-												<FormControl
-													label={t("products.height")}
-													htmlFor='height'
-													className={cn({
-														"text--danger": errors?.height,
-													})}
-													hintMsg={errors?.height?.message}>
-													<Input
-														type='number'
-														name='height'
-														placeholder={t("products.heightCm")}
-														{...restHeight}
-														innerRef={innerRefHeight}
-														pigment={errors?.height ? "danger" : "primary"}
-													/>
-												</FormControl>
-											</Flex.Col>
-											<Flex.Col col={{ base: "12", sm: "6" }}>
-												<FormControl
-													label={t("products.weight")}
-													htmlFor='weight'
-													className={cn({
-														"text--danger": errors?.weight,
-													})}
-													hintMsg={errors?.weight?.message}>
-													<Input
-														type='number'
-														name='weight'
-														placeholder={t("products.weightKg")}
-														{...restWeight}
-														innerRef={innerRefWeight}
-														pigment={errors?.weight ? "danger" : "primary"}
-													/>
-												</FormControl>
-											</Flex.Col>
-											<Flex.Col col={{ base: "12", sm: "6" }}>
-												<FormControl
-													label={t("products.lenght")}
-													htmlFor='length'
-													className={cn({
-														"text--danger": errors?.lenght,
-													})}
-													hintMsg={errors?.lenght?.message}>
-													<Input
-														type='number'
-														name='lenght'
-														placeholder={t("products.lenghtCm")}
-														{...restLenght}
-														innerRef={innerRefLenght}
-														pigment={errors?.lenght ? "danger" : "primary"}
-													/>
-												</FormControl>
-											</Flex.Col>
-										</Flex>
-									</Collapse.Content>
-								</Collapse>
-							</Flex.Col>
+							{userCan("productAddAdditionalDetails") && (
+								<Flex.Col col='12'>
+									<Collapse elevation='none' className='temat__form__collapse'>
+										<Collapse.Toggle collapseIndicator={false} className='justify--center'>
+											<Text className='mb--0'>{t("products.addAdditionalData")}</Text>
+										</Collapse.Toggle>
+										<Collapse.Content className='temat__form__collapse__content'>
+											<Flex spacingY='md'>
+												<Flex.Col col='12'>
+													<FormControl
+														label={t("products.image")}
+														htmlFor='image'
+														className={cn({
+															"text--danger": errors?.image,
+														})}
+														hintMsg={errors?.image?.message}>
+														<Input
+															type='file'
+															name='image'
+															placeholder={t("products.image")}
+															{...restImage}
+															innerRef={innerRefImage}
+															pigment={errors?.image ? "danger" : "primary"}
+														/>
+													</FormControl>
+												</Flex.Col>
+												<Flex.Col col={{ base: "12", sm: "6" }}>
+													<FormControl
+														label={t("products.width")}
+														htmlFor='width'
+														className={cn({
+															"text--danger": errors?.width,
+														})}
+														hintMsg={errors?.width?.message}>
+														<Input
+															type='number'
+															name='width'
+															placeholder={t("products.widthCm")}
+															{...restWidth}
+															innerRef={innerRefWidth}
+															pigment={errors?.width ? "danger" : "primary"}
+														/>
+													</FormControl>
+												</Flex.Col>
+												<Flex.Col col={{ base: "12", sm: "6" }}>
+													<FormControl
+														label={t("products.height")}
+														htmlFor='height'
+														className={cn({
+															"text--danger": errors?.height,
+														})}
+														hintMsg={errors?.height?.message}>
+														<Input
+															type='number'
+															name='height'
+															placeholder={t("products.heightCm")}
+															{...restHeight}
+															innerRef={innerRefHeight}
+															pigment={errors?.height ? "danger" : "primary"}
+														/>
+													</FormControl>
+												</Flex.Col>
+												<Flex.Col col={{ base: "12", sm: "6" }}>
+													<FormControl
+														label={t("products.weight")}
+														htmlFor='weight'
+														className={cn({
+															"text--danger": errors?.weight,
+														})}
+														hintMsg={errors?.weight?.message}>
+														<Input
+															type='number'
+															name='weight'
+															placeholder={t("products.weightKg")}
+															{...restWeight}
+															innerRef={innerRefWeight}
+															pigment={errors?.weight ? "danger" : "primary"}
+														/>
+													</FormControl>
+												</Flex.Col>
+												<Flex.Col col={{ base: "12", sm: "6" }}>
+													<FormControl
+														label={t("products.length")}
+														htmlFor='length'
+														className={cn({
+															"text--danger": errors?.length,
+														})}
+														hintMsg={errors?.length?.message}>
+														<Input
+															type='number'
+															name='length'
+															placeholder={t("products.lengthCm")}
+															{...restlength}
+															innerRef={innerReflength}
+															pigment={errors?.length ? "danger" : "primary"}
+														/>
+													</FormControl>
+												</Flex.Col>
+											</Flex>
+										</Collapse.Content>
+									</Collapse>
+								</Flex.Col>
+							)}
 						</Flex>
 					</Form>
 				</Card.Body>

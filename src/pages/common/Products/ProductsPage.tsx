@@ -12,6 +12,7 @@ import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const ProductsForm = lazy(() => import("./ProductsForm"));
 const ProductsDrawer = lazy(() => import("./ProductsDrawer"));
@@ -43,7 +44,7 @@ const ProductsPage = () => {
 		specs: queryParams,
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 		specialKey: queryParams,
 	});
@@ -51,10 +52,10 @@ const ProductsPage = () => {
 	const { mutate: deleteProduct } = useProductDelete({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("products");
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 

@@ -1,15 +1,16 @@
-import React from "react";
 import ReactDOM from "react-dom";
 import "./assets/app.scss";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import "./i18n";
 import { ConfigProvider } from "@dodobrat/react-ui-kit";
-import AuthProvider from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "react-query";
 // import { ReactQueryDevtools } from "react-query/devtools";
-import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 
-import "./i18n";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import AuthProvider from "./context/AuthContext";
+
+import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,17 @@ ReactDOM.render(
 			</AuthProvider>
 			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</QueryClientProvider>
+		<ToastContainer
+			position='bottom-left'
+			autoClose={5000}
+			hideProgressBar={false}
+			newestOnTop
+			closeOnClick
+			rtl={false}
+			pauseOnFocusLoss
+			draggable
+			pauseOnHover
+		/>
 	</ConfigProvider>,
 	document.getElementById("root")
 );

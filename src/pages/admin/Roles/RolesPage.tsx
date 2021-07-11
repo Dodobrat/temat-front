@@ -12,6 +12,7 @@ import { Helmet } from "react-helmet";
 import { Heading, Flex, Button, ZoomPortal } from "@dodobrat/react-ui-kit";
 import { useRoleDelete } from "../../../actions/mutateHooks";
 import { ResponseColumnType } from "../../../types/global.types";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const RolesForm = lazy(() => import("./RolesForm"));
 const RolesViewDrawer = lazy(() => import("./RolesViewDrawer"));
@@ -38,7 +39,7 @@ const RolesPage = () => {
 		specs: queryParams,
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 		specialKey: queryParams,
 	});
@@ -46,10 +47,10 @@ const RolesPage = () => {
 	const { mutate: deleteRole } = useRoleDelete({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("roles");
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 

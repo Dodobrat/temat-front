@@ -2,6 +2,7 @@ import { withAsyncPaginate } from "react-select-async-paginate";
 import WindowedSelect from "react-windowed-select";
 import cn from "classnames";
 import { useStateWithPromise } from "../../hooks/useStateWithPromise";
+import { errorToast } from "../../helpers/toastEmitter";
 
 const WindowedAsyncPaginate = withAsyncPaginate(WindowedSelect);
 
@@ -28,7 +29,7 @@ const AsyncSelect = (props: Props) => {
 		specs: queryParams,
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 		specialKey: ["select", queryParams],
 	});

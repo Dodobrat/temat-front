@@ -8,6 +8,7 @@ import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHo
 import { useQueryClient } from "react-query";
 import { useRoles } from "../../../actions/fetchHooks";
 import { useState } from "react";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 interface Props {
 	onClose: () => void;
@@ -37,22 +38,23 @@ const PermissionsForm = (props: Props) => {
 	const { mutate: addPermission, isLoading: isLoadingAdd } = usePermissionAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("permissions");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const { mutate: updatePermission, isLoading: isLoadingUpdate } = usePermissionUpdate({
+		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("permissions");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -68,7 +70,6 @@ const PermissionsForm = (props: Props) => {
 			description: data.description,
 		};
 		if (payload) {
-			sanitizedData["id"] = payload.id;
 			return updatePermission(sanitizedData);
 		}
 		return addPermission(sanitizedData);

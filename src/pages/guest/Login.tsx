@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useLogin } from "../../actions/mutateHooks";
 import { useAuth } from "../../context/AuthContext";
 import cn from "classnames";
+import { errorToast } from "../../helpers/toastEmitter";
 
 const Login = () => {
 	const {
@@ -23,7 +24,7 @@ const Login = () => {
 				setStorageToken(res.token);
 				setToken(res.token);
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 

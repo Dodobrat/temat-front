@@ -1,0 +1,45 @@
+.Toastify__toast-container {
+	z-index: 10000;
+}
+.Toastify__toast--dark {
+	background-color: $mainFont;
+	color: $bgCard;
+	* {
+		color: $bgCard;
+	}
+}
+.Toastify__toast--default {
+	background-color: $bgCard;
+	color: $mainFont;
+	* {
+		color: $mainFont;
+	}
+}
+.Toastify__toast--info {
+	background-color: $infoBg;
+	color: $infoFont;
+	* {
+		color: $infoFont;
+	}
+}
+.Toastify__toast--success {
+	background-color: $successBg;
+	color: $successFont;
+	* {
+		color: $successFont;
+	}
+}
+.Toastify__toast--warning {
+	background-color: $warningBg;
+	color: $warningFont;
+	* {
+		color: $warningFont;
+	}
+}
+.Toastify__toast--error {
+	background-color: $dangerBg;
+	color: $dangerFont;
+	* {
+		color: $dangerFont;
+	}
+}

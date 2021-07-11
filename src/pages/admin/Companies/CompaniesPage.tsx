@@ -17,6 +17,7 @@ import { useDebounce } from "@dodobrat/react-ui-kit";
 import { PortalWrapper } from "@dodobrat/react-ui-kit";
 import { Input } from "@dodobrat/react-ui-kit";
 import { Tooltip } from "@dodobrat/react-ui-kit";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const CompaniesForm = lazy(() => import("./CompaniesForm"));
 const CompaniesDrawer = lazy(() => import("./CompaniesDrawer"));
@@ -47,7 +48,7 @@ const CompaniesPage = () => {
 		specs: queryParams,
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 		specialKey: queryParams,
 	});
@@ -55,10 +56,10 @@ const CompaniesPage = () => {
 	const { mutate: deleteCompany } = useCompanyDelete({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("companies");
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 

@@ -1,6 +1,7 @@
-import React, { lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { AdminLayoutProvider } from "@dodobrat/react-ui-kit";
+
 import AuthRoute from "./components/util/AuthRoute";
 
 const GuestLayout = lazy(() => import("./layouts/guest/GuestLayout"));

@@ -5,6 +5,7 @@ import { IconClose } from "../../../components/ui/icons";
 import cn from "classnames";
 import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 interface Props {
 	onClose: () => void;
@@ -29,22 +30,23 @@ const RolesForm = (props: Props) => {
 	const { mutate: addRole, isLoading: isLoadingAdd } = useRoleAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("roles");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const { mutate: updateRole, isLoading: isLoadingUpdate } = useRoleUpdate({
+		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
-				console.log(res);
+				successToast(res);
 				queryClient.invalidateQueries("roles");
 				onClose();
 			},
-			onError: (err: any) => console.log(err),
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -54,7 +56,6 @@ const RolesForm = (props: Props) => {
 			description: data.description,
 		};
 		if (payload) {
-			sanitizedData["id"] = payload.id;
 			return updateRole(sanitizedData);
 		}
 		return addRole(sanitizedData);

@@ -6,7 +6,8 @@
 		"no": "No",
 		"confirm": "Confirm",
 		"confirmAction": "Are you sure you wish to continue?",
-		"actionIrrevirsible": "This cannot be undone!"
+		"actionIrrevirsible": "This cannot be undone!",
+		"offline": "You are currently offline!"
 	},
 	"auth": {
 		"login": "Login"
@@ -15,9 +16,11 @@
 		"fieldRequired": "Field is required",
 		"min3Chars": "Min 3 characters",
 		"min6Chars": "Min 6 characters",
+		"min13Chars": "Min 13 characters",
 		"max6Chars": "Max 6 characters",
 		"max9Chars": "Max 9 characters",
 		"max14Chars": "Max 14 characters",
+		"max50Chars": "Max 50 characters",
 		"max99Chars": "Max 99 characters",
 		"max250Chars": "Max 250 characters"
 	},
@@ -31,7 +34,24 @@
 		"settings": "Settings"
 	},
 	"dashboard": {},
-	"users": {},
+	"users": {
+		"addUser": "Add User",
+		"updateUser": "Update User",
+		"username": "Username",
+		"firstName": "First Name",
+		"lastName": "Last Name",
+		"email": "E-mail",
+		"phone": "Phone",
+		"streetName": "Street Name",
+		"streetNumber": "Street Number",
+		"city": "City",
+		"zipCode": "Post Code",
+		"country": "Country",
+		"image": "Image",
+		"role": "Role",
+		"password": "Password",
+		"confirmPassword": "Confirm Password"
+	},
 	"permissions": {},
 	"roles": {},
 	"companies": {
@@ -42,11 +62,13 @@
 		"streetName": "Street Name",
 		"streetNumber": "Street Number",
 		"city": "City",
-		"postCode": "Post Code",
+		"zipCode": "Post Code",
 		"country": "Country",
 		"molFirstName": "Mol First Name",
 		"molLastName": "Mol Last Name",
-		"image": "Image"
+		"image": "Image",
+		"phone": "Phone",
+		"email": "E-mail"
 	},
 	"products": {
 		"addProduct": "Add Product",
@@ -63,8 +85,8 @@
 		"widthCm": "Width in cm",
 		"height": "Height",
 		"heightCm": "Height in cm",
-		"lenght": "Lenght",
-		"lenghtCm": "Lenght in cm",
+		"length": "Length",
+		"lengthCm": "Length in cm",
 		"weight": "Weight",
 		"weightKg": "Weight in Kg",
 		"kg": "Kg"
