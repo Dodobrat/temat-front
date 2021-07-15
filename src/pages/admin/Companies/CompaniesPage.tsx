@@ -10,7 +10,7 @@ import { SlideIn } from "@dodobrat/react-ui-kit";
 import DataTable from "../../../components/util/DataTable";
 import { Helmet } from "react-helmet";
 import { Heading, Flex, Button, ZoomPortal } from "@dodobrat/react-ui-kit";
-import { useCompanyDelete } from "../../../actions/mutateHooks";
+import { useCompanyDelete, useCompanyUpdate } from "../../../actions/mutateHooks";
 import { ResponseColumnType } from "../../../types/global.types";
 import { Link } from "react-router-dom";
 import { useDebounce } from "@dodobrat/react-ui-kit";
@@ -63,6 +63,16 @@ const CompaniesPage = () => {
 		},
 	});
 
+	const { mutate: updateCompanyStatus } = useCompanyUpdate({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("companies");
+			},
+			onError: (err: any) => errorToast(err),
+		},
+	});
+
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
 
 	const handleOnSearchChange = (e: any) => {
@@ -82,6 +92,21 @@ const CompaniesPage = () => {
 	const columns = useMemo(() => {
 		if (data) {
 			return data.columns.map((col: ResponseColumnType) => {
+				if (col?.type === "Switch") {
+					return {
+						Header: col.title,
+						accessor: col.accessor,
+						disableSortBy: !col.canSort,
+						type: col?.type,
+						id: col?.id,
+						action: ({ value, entry }) => {
+							const formData = new FormData();
+							formData.append("active", value);
+							const data = { id: entry.id, formData };
+							updateCompanyStatus(data);
+						},
+					};
+				}
 				return {
 					Header: col.title,
 					accessor: col.accessor,
@@ -92,7 +117,7 @@ const CompaniesPage = () => {
 			});
 		}
 		return [];
-	}, [data]);
+	}, [data, updateCompanyStatus]);
 
 	const actions = useMemo(() => {
 		if (data) {

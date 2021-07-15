@@ -8,7 +8,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useUsers } from "../../../actions/fetchHooks";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import { useUserDelete } from "../../../actions/mutateHooks";
+import { useUserCredentialsUpdate, useUserDelete } from "../../../actions/mutateHooks";
 import { useDebounce } from "@dodobrat/react-ui-kit";
 import { ResponseColumnType } from "../../../types/global.types";
 import { Link } from "react-router-dom";
@@ -66,6 +66,16 @@ const UsersPage = () => {
 		},
 	});
 
+	const { mutate: updateUserStatus } = useUserCredentialsUpdate({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("users");
+			},
+			onError: (err: any) => errorToast(err),
+		},
+	});
+
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
 
 	const handleOnSearchChange = (e: any) => {
@@ -85,6 +95,21 @@ const UsersPage = () => {
 	const columns = useMemo(() => {
 		if (data) {
 			return data.columns.map((col: ResponseColumnType) => {
+				if (col?.type === "Switch") {
+					return {
+						Header: col.title,
+						accessor: col.accessor,
+						disableSortBy: !col.canSort,
+						type: col?.type,
+						id: col?.id,
+						action: ({ value, entry }) => {
+							const formData = new FormData();
+							formData.append("active", value);
+							const data = { id: entry.id, formData };
+							updateUserStatus(data);
+						},
+					};
+				}
 				return {
 					Header: col.title,
 					accessor: col.accessor,
@@ -95,7 +120,7 @@ const UsersPage = () => {
 			});
 		}
 		return [];
-	}, [data]);
+	}, [data, updateUserStatus]);
 
 	const actions = useMemo(() => {
 		if (data) {

@@ -47,7 +47,6 @@ const PermissionsForm = (props: Props) => {
 	});
 
 	const { mutate: updatePermission, isLoading: isLoadingUpdate } = usePermissionUpdate({
-		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
 				successToast(res);
@@ -70,6 +69,7 @@ const PermissionsForm = (props: Props) => {
 			description: data.description,
 		};
 		if (payload) {
+			sanitizedData["id"] = payload?.id;
 			return updatePermission(sanitizedData);
 		}
 		return addPermission(sanitizedData);

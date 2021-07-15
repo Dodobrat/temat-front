@@ -24,7 +24,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const userPermissionsValue = useMemo(() => ({ userPermissions, setUserPermissions }), [userPermissions, setUserPermissions]);
 
 	const userCan: (permissionKey: string) => boolean = (permissionKey) =>
-		userPermissionsValue.userPermissions.some((permission: any) => permission.name === permissionKey && !!permission.status);
+		userPermissionsValue.userPermissions.some((permission: any) => permission.name === permissionKey && !!permission.active);
 
 	const logout = () => {
 		localStorage.removeItem(process.env.REACT_APP_TOKEN_KEY);

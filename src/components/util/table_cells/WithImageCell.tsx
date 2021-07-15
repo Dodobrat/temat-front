@@ -12,7 +12,7 @@ const WithImageCell = (props: Props) => {
 
 	return (
 		<Table.Cell {...rest}>
-			<Flex align='center' wrap='nowrap'>
+			<Flex align='center' wrap='nowrap' className='temat__table__img__container'>
 				<Flex.Col className='temat__table__img'>
 					<Image imgSrc={cell.row.original?.image} alt={cell.row.original?.description ?? cell.row.original?.name} />
 				</Flex.Col>

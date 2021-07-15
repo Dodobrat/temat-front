@@ -41,7 +41,6 @@ const CompaniesForm = (props: Props) => {
 	});
 
 	const { mutate: updateCompany, isLoading: isLoadingUpdate } = useCompanyUpdate({
-		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
 				successToast(res);
@@ -59,7 +58,9 @@ const CompaniesForm = (props: Props) => {
 		formData.append("phone", data.phone);
 		formData.append("email", data.email);
 		formData.append("bulstat", data.bulstat);
-		formData.append("image", data.image[0]);
+		if (data.image?.[0]) {
+			formData.append("image", data.image[0]);
+		}
 		formData.append("streetNumber", data.streetNumber);
 		formData.append("streetName", data.streetName);
 		formData.append("country", data.country);
@@ -69,7 +70,8 @@ const CompaniesForm = (props: Props) => {
 		formData.append("molLastName", data.molLastName);
 
 		if (payload) {
-			return updateCompany(formData);
+			const formFinalData = { id: payload?.id, formData };
+			return updateCompany(formFinalData);
 		}
 		return addCompany(formData);
 	};

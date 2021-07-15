@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, Suspense, lazy } from "react
 import { useQueryClient } from "react-query";
 import { useDebounce, Flex, Heading, Button, PortalWrapper, Input, Tooltip, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
 import { useProducts } from "../../../actions/fetchHooks";
-import { useProductDelete } from "../../../actions/mutateHooks";
+import { useProductDelete, useProductUpdate } from "../../../actions/mutateHooks";
 import { useAuth } from "../../../context/AuthContext";
 import { ResponseColumnType } from "../../../types/global.types";
 import { Link } from "react-router-dom";
@@ -59,6 +59,16 @@ const ProductsPage = () => {
 		},
 	});
 
+	const { mutate: updateProductStatus } = useProductUpdate({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("products");
+			},
+			onError: (err: any) => errorToast(err),
+		},
+	});
+
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
 
 	const handleOnSearchChange = (e: any) => {
@@ -78,6 +88,21 @@ const ProductsPage = () => {
 	const columns = useMemo(() => {
 		if (data) {
 			return data.columns.map((col: ResponseColumnType) => {
+				if (col?.type === "Switch") {
+					return {
+						Header: col.title,
+						accessor: col.accessor,
+						disableSortBy: !col.canSort,
+						type: col?.type,
+						id: col?.id,
+						action: ({ value, entry }) => {
+							const formData = new FormData();
+							formData.append("active", value);
+							const data = { id: entry.id, formData };
+							updateProductStatus(data);
+						},
+					};
+				}
 				return {
 					Header: col.title,
 					accessor: col.accessor,
@@ -88,7 +113,7 @@ const ProductsPage = () => {
 			});
 		}
 		return [];
-	}, [data]);
+	}, [data, updateProductStatus]);
 
 	const actions = useMemo(() => {
 		if (data) {

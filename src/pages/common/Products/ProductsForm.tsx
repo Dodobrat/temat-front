@@ -53,7 +53,6 @@ const ProductsForm = (props: Props) => {
 	});
 
 	const { mutate: updateProduct, isLoading: isLoadingUpdate } = useProductUpdate({
-		specs: { id: payload?.id },
 		queryConfig: {
 			onSuccess: (res: any) => {
 				successToast(res);
@@ -99,7 +98,8 @@ const ProductsForm = (props: Props) => {
 		}
 
 		if (payload) {
-			return updateProduct(formData);
+			const formFinalData = { id: payload?.id, formData };
+			return updateProduct(formFinalData);
 		}
 		return addProduct(formData);
 	};

@@ -54,24 +54,27 @@ const UsersForm = (props: Props) => {
 	});
 
 	const { mutate: updatePersonalUser, isLoading: isLoadingPersonalUpdate } = useUserPersonalUpdate({
-		specs: { id: payload?.id },
 		queryConfig: {
-			onSuccess: () => setUpdatedUser((prev) => ({ ...prev, personal: true })),
+			onSuccess: (res) => {
+				successToast(res);
+				setUpdatedUser((prev) => ({ ...prev, personal: true }));
+			},
 			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const { mutate: updateCredentialUser, isLoading: isLoadingCredentialsUpdate } = useUserCredentialsUpdate({
-		specs: { id: payload?.id },
 		queryConfig: {
-			onSuccess: () => setUpdatedUser((prev) => ({ ...prev, credentials: true })),
+			onSuccess: (res) => {
+				successToast(res);
+				setUpdatedUser((prev) => ({ ...prev, credentials: true }));
+			},
 			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	useEffect(() => {
 		if (updatedUser.credentials && updatedUser.personal) {
-			successToast({ success: "Updated User successfully!" });
 			queryClient.invalidateQueries("users");
 			onClose();
 		}
@@ -89,17 +92,27 @@ const UsersForm = (props: Props) => {
 		formData.append("email", data.email);
 		formData.append("firstName", data.firstName);
 		formData.append("lastName", data.lastName);
-		formData.append("image", data.image[0]);
+		if (data.image?.[0]) {
+			formData.append("image", data.image[0]);
+		}
 		formData.append("streetNumber", data.streetNumber);
 		formData.append("streetName", data.streetName);
 		formData.append("country", data.country);
-		formData.append("password", data.password);
-		formData.append("confirmPassword", data.confirmPassword);
+		if (data.password) {
+			formData.append("password", data.password);
+		}
+		if (data.confirmPassword) {
+			formData.append("confirmPassword", data.confirmPassword);
+		}
 		formData.append("roleId", data.roleId?.value);
 
 		if (payload) {
-			updatePersonalUser(formData);
-			updateCredentialUser(formData);
+			const toSend = {
+				id: payload?.id,
+				formData,
+			};
+			updatePersonalUser(toSend);
+			updateCredentialUser(toSend);
 			return;
 		}
 		return addUser(formData);

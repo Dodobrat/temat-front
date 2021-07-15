@@ -57,10 +57,10 @@ const PermissionsViewDrawer = (props: Props) => {
 							<Text
 								as='strong'
 								className={cn({
-									"text--success": !!payload?.status,
-									"text--danger": !payload?.status,
+									"text--success": !!payload?.active,
+									"text--danger": !payload?.active,
 								})}>
-								{!!payload?.status ? "Active" : "Inactive"}
+								{!!payload?.active ? "Active" : "Inactive"}
 							</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>

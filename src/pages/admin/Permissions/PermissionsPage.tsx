@@ -100,7 +100,7 @@ const UsersPage = () => {
 						type: col?.type,
 						id: col?.id,
 						action: ({ value, entry }) => {
-							const data = { id: entry.id, status: value };
+							const data = { id: entry.id, active: value };
 							updatePermissionStatus(data);
 						},
 					};
