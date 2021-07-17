@@ -3,7 +3,7 @@ import { useQueryClient } from "react-query";
 import { useDebounce, Flex, Heading, Button, PortalWrapper, Input, Tooltip, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
 import { useProducts } from "../../../actions/fetchHooks";
 import { useProductDelete, useProductUpdate } from "../../../actions/mutateHooks";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuthContext } from "../../../context/AuthContext";
 import { ResponseColumnType } from "../../../types/global.types";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -21,7 +21,7 @@ const ProductsPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
 	const queryClient = useQueryClient();
-	const { userCan } = useAuth();
+	const { userCan } = useAuthContext();
 
 	const [queryParams, setQueryParams] = useState({
 		sortBy: [],

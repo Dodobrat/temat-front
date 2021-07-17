@@ -1,4 +1,3 @@
-import React from "react";
 import { Badge, Table } from "@dodobrat/react-ui-kit";
 import { parseDate } from "../../../helpers/dateHelpers";
 

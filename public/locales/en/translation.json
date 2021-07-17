@@ -31,6 +31,7 @@
 		"roles": "Roles",
 		"companies": "Companies",
 		"products": "Products",
+		"orders": "Orders",
 		"settings": "Settings"
 	},
 	"dashboard": {},
@@ -51,6 +52,10 @@
 		"role": "Role",
 		"password": "Password",
 		"confirmPassword": "Confirm Password"
+	},
+	"orders": {
+		"addOrder": "Add Order",
+		"updateOrder": "Update Order"
 	},
 	"permissions": {},
 	"roles": {},

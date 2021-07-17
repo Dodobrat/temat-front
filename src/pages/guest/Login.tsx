@@ -1,14 +1,14 @@
 import { Flex, Form, FormControl, Heading, IconUser, Input, IconLock, Button, Card, useLocalStorage } from "@dodobrat/react-ui-kit";
 import { useForm } from "react-hook-form";
 import { useLogin } from "../../actions/mutateHooks";
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "../../context/AuthContext";
 import cn from "classnames";
 import { errorToast } from "../../helpers/toastEmitter";
 
 const Login = () => {
 	const {
 		tokenValue: { setToken },
-	} = useAuth();
+	} = useAuthContext();
 
 	const {
 		register,

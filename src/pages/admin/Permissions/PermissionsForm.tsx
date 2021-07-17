@@ -15,6 +15,18 @@ interface Props {
 	payload?: any;
 }
 
+const parseRoles = (roles = "") => {
+	const explodedRoles = roles.split(",");
+	const parsedRoles = [];
+
+	for (const role of explodedRoles) {
+		const roleData = role.split(":");
+		parsedRoles.push({ value: parseInt(roleData[0]), label: roleData[1] });
+	}
+
+	return parsedRoles;
+};
+
 const PermissionsForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
@@ -28,11 +40,11 @@ const PermissionsForm = (props: Props) => {
 	} = useForm({
 		defaultValues: {
 			...payload,
-			roleId: payload ? { value: payload?.roleId, label: payload?.roleName } : null,
+			roles: payload ? parseRoles(payload?.roles) : null,
 		},
 	});
 
-	const [selectValue, setSelectValue] = useState(() => (payload ? { value: payload?.roleId, label: payload?.roleName } : null));
+	const [selectValue, setSelectValue] = useState(() => (payload ? parseRoles(payload?.roles) : null));
 	const [selectError, setSelectError] = useState(null);
 
 	const { mutate: addPermission, isLoading: isLoadingAdd } = usePermissionAdd({
@@ -58,14 +70,19 @@ const PermissionsForm = (props: Props) => {
 	});
 
 	const onSubmit = (data: any) => {
-		if (!data.roleId?.value) {
+		if (!data.roles || data.roles?.length === 0) {
 			return setSelectError({ message: "Field is required" });
 		} else {
 			setSelectError(null);
 		}
+
+		const extractedRoles = data.roles.reduce((prev: number[], curr: { value: number }) => {
+			return [...prev, curr.value];
+		}, []);
+
 		const sanitizedData = {
 			name: data.name,
-			roleId: data.roleId?.value,
+			roles: extractedRoles,
 			description: data.description,
 		};
 		if (payload) {
@@ -75,8 +92,8 @@ const PermissionsForm = (props: Props) => {
 		return addPermission(sanitizedData);
 	};
 
-	const handleOnChangeRoleId = (option: any) => {
-		setValue("roleId", option);
+	const handleOnChangeRoles = (option: any) => {
+		setValue("roles", option);
 		setSelectValue(option);
 		if (selectError && option) {
 			setSelectError(null);
@@ -135,10 +152,10 @@ const PermissionsForm = (props: Props) => {
 									hintMsg={selectError?.message}>
 									<AsyncSelect
 										useFetch={useRoles}
-										// isMulti
-										// closeMenuOnSelect={false}
+										isMulti
+										closeMenuOnSelect={false}
 										value={selectValue}
-										onChange={handleOnChangeRoleId}
+										onChange={handleOnChangeRoles}
 										className={cn({
 											"temat__select__container--danger": selectError,
 										})}

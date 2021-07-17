@@ -1,11 +1,11 @@
 import React from "react";
 import { Redirect, Route } from "react-router";
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "../../context/AuthContext";
 
 const AuthRoute = ({ component, ...rest }) => {
 	const {
 		tokenValue: { token },
-	} = useAuth();
+	} = useAuthContext();
 
 	if (!token) return <Redirect push to='/guest' />;
 

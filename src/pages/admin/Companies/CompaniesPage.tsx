@@ -4,7 +4,7 @@ import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import { useQueryClient } from "react-query";
 import { useCompanies } from "../../../actions/fetchHooks";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuthContext } from "../../../context/AuthContext";
 import { IconAdd, IconErrorCircle, IconFilter } from "../../../components/ui/icons";
 import { SlideIn } from "@dodobrat/react-ui-kit";
 import DataTable from "../../../components/util/DataTable";
@@ -26,7 +26,7 @@ const CompaniesPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
 	const queryClient = useQueryClient();
-	const { userCan } = useAuth();
+	const { userCan } = useAuthContext();
 
 	const [queryParams, setQueryParams] = useState({
 		sortBy: [],

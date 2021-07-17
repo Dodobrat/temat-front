@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Flex, Heading, SwitchGroup, useConfig } from "@dodobrat/react-ui-kit";
 import { IconMoon, IconSun } from "../../components/ui/icons";
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "../../context/AuthContext";
 import { Redirect, Route, Switch, useLocation } from "react-router";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Footer from "../../components/ui/Footer";
@@ -12,7 +12,7 @@ const GuestLayout = () => {
 
 	const {
 		tokenValue: { token },
-	} = useAuth();
+	} = useAuthContext();
 
 	const {
 		themeConfig: { dark, setDark },

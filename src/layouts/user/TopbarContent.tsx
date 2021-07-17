@@ -3,13 +3,13 @@ import { useAdminLayout } from "@dodobrat/react-ui-kit";
 import { AdminLayout, Button, Text, Flex, Container, Skeleton } from "@dodobrat/react-ui-kit";
 import { IconHamburger } from "../../components/ui/icons";
 import { IconLogout } from "../../components/ui/icons";
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "../../context/AuthContext";
 
 const TopbarContent = () => {
 	const {
 		userValue: { user },
 		logout,
-	} = useAuth();
+	} = useAuthContext();
 
 	const { toggleSidebar } = useAdminLayout();
 

@@ -1,8 +1,17 @@
 import { useEffect, Suspense, lazy, useMemo } from "react";
 import { AdminLayout, BackTop, Container } from "@dodobrat/react-ui-kit";
-import { IconDashboard, IconUsers, IconRule, IconArrowUp, IconBadge, IconInventory, IconBriefcase } from "../../components/ui/icons";
+import {
+	IconDashboard,
+	IconUsers,
+	IconRule,
+	IconArrowUp,
+	IconBadge,
+	IconInventory,
+	IconBriefcase,
+	IconArchive,
+} from "../../components/ui/icons";
 import { useLoadUser } from "../../actions/fetchHooks";
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "../../context/AuthContext";
 import { useIsFetching } from "react-query";
 import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import SidebarContent from "./SidebarContent";
@@ -20,10 +29,12 @@ const CompaniesPage = lazy(() => import("../../pages/admin/Companies/CompaniesPa
 //COMMON PAGES
 const DashboardPage = lazy(() => import("../../pages/common/Dashboard/DashboardPage"));
 const ProductsPage = lazy(() => import("../../pages/common/Products/ProductsPage"));
+const OrdersPage = lazy(() => import("../../pages/common/Orders/OrdersPage"));
 const SettingsPage = lazy(() => import("../../pages/common/Settings/SettingsPage"));
 //VIEW PAGES
 const CompaniesViewPage = lazy(() => import("../../pages/admin/Companies/CompaniesViewPage"));
 const ProductsViewPage = lazy(() => import("../../pages/common/Products/ProductsViewPage"));
+const OrdersViewPage = lazy(() => import("../../pages/common/Orders/OrdersViewPage"));
 // FALLBACK
 const NotFoundPage = lazy(() => import("../../pages/common/NotFoundPage"));
 
@@ -33,7 +44,7 @@ const UserLayout = () => {
 		userValue: { user, setUser },
 		userPermissionsValue: { userPermissions, setUserPermissions },
 		userCan,
-	} = useAuth();
+	} = useAuthContext();
 
 	const { t } = useTranslation();
 	const isFetching = useIsFetching();
@@ -95,6 +106,13 @@ const UserLayout = () => {
 				permission: "routeProducts",
 			},
 			{
+				path: "/app/orders",
+				component: OrdersPage,
+				icon: <IconArchive />,
+				label: t("pages.orders"),
+				permission: "routeOrders",
+			},
+			{
 				path: "/app/settings",
 				component: SettingsPage,
 				icon: <IconSettings />,
@@ -111,6 +129,11 @@ const UserLayout = () => {
 				path: "/app/products/:id",
 				component: ProductsViewPage,
 				permission: "productReadSingle",
+			},
+			{
+				path: "/app/orders/:id",
+				component: OrdersViewPage,
+				permission: "orderReadSingle",
 			},
 		];
 	}, [t]);

@@ -15,6 +15,8 @@ import DateCell from "./table_cells/DateCell";
 import AddressCell from "./table_cells/AddressCell";
 import CompanyMolCell from "./table_cells/CompanyMolCell";
 import ContactsCell from "./table_cells/ContactsCell";
+import PermissionRolesCell from "./table_cells/PermissionRolesCell";
+import OrderStatusCell from "./table_cells/OrderStatusCell";
 
 interface Props {
 	columns: any[];
@@ -105,8 +107,14 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 						case "CopyToClipboard": {
 							return cell.value && <CopyCell cell={cell} {...cell.getCellProps()} />;
 						}
+						case "OrderStatus": {
+							return <OrderStatusCell cell={cell} {...cell.getCellProps()} />;
+						}
 						case "ProductDetails": {
 							return <ProductDetailsCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "PermissionRoles": {
+							return <PermissionRolesCell cell={cell} {...cell.getCellProps()} />;
 						}
 						case "WithImage": {
 							return <WithImageCell cell={cell} {...cell.getCellProps()} />;

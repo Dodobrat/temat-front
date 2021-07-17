@@ -120,6 +120,24 @@ export const useCompanies: FetchQueryType = ({ specs, queryConfig, specialKey })
 	);
 };
 
+//ORDERS
+export const useOrders: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orders", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/orders?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 //USERS
 export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(

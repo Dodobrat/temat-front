@@ -4,7 +4,7 @@ import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import { useQueryClient } from "react-query";
 import { useRoles } from "../../../actions/fetchHooks";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuthContext } from "../../../context/AuthContext";
 import { IconAdd } from "../../../components/ui/icons";
 import { SlideIn } from "@dodobrat/react-ui-kit";
 import DataTable from "../../../components/util/DataTable";
@@ -19,7 +19,7 @@ const RolesViewDrawer = lazy(() => import("./RolesViewDrawer"));
 
 const RolesPage = () => {
 	const queryClient = useQueryClient();
-	const { userCan } = useAuth();
+	const { userCan } = useAuthContext();
 
 	const [queryParams, setQueryParams] = useState({
 		sortBy: [],

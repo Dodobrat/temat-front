@@ -1,4 +1,5 @@
 export { default as IconAdd } from './IconAdd'
+export { default as IconArchive } from './IconArchive'
 export { default as IconArrowDown } from './IconArrowDown'
 export { default as IconArrowUp } from './IconArrowUp'
 export { default as IconBackPage } from './IconBackPage'

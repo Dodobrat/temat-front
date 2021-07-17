@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
 import { useCompanies } from "../../../actions/fetchHooks";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuthContext } from "../../../context/AuthContext";
 
 import { Portal, Card, Collapse, Button, Text, Form, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import { IconClose } from "../../../components/ui/icons";
@@ -21,7 +21,7 @@ interface Props {
 
 const ProductsForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
-	const { userCan } = useAuth();
+	const { userCan } = useAuthContext();
 	const { t } = useTranslation();
 
 	const queryClient = useQueryClient();

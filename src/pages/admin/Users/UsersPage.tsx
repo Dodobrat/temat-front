@@ -4,7 +4,7 @@ import PageContent from "../../../components/ui/wrappers/PageContent";
 import { Heading } from "@dodobrat/react-ui-kit";
 import { Helmet } from "react-helmet";
 import { useQueryClient } from "react-query";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuthContext } from "../../../context/AuthContext";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useUsers } from "../../../actions/fetchHooks";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
@@ -29,7 +29,7 @@ const UsersPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
 	const queryClient = useQueryClient();
-	const { userCan } = useAuth();
+	const { userCan } = useAuthContext();
 
 	const [queryParams, setQueryParams] = useState({
 		sortBy: [],
