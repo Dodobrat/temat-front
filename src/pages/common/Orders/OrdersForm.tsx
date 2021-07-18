@@ -25,11 +25,9 @@ const OrdersForm = (props: Props) => {
 					}>
 					<Text className='mb--0'>{payload ? t("orders.updateOrder") : t("orders.addOrder")}</Text>
 				</Card.Header>
-				<Card.Body>
-					<OrdersProvider>
-						<OrdersFormWizard payload={payload} maxSteps={4} />
-					</OrdersProvider>
-				</Card.Body>
+				<OrdersProvider>
+					<OrdersFormWizard payload={payload} maxSteps={4} />
+				</OrdersProvider>
 			</Card>
 		</Portal>
 	);

@@ -34,7 +34,6 @@ const PermissionsForm = (props: Props) => {
 
 	const {
 		register,
-		setValue,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -70,13 +69,13 @@ const PermissionsForm = (props: Props) => {
 	});
 
 	const onSubmit = (data: any) => {
-		if (!data.roles || data.roles?.length === 0) {
+		if (!selectValue || selectValue?.length === 0) {
 			return setSelectError({ message: "Field is required" });
 		} else {
 			setSelectError(null);
 		}
 
-		const extractedRoles = data.roles.reduce((prev: number[], curr: { value: number }) => {
+		const extractedRoles = selectValue.reduce((prev: number[], curr: { value: number }) => {
 			return [...prev, curr.value];
 		}, []);
 
@@ -93,7 +92,6 @@ const PermissionsForm = (props: Props) => {
 	};
 
 	const handleOnChangeRoles = (option: any) => {
-		setValue("roles", option);
 		setSelectValue(option);
 		if (selectError && option) {
 			setSelectError(null);
@@ -125,7 +123,7 @@ const PermissionsForm = (props: Props) => {
 				<Card.Body>
 					<Form id='permissions-add-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
+							<Flex.Col col='12'>
 								<FormControl
 									label='Name'
 									htmlFor='name'
@@ -142,7 +140,7 @@ const PermissionsForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
+							<Flex.Col col='12'>
 								<FormControl
 									label='Role'
 									htmlFor='roleId'
@@ -153,6 +151,7 @@ const PermissionsForm = (props: Props) => {
 									<AsyncSelect
 										useFetch={useRoles}
 										isMulti
+										isClearable={false}
 										closeMenuOnSelect={false}
 										value={selectValue}
 										onChange={handleOnChangeRoles}

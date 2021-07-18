@@ -9,15 +9,28 @@ interface OrdersProviderProps {
 
 const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData }) => {
 	const [currStep, setCurrStep] = useState(1);
-	const [data, setData] = useState(initialData ?? null);
+	const [toggledSummaryPanels, setToggledSummaryPanels] = useState({
+		products: false,
+		address: false,
+		payment: false,
+	});
+	const [data, setData] = useState(
+		initialData ?? {
+			products: [],
+			address: {},
+			payment: {},
+		}
+	);
 
 	const stepValue = useMemo(() => ({ currStep, setCurrStep }), [currStep, setCurrStep]);
+	const panelsValue = useMemo(() => ({ toggledSummaryPanels, setToggledSummaryPanels }), [toggledSummaryPanels, setToggledSummaryPanels]);
 	const dataValue = useMemo(() => ({ data, setData }), [data, setData]);
 
 	return (
 		<OrdersContext.Provider
 			value={{
 				stepValue,
+				panelsValue,
 				dataValue,
 			}}>
 			{children}

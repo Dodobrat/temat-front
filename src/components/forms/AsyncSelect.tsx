@@ -55,7 +55,6 @@ const AsyncSelect = (props: Props) => {
 			};
 		}
 		const { data } = await refetch();
-		// queryClient.getQueryData([queryMainKey, ["select", queryParams]]);
 		const fetchedData = await data;
 
 		const responseData = await fetchedData?.data?.reduce(
@@ -64,6 +63,7 @@ const AsyncSelect = (props: Props) => {
 				{
 					value: item[valueKey],
 					label: item[labelKey],
+					data: item,
 				},
 			],
 			[]

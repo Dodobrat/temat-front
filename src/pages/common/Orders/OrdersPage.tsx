@@ -97,12 +97,12 @@ const OrdersPage = () => {
 					}),
 				});
 			}
-			if (userCan("orderUpdate")) {
-				permittedActions.push({
-					type: "edit",
-					action: (entry: any) => setShowOrdersForm({ state: true, payload: entry }),
-				});
-			}
+			// if (userCan("orderUpdate")) {
+			// 	permittedActions.push({
+			// 		type: "edit",
+			// 		action: (entry: any) => setShowOrdersForm({ state: true, payload: entry }),
+			// 	});
+			// }
 			return permittedActions;
 		}
 		return [];

@@ -7,7 +7,9 @@
 		"confirm": "Confirm",
 		"confirmAction": "Are you sure you wish to continue?",
 		"actionIrrevirsible": "This cannot be undone!",
-		"offline": "You are currently offline!"
+		"offline": "You are currently offline!",
+		"back": "Back",
+		"next": "Next"
 	},
 	"auth": {
 		"login": "Login"
@@ -55,7 +57,15 @@
 	},
 	"orders": {
 		"addOrder": "Add Order",
-		"updateOrder": "Update Order"
+		"updateOrder": "Update Order",
+		"pickProduct": "Pick a Product",
+		"products": "Products",
+		"address": "Address",
+		"payment": "Payment",
+		"paymentMethod": "Payment Method",
+		"amount": "Amount",
+		"currency": "Currency",
+		"payee": "Payee"
 	},
 	"permissions": {},
 	"roles": {},
