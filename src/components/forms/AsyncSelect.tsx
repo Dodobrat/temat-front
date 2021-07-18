@@ -1,20 +1,25 @@
-import { withAsyncPaginate } from "react-select-async-paginate";
-import WindowedSelect from "react-windowed-select";
 import cn from "classnames";
+import {
+	AsyncPaginate,
+	// wrapMenuList
+} from "react-select-async-paginate";
 import { useStateWithPromise } from "../../hooks/useStateWithPromise";
 import { errorToast } from "../../helpers/toastEmitter";
 
-const WindowedAsyncPaginate = withAsyncPaginate(WindowedSelect);
+// import { WindowedMenuList } from "react-windowed-select";
+
+// const WindowedList = wrapMenuList(WindowedMenuList);
 
 interface Props {
 	useFetch: any;
 	valueKey?: string;
 	labelKey?: string;
+	querySpecs?: any;
 	[key: string]: any;
 }
 
 const AsyncSelect = (props: Props) => {
-	const { useFetch, valueKey = "id", labelKey = "name", className, ...rest } = props;
+	const { useFetch, valueKey = "id", labelKey = "name", querySpecs = {}, querySpecialKey, className, ...rest } = props;
 
 	const [queryParams, setQueryParams] = useStateWithPromise({
 		filters: {
@@ -26,12 +31,15 @@ const AsyncSelect = (props: Props) => {
 	});
 
 	const { refetch } = useFetch({
-		specs: queryParams,
+		specs: {
+			...queryParams,
+			...querySpecs,
+		},
 		queryConfig: {
 			// onSuccess: (data) => console.log(data),
 			onError: (err: any) => errorToast(err),
 		},
-		specialKey: ["select", queryParams],
+		specialKey: ["select", queryParams, querySpecialKey],
 	});
 
 	const updateQueryPage = async ({ page, searchString }) => {
@@ -82,10 +90,15 @@ const AsyncSelect = (props: Props) => {
 	};
 
 	return (
-		<WindowedAsyncPaginate
-			className={cn("temat__select__container", className)}
+		<AsyncPaginate
+			className={cn(
+				"temat__select__container",
+				// 'async-select',
+				className
+			)}
 			classNamePrefix='temat__select'
 			debounceTimeout={300}
+			// components={{ MenuList: WindowedList as any }}
 			loadOptions={async (search, _, { page }) => {
 				await updateQueryPage({ page, searchString: search });
 				const result = await loadOptions(search, page);

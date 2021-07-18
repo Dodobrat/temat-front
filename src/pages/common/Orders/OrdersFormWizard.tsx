@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useOrdersContext } from "../../../context/OrdersContext";
 import { ProgressBar, Flex, Button } from "@dodobrat/react-ui-kit";
 import OrderStepProducts from "./order_steps/OrderStepProducts";
-import OrderStepAddress from "./order_steps/OrderStepAddress";
+import OrderStepShipping from "./order_steps/OrderStepShipping";
 import OrderStepPayment from "./order_steps/OrderStepPayment";
 import OrderStepSummary from "./order_steps/OrderStepSummary";
 import { Card } from "@dodobrat/react-ui-kit";
@@ -59,7 +59,7 @@ const OrdersFormWizard = (props: Props) => {
 				</div>
 				{/* {console.log(data)} */}
 				{currStep === 1 && <OrderStepProducts />}
-				{currStep === 2 && <OrderStepAddress />}
+				{currStep === 2 && <OrderStepShipping />}
 				{currStep === 3 && <OrderStepPayment />}
 				{currStep === 4 && <OrderStepSummary />}
 			</Card.Body>

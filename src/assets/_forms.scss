@@ -26,7 +26,7 @@
 			color: $mainFont;
 			box-shadow: map-get($elevations, "light"), 0 0 0 0.0625rem rgba($bg, 0.5);
 			&-list {
-				padding: 0.3125rem;
+				padding: 0.25rem;
 				position: relative;
 				& > div {
 					position: relative;
@@ -88,4 +88,11 @@
 			position: absolute;
 		}
 	}
+	// &.async-select {
+	// 	.temat__select__menu {
+	// 		&-list {
+	// 			padding: 0 0.25rem;
+	// 		}
+	// 	}
+	// }
 }

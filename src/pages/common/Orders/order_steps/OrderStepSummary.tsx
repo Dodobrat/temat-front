@@ -16,7 +16,7 @@ const EmptyEntry = () => (
 const ProductsDetails = ({ item, ...rest }) => {
 	if (item[1].length === 0) return <EmptyEntry />;
 	return (
-		<ListGroup>
+		<ListGroup elevation='none'>
 			{item[1].map((entry) => (
 				<ListGroup.Item key={entry.value}>
 					<Flex align='center' wrap='nowrap' {...rest}>
@@ -32,7 +32,7 @@ const ProductsDetails = ({ item, ...rest }) => {
 	);
 };
 
-const AddressDetails = ({ item, ...rest }) => {
+const ShippingDetails = ({ item, ...rest }) => {
 	const values = Object.values(item[1]);
 
 	if (values.length === 0) return <EmptyEntry />;
@@ -47,7 +47,7 @@ const PaymentDetails = ({ item, ...rest }) => {
 	if (values.length === 0) return <EmptyEntry />;
 
 	return (
-		<ListGroup>
+		<ListGroup elevation='none'>
 			{Object.entries(item[1]).map((entry: any) => (
 				<ListGroup.Item key={entry[0]}>
 					<Flex align='center' wrap='nowrap' {...rest}>
@@ -96,7 +96,7 @@ const OrderStepSummary = () => {
 					</ListGroup.Collapse.Toggle>
 					<ListGroup.Collapse.Content className='p--1'>
 						{item[0] === "products" && <ProductsDetails item={item} />}
-						{item[0] === "address" && <AddressDetails item={item} />}
+						{item[0] === "shipping" && <ShippingDetails item={item} />}
 						{item[0] === "payment" && <PaymentDetails item={item} />}
 					</ListGroup.Collapse.Content>
 				</ListGroup.Collapse>

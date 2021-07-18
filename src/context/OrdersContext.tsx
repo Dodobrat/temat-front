@@ -11,13 +11,13 @@ const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData }
 	const [currStep, setCurrStep] = useState(1);
 	const [toggledSummaryPanels, setToggledSummaryPanels] = useState({
 		products: false,
-		address: false,
+		shipping: false,
 		payment: false,
 	});
 	const [data, setData] = useState(
 		initialData ?? {
 			products: [],
-			address: {},
+			shipping: {},
 			payment: {},
 		}
 	);

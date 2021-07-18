@@ -13,12 +13,16 @@ const selectProps = {
 };
 
 const paymentOptions = [
-	{ value: "paid", label: "Paid" },
-	{ value: "nalojen", label: "Nalojen" },
+	{ value: "paid", label: "Paid in Full" },
+	{ value: "onDelivery", label: "Cash on Delivery" },
 ];
 const currencyOptions = [
 	{ value: "BGN", label: "BGN - лв." },
 	{ value: "EUR", label: "EUR - €" },
+];
+const paidByOptions = [
+	{ value: "receiver", label: "Receiver" },
+	{ value: "sender", label: "Sender" },
 ];
 
 const OrderStepPayment = () => {
@@ -71,11 +75,12 @@ const OrderStepPayment = () => {
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
-				<FormControl label={t("orders.payee")} htmlFor='currency' className={cn("")} hintMsg={""}>
-					<Input
-						name='payee'
-						value={data?.payment?.payee ?? ""}
-						onChange={({ target }) => handleValueUpdate("payee", target.value)}
+				<FormControl label={t("orders.paidBy")} htmlFor='paidBy' className={cn("")} hintMsg={""}>
+					<WindowedSelect
+						{...selectProps}
+						options={paidByOptions}
+						value={data?.payment?.paidBy}
+						onChange={(option) => handleValueUpdate("paidBy", option)}
 					/>
 				</FormControl>
 			</Flex.Col>

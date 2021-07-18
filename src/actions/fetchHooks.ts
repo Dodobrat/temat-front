@@ -138,6 +138,76 @@ export const useOrders: FetchQueryType = ({ specs, queryConfig, specialKey }) =>
 	);
 };
 
+//DELIVERIES
+export const useDeliveryMethods: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["deliveryMethods", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/deliveries/methods?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+export const useDeliveryOffices: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["deliveryOffices", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/deliveries/${specs?.courier}/office?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+export const useDeliveryCountries: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["deliveryCountries", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/deliveries/${specs?.courier}/country?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+export const useDeliveryCities: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["deliveryCities", specialKey],
+		async () => {
+			specs.filters.countryId = specs?.countryId;
+			const { data } = await axios.get(`${apiUrl}/deliveries/${specs?.courier}/city?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 //USERS
 export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
