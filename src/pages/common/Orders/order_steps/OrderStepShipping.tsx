@@ -3,7 +3,13 @@ import { Flex, FormControl } from "@dodobrat/react-ui-kit";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useOrdersContext } from "../../../../context/OrdersContext";
 import cn from "classnames";
-import { useDeliveryCities, useDeliveryCountries, useDeliveryMethods, useDeliveryOffices } from "../../../../actions/fetchHooks";
+import {
+	useDeliveryCities,
+	useDeliveryCountries,
+	useDeliveryMethods,
+	useDeliveryOffices,
+	useDeliveryStreets,
+} from "../../../../actions/fetchHooks";
 import { useEffect, useState } from "react";
 import { Input } from "@dodobrat/react-ui-kit";
 import { Heading } from "@dodobrat/react-ui-kit";
@@ -30,7 +36,7 @@ const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate }) => {
 					<Flex.Col col={{ base: "12", sm: "6" }} key={field}>
 						<FormControl label={t(`orders.${field}`)} htmlFor={field} className={cn("")} hintMsg={""}>
 							<Input
-								value={data.shipping[field]}
+								value={data.shipping[field] ?? ""}
 								onChange={({ target }) => handleValueUpdate(field, target.value)}
 								placeholder={field}
 							/>
@@ -58,20 +64,23 @@ const DeliveryAddress = ({ deliveryFields, handleValueUpdate }) => {
 					</Heading>
 				</Flex.Col>
 				{deliveryFields.map((item) => {
-					const { field, col, useFetch, querySpecs } = item;
+					const { field, col, useFetch, querySpecs, querySpecialKey } = item;
+
 					return (
 						<Flex.Col col={col} key={field}>
 							<FormControl label={t(`orders.${field}`)} htmlFor={field} className={cn("")} hintMsg={""}>
 								{useFetch ? (
 									<AsyncSelect
 										querySpecs={querySpecs}
+										querySpecialKey={querySpecialKey}
 										useFetch={useFetch}
 										value={data.shipping[field]}
 										onChange={(option) => handleValueUpdate(field, option)}
+										cacheUniqs={querySpecialKey}
 									/>
 								) : (
 									<Input
-										value={data.shipping[field]}
+										value={data.shipping[field] ?? ""}
 										onChange={({ target }) => handleValueUpdate(field, target.value)}
 										placeholder={field}
 									/>
@@ -105,6 +114,26 @@ const OrderStepShipping = () => {
 		}));
 	};
 
+	const resetAddressValues = (key, val) => {
+		setData((prev) => ({
+			...prev,
+			shipping: {
+				[key]: val,
+				country: null,
+				city: null,
+				streetName: null,
+				zipCode: "",
+				streetNumber: "",
+				receiverName: prev.shipping?.receiverName ?? "",
+				receiverPhone: prev.shipping?.receiverPhone ?? "",
+				agentName: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.agentName : "",
+				agentPhone: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.agentPhone : "",
+			},
+		}));
+	};
+
+	// console.log(data);
+
 	useEffect(() => {
 		const deliveryOption = data.shipping?.delivery ?? null;
 		if (deliveryOption) {
@@ -122,6 +151,7 @@ const OrderStepShipping = () => {
 				querySpecs: {
 					courier: courierName,
 				},
+				querySpecialKey: [courierName, deliveryType],
 			},
 			{
 				col: { base: "12", sm: "8" },
@@ -129,14 +159,25 @@ const OrderStepShipping = () => {
 				useFetch: useDeliveryCities,
 				querySpecs: {
 					courier: courierName,
-					countryId: data.shipping?.country?.data?.id,
+					countryId: data.shipping?.country?.value,
 				},
+				querySpecialKey: [courierName, deliveryType, data.shipping?.country],
 			},
 			{ col: { base: "12", sm: "4" }, field: "zipCode" },
-			{ col: { base: "12", sm: "8" }, field: "streetName" },
+			{
+				col: { base: "12", sm: "8" },
+				field: "streetName",
+				useFetch: useDeliveryStreets,
+				querySpecs: {
+					courier: courierName,
+					sortBy: [{ id: "name", desc: true }],
+					cityId: data.shipping?.city?.value,
+				},
+				querySpecialKey: [courierName, deliveryType, data.shipping?.city],
+			},
 			{ col: { base: "12", sm: "4" }, field: "streetNumber" },
 		];
-	}, [courierName, data.shipping?.country?.data?.id]);
+	}, [courierName, deliveryType, data]);
 
 	return (
 		<Flex>
@@ -145,7 +186,7 @@ const OrderStepShipping = () => {
 					<AsyncSelect
 						useFetch={useDeliveryMethods}
 						value={data.shipping?.delivery}
-						onChange={(option) => handleValueUpdate("delivery", option)}
+						onChange={(option) => resetAddressValues("delivery", option)}
 						placeholder='Select Delivery'
 					/>
 				</FormControl>
@@ -157,9 +198,11 @@ const OrderStepShipping = () => {
 						<AsyncSelect
 							useFetch={useDeliveryOffices}
 							querySpecs={{ courier: courierName }}
+							querySpecialKey={[courierName, deliveryType]}
 							value={data.shipping?.officeCode}
 							onChange={(option) => handleValueUpdate("officeCode", option)}
 							placeholder='Select Office'
+							cacheUniqs={[deliveryType, courierName]}
 						/>
 					</FormControl>
 				</Flex.Col>

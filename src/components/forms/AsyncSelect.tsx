@@ -25,7 +25,7 @@ const AsyncSelect = (props: Props) => {
 		filters: {
 			withColumns: "false",
 			page: 0,
-			perPage: 20,
+			perPage: 10,
 			searchString: "",
 		},
 	});

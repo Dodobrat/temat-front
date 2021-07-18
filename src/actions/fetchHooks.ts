@@ -208,6 +208,24 @@ export const useDeliveryCities: FetchQueryType = ({ specs, queryConfig, specialK
 	);
 };
 
+export const useDeliveryStreets: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["deliveryStreetName", specialKey],
+		async () => {
+			specs.filters.cityId = specs?.cityId;
+			const { data } = await axios.get(`${apiUrl}/deliveries/${specs?.courier}/street?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 //USERS
 export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
