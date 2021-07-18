@@ -31,6 +31,7 @@ const UsersForm = (props: Props) => {
 	} = useForm({
 		defaultValues: {
 			...payload,
+			image: "",
 			roleId: payload ? { value: payload?.roleId, label: payload?.roleName } : null,
 		},
 	});
@@ -337,7 +338,25 @@ const UsersForm = (props: Props) => {
 									className={cn({
 										"text--danger": errors?.image,
 									})}
-									hintMsg={errors?.image?.message}>
+									hintMsg={
+										<>
+											{payload ? (
+												<>
+													<a
+														href={payload?.image}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='text--info'>
+														Image Link
+													</a>
+													{!!errors?.image?.message && <br />}
+												</>
+											) : (
+												""
+											)}
+											{errors?.image?.message ?? ""}
+										</>
+									}>
 									<Input
 										type='file'
 										name='image'
