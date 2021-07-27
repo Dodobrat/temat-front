@@ -56,6 +56,12 @@
 		"confirmPassword": "Confirm Password"
 	},
 	"orders": {
+		"orderDetails": "Order Details",
+		"orderProgress": "Order Progress",
+		"additionalInfo": "Additional Information",
+		"addressInfo": "Address Info",
+		"clientInfo": "Client Info",
+		"customerNote": "Customer Note",
 		"addOrder": "Add Order",
 		"updateOrder": "Update Order",
 		"pickProduct": "Pick a Product",
@@ -79,7 +85,9 @@
 		"receiverName": "Receiver Name",
 		"receiverPhone": "Receiver Phone",
 		"agentName": "Agent Name",
-		"agentPhone": "Agent Phone"
+		"agentPhone": "Agent Phone",
+		"phone": "Phone",
+		"email": "E-mail"
 	},
 	"permissions": {},
 	"roles": {},

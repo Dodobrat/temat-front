@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
 import setAuthHeader from "../helpers/setAuthHeader";
 
 const AuthContext = createContext(null);
@@ -15,6 +16,8 @@ const validToken = () => {
 };
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+	const queryClient = useQueryClient();
+
 	const [token, setToken] = useState<string | null>(validToken());
 	const [user, setUser] = useState<Object | null>(null);
 	const [userPermissions, setUserPermissions] = useState(null);
@@ -31,6 +34,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		tokenValue.setToken(null);
 		userValue.setUser(null);
 		userPermissionsValue.setUserPermissions(null);
+		queryClient.clear();
 	};
 
 	useEffect(() => {

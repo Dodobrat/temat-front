@@ -138,6 +138,40 @@ export const useOrders: FetchQueryType = ({ specs, queryConfig, specialKey }) =>
 	);
 };
 
+export const useOrderById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderById", specialKey],
+		async ({ queryKey }) => {
+			const orderId = queryKey[1];
+			const { data } = await axios.get(`${apiUrl}/orders/${orderId}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			enabled: queryConfig?.enabled ?? true,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+// export const useOrderPackInfoById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+// 	return useQuery(
+// 		["orderPackingInfoById", specialKey],
+// 		async ({ queryKey }) => {
+// 			const orderId = queryKey[1];
+// 			const { data } = await axios.get(`${apiUrl}/orders/${orderId}?${parseParams(specs)}`);
+// 			return data;
+// 		},
+// 		{
+// 			...queryConfig,
+// 			enabled: queryConfig?.enabled ?? true,
+// 			cacheTime: halfDay,
+// 			staleTime: halfDay,
+// 		}
+// 	);
+// };
+
 //DELIVERIES
 export const useDeliveryMethods: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(

@@ -125,6 +125,22 @@ svg {
 	}
 }
 
+.temat__view__aside {
+	position: sticky;
+	top: 4.5rem;
+	&__card {
+		@media (min-width: map-get($breakpoints, "xl" )) {
+			width: 22.5rem;
+		}
+	}
+}
+
+.temat__view__list__header {
+	text-transform: uppercase;
+	font-size: map-get($sizes, "xs");
+	border-bottom: none !important;
+}
+
 .temat__form__collapse {
 	box-shadow: 0 0 0 0.0625rem rgba($subFont, 0.25);
 	&__content {
