@@ -1,5 +1,6 @@
 import { ListGroup } from "@dodobrat/react-ui-kit";
 import { Badge } from "@dodobrat/react-ui-kit";
+import { useLocalStorage } from "@dodobrat/react-ui-kit";
 import { Collapse } from "@dodobrat/react-ui-kit";
 import { Heading, Card, Flex, Text } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
@@ -18,6 +19,8 @@ interface Props {}
 const OrdersViewPage = (props: Props) => {
 	const { id: orderId }: any = useParams();
 	const { t } = useTranslation();
+
+	const [isCollapsedDetails, setIsCollapsedDetails] = useLocalStorage("orderDetailsCollapseState", true);
 
 	const { data: orderData } = useOrderById({
 		queryConfig: {
@@ -66,7 +69,9 @@ const OrdersViewPage = (props: Props) => {
 					<Flex.Col>
 						<Flex direction='column' spacingY='md'>
 							<Flex.Col className='w--100'>
-								<Collapse>
+								<Collapse
+									isCollapsed={isCollapsedDetails}
+									onToggle={(isColapsed: boolean) => setIsCollapsedDetails(!isColapsed)}>
 									<Collapse.Toggle>
 										<Heading as='p' className='mb--1'>
 											{t("orders.orderDetails")}
