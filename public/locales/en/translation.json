@@ -9,7 +9,9 @@
 		"actionIrrevirsible": "This cannot be undone!",
 		"offline": "You are currently offline!",
 		"back": "Back",
-		"next": "Next"
+		"next": "Next",
+		"show": "Show",
+		"hide": "Hide"
 	},
 	"auth": {
 		"login": "Login"
@@ -56,9 +58,12 @@
 		"confirmPassword": "Confirm Password"
 	},
 	"orders": {
+		"orderProducts": "Order Products",
 		"orderDetails": "Order Details",
 		"orderProgress": "Order Progress",
-		"additionalInfo": "Additional Information",
+		"additionalInfo": "Additional Info",
+		"receiverIsCompany": "Receiver Is Company",
+		"payAfter": "Pay On...",
 		"addressInfo": "Address Info",
 		"clientInfo": "Client Info",
 		"customerNote": "Customer Note",
@@ -87,7 +92,16 @@
 		"agentName": "Agent Name",
 		"agentPhone": "Agent Phone",
 		"phone": "Phone",
-		"email": "E-mail"
+		"email": "E-mail",
+		"sku": "SKU",
+		"required": "Required",
+		"packaged": "Packaged",
+		"weight": "Weight",
+		"progress": "Progress",
+		"qty": "Qty",
+		"history": "History",
+		"files": "Files",
+		"companyId": "Company"
 	},
 	"permissions": {},
 	"roles": {},

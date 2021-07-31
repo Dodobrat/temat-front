@@ -12,5 +12,5 @@ export const parseDate: (date: string, time?: boolean) => string = (date, time =
 
 		return parsedDate;
 	}
-	return "";
+	return null;
 };

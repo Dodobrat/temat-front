@@ -15,7 +15,7 @@ const OrdersForm = (props: Props) => {
 	const { t } = useTranslation();
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onClose={onClose} isOpen animation='none' {...rest} withFocusLock>
 			<Card>
 				<Card.Header
 					actions={
@@ -26,7 +26,7 @@ const OrdersForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? t("orders.updateOrder") : t("orders.addOrder")}</Text>
 				</Card.Header>
 				<OrdersProvider>
-					<OrdersFormWizard payload={payload} maxSteps={4} />
+					<OrdersFormWizard payload={payload} maxSteps={5} onClose={onClose} />
 				</OrdersProvider>
 			</Card>
 		</Portal>

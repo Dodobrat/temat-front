@@ -160,6 +160,18 @@ export const useProductDelete = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
+//ORDERS
+export const useOrderAdd = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/orders`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 //USERS
 export const useUserAdd = ({ queryConfig }: MutateHookType) => {
 	return useMutation(

@@ -4,6 +4,8 @@ import cn from "classnames";
 import { useTranslation } from "react-i18next";
 import WindowedSelect from "react-windowed-select";
 import { Input } from "@dodobrat/react-ui-kit";
+import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
 
 const selectProps = {
 	className: "temat__select__container",
@@ -12,17 +14,14 @@ const selectProps = {
 	isSearchable: false,
 };
 
-const paymentOptions = [
-	{ value: "paid", label: "Paid in Full" },
-	{ value: "onDelivery", label: "Cash on Delivery" },
-];
-const currencyOptions = [
-	{ value: "BGN", label: "BGN - лв." },
-	{ value: "EUR", label: "EUR - €" },
-];
 const paidByOptions = [
 	{ value: "receiver", label: "Receiver" },
 	{ value: "sender", label: "Sender" },
+];
+const payAfterOptions = [
+	{ value: "none", label: "Delivery" },
+	{ value: "view", label: "Delivery and View" },
+	{ value: "test", label: "Delivery and Test" },
 ];
 
 const OrderStepPayment = () => {
@@ -45,42 +44,51 @@ const OrderStepPayment = () => {
 	return (
 		<Flex>
 			<Flex.Col col='12'>
-				<FormControl label={t("orders.paymentMethod")} htmlFor='paymentMethod' className={cn("")} hintMsg={""}>
-					<WindowedSelect
-						{...selectProps}
-						options={paymentOptions}
-						value={data?.payment?.paymentMethod}
-						onChange={(option) => handleValueUpdate("paymentMethod", option)}
+				<FormControl label={t("orders.paymentMethod")} htmlFor='paymentMethodId' className={cn("")} hintMsg={""}>
+					<AsyncSelect
+						useFetch={usePaymentMethods}
+						value={data?.payment?.paymentMethodId}
+						onChange={(option) => handleValueUpdate("paymentMethodId", option)}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='7'>
-				<FormControl label={t("orders.amount")} htmlFor='amount' className={cn("")} hintMsg={""}>
+				<FormControl label={t("orders.amount")} htmlFor='totalAmount' className={cn("")} hintMsg={""}>
 					<Input
 						type='number'
-						name='amount'
-						value={data?.payment?.amount ?? ""}
-						onChange={({ target }) => handleValueUpdate("amount", target.value)}
+						name='totalAmount'
+						value={data?.payment?.totalAmount ?? ""}
+						onChange={({ target }) => handleValueUpdate("totalAmount", target.value)}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='5'>
-				<FormControl label={t("orders.currency")} htmlFor='currency' className={cn("")} hintMsg={""}>
-					<WindowedSelect
-						{...selectProps}
-						options={currencyOptions}
-						value={data?.payment?.currency}
-						onChange={(option) => handleValueUpdate("currency", option)}
+				<FormControl label={t("orders.currency")} htmlFor='currencyId' className={cn("")} hintMsg={""}>
+					<AsyncSelect
+						useFetch={useCurrency}
+						labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
+						value={data?.payment?.currencyId}
+						onChange={(option) => handleValueUpdate("currencyId", option)}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
-				<FormControl label={t("orders.paidBy")} htmlFor='paidBy' className={cn("")} hintMsg={""}>
+				<FormControl label={t("orders.paidBy")} htmlFor='shippingPaidBy' className={cn("")} hintMsg={""}>
 					<WindowedSelect
 						{...selectProps}
 						options={paidByOptions}
-						value={data?.payment?.paidBy}
-						onChange={(option) => handleValueUpdate("paidBy", option)}
+						value={data?.payment?.shippingPaidBy}
+						onChange={(option) => handleValueUpdate("shippingPaidBy", option)}
+					/>
+				</FormControl>
+			</Flex.Col>
+			<Flex.Col col='12'>
+				<FormControl label={t("orders.payAfter")} htmlFor='payAfter' className={cn("")} hintMsg={""}>
+					<WindowedSelect
+						{...selectProps}
+						options={payAfterOptions}
+						value={data?.payment?.payAfter}
+						onChange={(option) => handleValueUpdate("payAfter", option)}
 					/>
 				</FormControl>
 			</Flex.Col>

@@ -155,6 +155,24 @@ export const useOrderById: FetchQueryType = ({ specs, queryConfig, specialKey })
 	);
 };
 
+export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderHistoryById", specialKey],
+		async ({ queryKey }) => {
+			const orderId = queryKey[1]?.order?.details?.id;
+			const { data } = await axios.get(`${apiUrl}/orders/${orderId}/history?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 // export const useOrderPackInfoById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 // 	return useQuery(
 // 		["orderPackingInfoById", specialKey],
@@ -266,6 +284,42 @@ export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => 
 		["users", specialKey],
 		async () => {
 			const { data } = await axios.get(`${apiUrl}/users?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+//CURRENCY
+export const useCurrency: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["currency", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/stores/currency?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+//PAYMENT METHODS
+export const usePaymentMethods: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["paymentMethods", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/stores/paymentMethods?${parseParams(specs)}`);
 			return data;
 		},
 		{

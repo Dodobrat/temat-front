@@ -19,7 +19,16 @@ interface Props {
 }
 
 const AsyncSelect = (props: Props) => {
-	const { useFetch, valueKey = "id", labelKey = "name", querySpecs = {}, querySpecialKey, className, ...rest } = props;
+	const {
+		useFetch,
+		valueKey = "id",
+		labelKey = "name",
+		labelComponent = null,
+		querySpecs = {},
+		querySpecialKey,
+		className,
+		...rest
+	} = props;
 
 	const [queryParams, setQueryParams] = useStateWithPromise({
 		filters: {
@@ -70,7 +79,7 @@ const AsyncSelect = (props: Props) => {
 				...final,
 				{
 					value: item[valueKey],
-					label: item[labelKey],
+					label: labelComponent ? labelComponent(item) : item[labelKey],
 					data: item,
 				},
 			],

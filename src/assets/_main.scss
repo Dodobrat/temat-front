@@ -128,10 +128,18 @@ svg {
 .temat__view__aside {
 	position: sticky;
 	top: 4.5rem;
+
 	&__card {
+		width: 100%;
+		max-height: unset;
+		@media (min-width: map-get($breakpoints, "md" )) {
+			max-height: calc(100vh - 14rem);
+		}
 		@media (min-width: map-get($breakpoints, "xl" )) {
 			width: 22.5rem;
 		}
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 }
 
@@ -196,4 +204,8 @@ svg {
 
 .text--opaque {
 	opacity: 0.6;
+}
+
+.list__collapse__toggle {
+	background-color: $bg;
 }

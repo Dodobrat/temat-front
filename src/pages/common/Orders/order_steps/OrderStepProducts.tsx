@@ -75,7 +75,7 @@ const OrderStepProducts = () => {
 	return (
 		<>
 			{data.products.length > 0 && (
-				<ListGroup elevation='none' className='my--2'>
+				<ListGroup elevation='none' className='my--2 outline'>
 					{data.products.map((product) => (
 						<ListGroup.Item key={product.value} className='px--2'>
 							<Flex align='center' wrap={{ base: "wrap", sm: "nowrap" }}>
@@ -133,6 +133,11 @@ const OrderStepProducts = () => {
 				hintMsg={selectError?.message}>
 				<AsyncSelect
 					useFetch={useProducts}
+					querySpecs={{
+						filters: {
+							companyId: data?.payment?.companyId?.value,
+						},
+					}}
 					isMulti
 					isClearable={false}
 					value={data.products}

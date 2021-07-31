@@ -14,8 +14,17 @@ import { useEffect, useState } from "react";
 import { Input } from "@dodobrat/react-ui-kit";
 import { Heading } from "@dodobrat/react-ui-kit";
 import { useMemo } from "react";
+import { Checkbox } from "@dodobrat/react-ui-kit";
 
-const receiverFields = ["receiverName", "receiverPhone"];
+const receiverFields: any = [
+	{
+		type: "email",
+		name: "email",
+		col: "12",
+	},
+	{ name: "receiverName" },
+	{ name: "receiverPhone" },
+];
 
 const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate }) => {
 	const { t } = useTranslation();
@@ -32,17 +41,23 @@ const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate }) => {
 						Receiver Details
 					</Heading>
 				</Flex.Col>
-				{fields.map((field) => (
-					<Flex.Col col={{ base: "12", sm: "6" }} key={field}>
-						<FormControl label={t(`orders.${field}`)} htmlFor={field} className={cn("")} hintMsg={""}>
-							<Input
-								value={data.shipping[field] ?? ""}
-								onChange={({ target }) => handleValueUpdate(field, target.value)}
-								placeholder={field}
-							/>
-						</FormControl>
-					</Flex.Col>
-				))}
+				{fields.map((field: any) => {
+					const Component = field.inputType ?? Input;
+
+					return (
+						<Flex.Col col={field.col ?? { base: "12", sm: "6" }} key={field.name}>
+							<FormControl withLabel={field?.formControlLabel} label={t(`orders.${field.name}`)} htmlFor={field.name}>
+								<Component
+									type={field.type ?? "text"}
+									value={data.shipping[field.name] ?? ""}
+									onChange={({ target }) => handleValueUpdate(field.name, target[field?.dataValue ?? "value"])}
+									placeholder={field.name}
+									{...field?.inputProps}
+								/>
+							</FormControl>
+						</Flex.Col>
+					);
+				})}
 			</Flex>
 		</Flex.Col>
 	);
@@ -118,24 +133,25 @@ const OrderStepShipping = () => {
 		setData((prev) => ({
 			...prev,
 			shipping: {
+				...prev.shipping,
 				[key]: val,
+				officeId: null,
 				country: null,
 				city: null,
 				streetName: null,
 				zipCode: "",
 				streetNumber: "",
+				email: prev.shipping?.email ?? "",
 				receiverName: prev.shipping?.receiverName ?? "",
 				receiverPhone: prev.shipping?.receiverPhone ?? "",
-				agentName: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.agentName : "",
-				agentPhone: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.agentPhone : "",
+				receiverAgentName: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentName : "",
+				receiverAgentPhone: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentPhone : "",
 			},
 		}));
 	};
 
-	// console.log(data);
-
 	useEffect(() => {
-		const deliveryOption = data.shipping?.delivery ?? null;
+		const deliveryOption = data.shipping?.shippingMethodId ?? null;
 		if (deliveryOption) {
 			setCourierName(deliveryOption?.label?.split(" ")[0].toLowerCase());
 			setDeliveryType(deliveryOption?.label?.split(" ")[1].toLowerCase());
@@ -182,25 +198,28 @@ const OrderStepShipping = () => {
 	return (
 		<Flex>
 			<Flex.Col col='12'>
-				<FormControl label={t("orders.delivery")} htmlFor='delivery' className={cn("")} hintMsg={""}>
+				<FormControl label={t("orders.delivery")} htmlFor='shippingMethodId' className={cn("")} hintMsg={""}>
 					<AsyncSelect
 						useFetch={useDeliveryMethods}
-						value={data.shipping?.delivery}
-						onChange={(option) => resetAddressValues("delivery", option)}
-						placeholder='Select Delivery'
+						querySpecs={{
+							sortBy: [{ asc: true, id: "name" }],
+						}}
+						value={data.shipping?.shippingMethodId}
+						onChange={(option) => resetAddressValues("shippingMethodId", option)}
+						placeholder='Select Delivery Type'
 					/>
 				</FormControl>
 			</Flex.Col>
 
 			{deliveryType === "office" && (
 				<Flex.Col col='12'>
-					<FormControl label={t("orders.office")} htmlFor='officeCode' className={cn("")} hintMsg={""}>
+					<FormControl label={t("orders.office")} htmlFor='officeId' className={cn("")} hintMsg={""}>
 						<AsyncSelect
 							useFetch={useDeliveryOffices}
 							querySpecs={{ courier: courierName }}
 							querySpecialKey={[courierName, deliveryType]}
-							value={data.shipping?.officeCode}
-							onChange={(option) => handleValueUpdate("officeCode", option)}
+							value={data.shipping?.officeId}
+							onChange={(option) => handleValueUpdate("officeId", option)}
 							placeholder='Select Office'
 							cacheUniqs={[deliveryType, courierName]}
 						/>
@@ -211,7 +230,25 @@ const OrderStepShipping = () => {
 			{deliveryType === "address" && <DeliveryAddress deliveryFields={deliveryFields} handleValueUpdate={handleValueUpdate} />}
 
 			{courierName === "econt" && (
-				<ReceiverInputs fields={[...receiverFields, "agentName", "agentPhone"]} handleValueUpdate={handleValueUpdate} />
+				<ReceiverInputs
+					fields={[
+						...receiverFields,
+						{ name: "receiverAgentName" },
+						{ name: "receiverAgentPhone" },
+						{
+							name: "receiverIsCompany",
+							formControlLabel: false,
+							col: "12",
+							inputType: Checkbox,
+							dataValue: "checked",
+							inputProps: {
+								seamless: true,
+								children: t("orders.receiverIsCompany"),
+							},
+						},
+					]}
+					handleValueUpdate={handleValueUpdate}
+				/>
 			)}
 			{courierName === "speedy" && <ReceiverInputs handleValueUpdate={handleValueUpdate} />}
 		</Flex>

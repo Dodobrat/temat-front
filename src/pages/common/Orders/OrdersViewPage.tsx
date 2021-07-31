@@ -1,28 +1,74 @@
 import { ListGroup } from "@dodobrat/react-ui-kit";
+import { Button } from "@dodobrat/react-ui-kit";
 import { Badge } from "@dodobrat/react-ui-kit";
-import { useLocalStorage } from "@dodobrat/react-ui-kit";
-import { Collapse } from "@dodobrat/react-ui-kit";
+import { CollapseFade } from "@dodobrat/react-ui-kit";
 import { Heading, Card, Flex, Text } from "@dodobrat/react-ui-kit";
-import cn from "classnames";
+import { useState } from "react";
+// import cn from "classnames";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useOrderById } from "../../../actions/fetchHooks";
+import { LogoPdf } from "../../../components/ui/icons";
+import Image from "../../../components/ui/Image";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import { parseDate } from "../../../helpers/dateHelpers";
 import { errorToast } from "../../../helpers/toastEmitter";
+import OrdersViewHistory from "./OrdersViewHistory";
 
-interface Props {}
+const addressInfo = (order: { address: any }) => {
+	const address = order?.address;
 
-const OrdersViewPage = (props: Props) => {
+	const mainAddress = [address?.country, address?.city, address?.zipCode].filter((entry) => entry);
+	const secondaryAddress = [address?.streetName, address?.streetNumber].filter((entry) => entry);
+
+	const main = mainAddress.length > 0 ? mainAddress.join(", ") : <span className='text--opaque'>N/A</span>;
+	const secondary = secondaryAddress.length > 0 ? secondaryAddress.join(" ") : <span className='text--opaque'>N/A</span>;
+
+	return { main, secondary };
+};
+
+const clientInfo = (order: { client: any }) => {
+	const client = order?.client;
+
+	const receiverInfo = [client?.receiverName, client?.receiverPhone].filter((entry) => entry);
+	const agentInfo = [client?.receiverAgentName, client?.receiverAgentPhone].filter((entry) => entry);
+	const contactInfo = [client?.phone, client?.email].filter((entry) => entry);
+
+	const receiver = receiverInfo.length > 0 ? receiverInfo.join(" | ") : <span className='text--opaque'>N/A</span>;
+	const agent = agentInfo.length > 0 ? agentInfo.join(" | ") : <span className='text--opaque'>N/A</span>;
+	const contact = contactInfo.length > 0 ? contactInfo.join(" | ") : <span className='text--opaque'>N/A</span>;
+
+	return { receiver, agent, contact };
+};
+
+const detailsInfo = (order) => {
+	const details = order?.details;
+	const files = order?.files;
+
+	const note = details?.customerNote ?? <span className='text--opaque'>N/A</span>;
+
+	return { note, files };
+};
+
+const OrdersViewPage = () => {
 	const { id: orderId }: any = useParams();
 	const { t } = useTranslation();
 
-	const [isCollapsedDetails, setIsCollapsedDetails] = useLocalStorage("orderDetailsCollapseState", true);
+	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
+
+	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
 
 	const { data: orderData } = useOrderById({
+		specs: {
+			filters: {
+				history: "true",
+				products: "true",
+				files: "true",
+			},
+		},
 		queryConfig: {
 			onError: (err: any) => errorToast(err),
 		},
@@ -32,20 +78,6 @@ const OrdersViewPage = (props: Props) => {
 	const { data: order } = orderData ?? { data: null };
 
 	console.log(order);
-
-	const ListText = ({ children, className, ...rest }: any) => (
-		<Text className={cn("mb--0", className)} {...rest}>
-			{children}
-		</Text>
-	);
-
-	const ListHeading = ({ children, className, ...rest }: any) => (
-		<ListGroup.Header className={cn("py--1 temat__view__list__header text--opaque", className)} {...rest}>
-			{children}
-		</ListGroup.Header>
-	);
-
-	ListHeading.displayName = "ListGroupHeader";
 
 	return (
 		<PageWrapper>
@@ -60,118 +92,141 @@ const OrdersViewPage = (props: Props) => {
 						</Heading>
 					</Flex.Col>
 					<Flex.Col col='auto'>
-						<Badge sizing={{ base: "md", xl: "lg" }}>{parseDate(order?.dateCreated, true)}</Badge>
+						<Button pigment='secondary'>{parseDate(order?.details?.dateCreated, true) ?? "Date Added"}</Button>
 					</Flex.Col>
 				</Flex>
 			</PageHeader>
 			<PageContent>
-				<Flex wrap={{ base: "wrap", xl: "nowrap" }} spacingX='md'>
-					<Flex.Col>
+				<Flex wrap={{ base: "wrap", xl: "nowrap" }} spacingX='md' spacingY='md'>
+					<Flex.Col col={{ base: "12", md: "6", xl: "reset" }}>
 						<Flex direction='column' spacingY='md'>
+							{/* <Flex.Col className='w--100'>
+								<Card>
+									<Card.Body>
+										<Heading as='p'>{t("orders.progress")}</Heading>
+										Progress
+									</Card.Body>
+								</Card>
+							</Flex.Col> */}
 							<Flex.Col className='w--100'>
-								<Collapse
-									isCollapsed={isCollapsedDetails}
-									onToggle={(isColapsed: boolean) => setIsCollapsedDetails(!isColapsed)}>
-									<Collapse.Toggle>
-										<Heading as='p' className='mb--1'>
-											{t("orders.orderDetails")}
-										</Heading>
-									</Collapse.Toggle>
-									<Collapse.Content className='pt--0'>
-										<hr className='mb--3 mt--0' />
-										<Flex align='stretch'>
-											<Flex.Col col={{ base: "12", xl: "6" }} className='h--100'>
-												<Heading as='p'>{t("orders.addressInfo")}</Heading>
-												<ListGroup elevation='none' className='outline'>
-													<ListHeading>{t("orders.country")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>{order?.country ?? <span className='text--opaque'>N/A</span>}</ListText>
+								<Card>
+									<Card.Body>
+										<Heading as='p'>{t("orders.products")}</Heading>
+										{order?.products.length > 0 ? (
+											<ListGroup elevation='none' className='outline'>
+												{order?.products?.map((product) => (
+													<ListGroup.Item
+														className='p--2'
+														key={product?.productId}
+														as={Link}
+														to={`/app/products/${product?.productId}`}>
+														<Flex align='center' wrap={{ base: "wrap", md: "nowrap" }}>
+															<Flex.Col col={{ base: "12", md: "reset" }}>
+																<Flex wrap='nowrap' align='center'>
+																	<Flex.Col className='temat__table__img'>
+																		<Image
+																			imgSrc={product?.image}
+																			alt={product?.description ?? product?.label}
+																		/>
+																	</Flex.Col>
+																	<Flex.Col>
+																		<Text className='mb--0'>{product?.name}</Text>
+																	</Flex.Col>
+																</Flex>
+															</Flex.Col>
+															<Flex.Col col={{ base: "12", md: "auto" }}>
+																<Flex wrap='nowrap' align='center'>
+																	<Flex.Col col='auto'>
+																		<Badge sizing='lg' pigment='warning'>
+																			{t("orders.sku")}: {product?.sku}
+																		</Badge>
+																	</Flex.Col>
+																	<Flex.Col col='auto'>
+																		<Badge sizing='lg' pigment='warning'>
+																			{t("orders.qty")}: {product?.required}
+																		</Badge>
+																	</Flex.Col>
+																</Flex>
+															</Flex.Col>
+														</Flex>
 													</ListGroup.Item>
-													<ListHeading>{t("orders.city")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>{order?.city ?? <span className='text--opaque'>N/A</span>}</ListText>
-													</ListGroup.Item>
-													<ListHeading>{t("orders.zipCode")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>{order?.zipCode ?? <span className='text--opaque'>N/A</span>}</ListText>
-													</ListGroup.Item>
-													<ListHeading>
-														{t("orders.streetName") ?? <span className='text--opaque'>N/A</span>}
-													</ListHeading>
-													<ListGroup.Item>
-														<ListText>
-															{order?.streetName ?? <span className='text--opaque'>N/A</span>}
-														</ListText>
-													</ListGroup.Item>
-													<ListHeading>{t("orders.streetNumber")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>
-															{order?.streetNumber ?? <span className='text--opaque'>N/A</span>}
-														</ListText>
-													</ListGroup.Item>
-												</ListGroup>
-											</Flex.Col>
-											<Flex.Col col={{ base: "12", xl: "6" }}>
-												<Heading as='p'>{t("orders.clientInfo")}</Heading>
-												<ListGroup elevation='none' className='outline'>
-													<ListHeading>{t("orders.agentName")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>
-															{order?.receiverAgentName ?? <span className='text--opaque'>N/A</span>}
-														</ListText>
-													</ListGroup.Item>
-													<ListHeading>{t("orders.agentPhone")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>
-															{order?.receiverAgentPhone ?? <span className='text--opaque'>N/A</span>}
-														</ListText>
-													</ListGroup.Item>
-													<ListHeading>{t("orders.receiverName")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>
-															{order?.receiverName ?? <span className='text--opaque'>N/A</span>}
-														</ListText>
-													</ListGroup.Item>
-													<ListHeading>{t("orders.phone")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>{order?.phone ?? <span className='text--opaque'>N/A</span>}</ListText>
-													</ListGroup.Item>
-													<ListHeading>{t("orders.email")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>{order?.email ?? <span className='text--opaque'>N/A</span>}</ListText>
-													</ListGroup.Item>
-												</ListGroup>
-											</Flex.Col>
-											<Flex.Col col='12'>
-												<Heading as='p'>{t("orders.additionalInfo")}</Heading>
-												<ListGroup elevation='none' className='outline'>
-													<ListHeading>{t("orders.customerNote")}</ListHeading>
-													<ListGroup.Item>
-														<ListText>
-															{order?.customerNote ?? <span className='text--opaque'>N/A</span>}
-														</ListText>
-													</ListGroup.Item>
-												</ListGroup>
-											</Flex.Col>
-										</Flex>
-									</Collapse.Content>
-								</Collapse>
+												))}
+											</ListGroup>
+										) : (
+											<span className='text--opaque'>N/A</span>
+										)}
+									</Card.Body>
+								</Card>
 							</Flex.Col>
 							<Flex.Col className='w--100'>
 								<Card>
-									<Card.Header>
-										<Heading as='p' className='mb--0'>
-											{t("orders.orderProgress")}
+									<Card.Body>
+										<Flex align='stretch' spacingX='md' spacingY='md'>
+											<Flex.Col col={{ base: "12", xl: "6" }} className='h--100'>
+												<Heading as='p'>{t("orders.address")}</Heading>
+												<Text className='mb--1'>
+													Address: <strong>{addressInfo(order).main}</strong>
+												</Text>
+												<Text className='mb--0'>
+													Street: <strong>{addressInfo(order).secondary}</strong>
+												</Text>
+											</Flex.Col>
+											<Flex.Col col={{ base: "12", xl: "6" }}>
+												<Heading as='p'>{t("orders.clientInfo")}</Heading>
+												<Text className='mb--1'>
+													Receiver: <strong>{clientInfo(order).receiver}</strong>
+												</Text>
+												<Text className='mb--1'>
+													Agent: <strong>{clientInfo(order).agent}</strong>
+												</Text>
+												<Text className='mb--0'>
+													Contact: <strong>{clientInfo(order).contact}</strong>
+												</Text>
+											</Flex.Col>
+										</Flex>
+									</Card.Body>
+								</Card>
+							</Flex.Col>
+							<Flex.Col className='w--100'>
+								<Card>
+									<Button as='div' wide pigment='none' leftAlignContent onClick={loadHistory}>
+										<Heading as='p' className='mb--1'>
+											{t(`common.${loadOrderHistory ? "hide" : "show"}`)} {t("orders.history")}
 										</Heading>
-									</Card.Header>
-									<Card.Body>Progress</Card.Body>
+									</Button>
+									<CollapseFade in={loadOrderHistory}>
+										<OrdersViewHistory order={order} />
+									</CollapseFade>
 								</Card>
 							</Flex.Col>
 						</Flex>
 					</Flex.Col>
-					<Flex.Col col='auto' className='temat__view__aside'>
+					<Flex.Col col={{ base: "12", md: "6", xl: "auto" }} className='temat__view__aside'>
 						<Card className='temat__view__aside__card'>
-							<Card.Body>Prducts</Card.Body>
+							<Card.Body>
+								<Heading as='p'>{t("orders.additionalInfo")}</Heading>
+								{detailsInfo(order).files?.length > 0 && (
+									<ListGroup elevation='none' className='outline mb--2'>
+										<ListGroup.Header>Files</ListGroup.Header>
+										{detailsInfo(order).files?.map((file) => (
+											<ListGroup.Item
+												href={file?.link}
+												key={file?.link}
+												target='_blank'
+												rel='noopener noreferrer'
+												download>
+												<Flex wrap='nowrap' align='center'>
+													<Flex.Col col='auto'>
+														<LogoPdf height='2rem' width='2rem' />
+													</Flex.Col>
+													<Flex.Col>{file?.name}</Flex.Col>
+												</Flex>
+											</ListGroup.Item>
+										))}
+									</ListGroup>
+								)}
+								<Text className='mb--1'>Note: {detailsInfo(order).note}</Text>
+							</Card.Body>
 						</Card>
 					</Flex.Col>
 				</Flex>

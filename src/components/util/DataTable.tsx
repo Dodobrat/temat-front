@@ -17,6 +17,7 @@ import CompanyMolCell from "./table_cells/CompanyMolCell";
 import ContactsCell from "./table_cells/ContactsCell";
 import PermissionRolesCell from "./table_cells/PermissionRolesCell";
 import OrderStatusCell from "./table_cells/OrderStatusCell";
+import { AllElevationOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 
 interface Props {
 	columns: any[];
@@ -26,6 +27,9 @@ interface Props {
 	loading: boolean;
 	serverPageCount: number;
 	serverTotalResults: number;
+	elevation?: AllElevationOptions;
+	stackHeader?: boolean;
+	className?: string;
 }
 
 const paginationBtnProps = {
@@ -35,7 +39,18 @@ const paginationBtnProps = {
 	as: Button,
 };
 
-const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount, serverTotalResults }: Props) => {
+const DataTable = ({
+	columns,
+	data,
+	actions,
+	fetchData,
+	loading,
+	serverPageCount,
+	serverTotalResults,
+	elevation,
+	stackHeader = true,
+	className,
+}: Props) => {
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -148,10 +163,13 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 	};
 
 	return (
-		<div className='temat__card__stack'>
-			<Card>
-				<Card.Body id='datatable__header' className='pb--0 pt--2 px--2'></Card.Body>
-			</Card>
+		<div className={cn("temat__card__stack", className)}>
+			{stackHeader && (
+				<Card elevation={elevation}>
+					<Card.Body id='datatable__header' className='pb--0 pt--2 px--2'></Card.Body>
+				</Card>
+			)}
+
 			<Table {...getTableProps()} elevation='none' className='px--3'>
 				<Table.Head>
 					{headerGroups.map((headerGroup: HeaderGroup<object>, idx: React.Key) => (
@@ -166,7 +184,7 @@ const DataTable = ({ columns, data, actions, fetchData, loading, serverPageCount
 					})}
 				</Table.Body>
 			</Table>
-			<Card>
+			<Card elevation={elevation}>
 				<Card.Body className='pb--2 pt--0 px--2'>
 					<Flex align='center' disableNegativeSpace>
 						<Flex.Col col='auto'>

@@ -8,17 +8,19 @@ interface OrdersProviderProps {
 }
 
 const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData }) => {
-	const [currStep, setCurrStep] = useState(1);
+	const [currStep, setCurrStep] = useState(0);
 	const [toggledSummaryPanels, setToggledSummaryPanels] = useState({
 		products: false,
 		shipping: false,
 		payment: false,
+		files: false,
 	});
 	const [data, setData] = useState(
 		initialData ?? {
 			products: [],
 			shipping: {},
 			payment: {},
+			files: [],
 		}
 	);
 
