@@ -6,7 +6,6 @@ import WindowedSelect from "react-windowed-select";
 import { Input } from "@dodobrat/react-ui-kit";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
-import { useEffect } from "react";
 
 const selectProps = {
 	className: "temat__select__container",
@@ -43,19 +42,6 @@ const OrderStepPayment = ({ useContext = useOrdersContext }) => {
 		}));
 	};
 
-	useEffect(() => {
-		if (data?.payment?.paymentMethodId?.value === 1) {
-			setData((prev) => ({
-				...prev,
-				payment: {
-					...prev?.payment,
-					totalAmount: "",
-					currencyId: null,
-				},
-			}));
-		}
-	}, [data?.payment?.paymentMethodId?.value, setData]);
-
 	return (
 		<Flex>
 			<Flex.Col col='12'>
@@ -64,7 +50,19 @@ const OrderStepPayment = ({ useContext = useOrdersContext }) => {
 						inputId='payment-method'
 						useFetch={usePaymentMethods}
 						value={data?.payment?.paymentMethodId}
-						onChange={(option) => handleValueUpdate("paymentMethodId", option)}
+						onChange={(option) => {
+							handleValueUpdate("paymentMethodId", option);
+							if (option?.value === 1) {
+								setData((prev) => ({
+									...prev,
+									payment: {
+										...prev?.payment,
+										totalAmount: "",
+										currencyId: null,
+									},
+								}));
+							}
+						}}
 					/>
 				</FormControl>
 			</Flex.Col>
