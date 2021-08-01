@@ -5,7 +5,7 @@ interface Props {
 	cell: any;
 }
 
-const pickPigment = (status: string) => {
+export const pickPigment = (status: string) => {
 	const parsedStatus = status.trim().replace(" ", "").toLowerCase();
 
 	switch (parsedStatus) {
@@ -15,6 +15,7 @@ const pickPigment = (status: string) => {
 		case "processing":
 			return "warning";
 		case "received":
+		case "created":
 			return "info";
 		case "shipped":
 			return "success";

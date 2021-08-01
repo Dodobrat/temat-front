@@ -9,12 +9,12 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import cn from "classnames";
 import { Button } from "@dodobrat/react-ui-kit";
 
-const OrderStepFiles = () => {
+const OrderStepFiles = ({ useContext = useOrdersContext }) => {
 	const { t } = useTranslation();
 
 	const {
 		dataValue: { data, setData },
-	} = useOrdersContext();
+	} = useContext();
 
 	const [currFile, setCurrFile] = useState("");
 	const [fileError, setFileError] = useState(null);
@@ -51,7 +51,7 @@ const OrderStepFiles = () => {
 
 	return (
 		<>
-			{data.files.length > 0 && (
+			{data.files?.length > 0 && (
 				<ListGroup elevation='none' className='my--2 outline'>
 					{data.files.map((file) => (
 						<ListGroup.Item key={file?.name} className='px--2'>

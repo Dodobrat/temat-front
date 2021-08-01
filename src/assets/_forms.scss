@@ -21,6 +21,7 @@
 			}
 		}
 		&__menu {
+			z-index: 999999;
 			border-radius: $smBorderRadius;
 			background-color: $bgCard;
 			color: $mainFont;

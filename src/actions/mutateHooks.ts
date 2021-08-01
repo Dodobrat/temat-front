@@ -172,6 +172,28 @@ export const useOrderAdd = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
+export const useOrderProductUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/orders/${specs.orderId}/products`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useOrderDelete = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/orders/${data}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 //USERS
 export const useUserAdd = ({ queryConfig }: MutateHookType) => {
 	return useMutation(

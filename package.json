@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"@dodobrat/react-ui-kit": "0.4.3",
+		"@dodobrat/react-ui-kit": "0.4.4",
 		"@testing-library/jest-dom": "5.14.1",
 		"@testing-library/react": "12.0.0",
 		"@testing-library/user-event": "13.2.0",

@@ -24,12 +24,12 @@ const payAfterOptions = [
 	{ value: "test", label: "Delivery and Test" },
 ];
 
-const OrderStepPayment = () => {
+const OrderStepPayment = ({ useContext = useOrdersContext }) => {
 	const { t } = useTranslation();
 
 	const {
 		dataValue: { data, setData },
-	} = useOrdersContext();
+	} = useContext();
 
 	const handleValueUpdate = (key, val) => {
 		setData((prev) => ({

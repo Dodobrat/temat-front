@@ -1,22 +1,21 @@
 import { useEffect } from "react";
-import { useOrdersContext } from "../../../context/OrdersContext";
+import { useOrdersContext } from "../../../../context/OrdersContext";
 import { ProgressBar, Flex, Button } from "@dodobrat/react-ui-kit";
-import OrderStepProducts from "./order_steps/OrderStepProducts";
-import OrderStepShipping from "./order_steps/OrderStepShipping";
-import OrderStepPayment from "./order_steps/OrderStepPayment";
-import OrderStepSummary from "./order_steps/OrderStepSummary";
+import OrderStepProducts from "../order_steps/OrderStepProducts";
+import OrderStepShipping from "../order_steps/OrderStepShipping";
+import OrderStepPayment from "../order_steps/OrderStepPayment";
+import OrderStepSummary from "../order_steps/OrderStepSummary";
 import { Card } from "@dodobrat/react-ui-kit";
 import { useTranslation } from "react-i18next";
-import OrderStepFiles from "./order_steps/OrderStepFiles";
-import { useOrderAdd } from "../../../actions/mutateHooks";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import OrderStepFiles from "../order_steps/OrderStepFiles";
+import { useOrderAdd } from "../../../../actions/mutateHooks";
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { useQueryClient } from "react-query";
-import { useAuthContext } from "../../../context/AuthContext";
-import OrderStepCompany from "./order_steps/OrderStepCompany";
+import { useAuthContext } from "../../../../context/AuthContext";
+import OrderStepCompany from "../order_steps/OrderStepCompany";
 import { CollapseFade } from "@dodobrat/react-ui-kit";
 
 interface Props {
-	payload?: any;
 	maxSteps?: number;
 	onClose: any;
 }
@@ -28,9 +27,11 @@ const parseOrderAddData = (data) => {
 		formData.append(`products[${idx}][id]`, product.value);
 		formData.append(`products[${idx}][qty]`, product.quantity);
 	});
-	data.files.forEach((file: string | Blob | File | any, idx: number) => {
-		formData.append(`files[${idx}]`, file, file?.name);
+
+	data.files.forEach((file: string | Blob | File | any) => {
+		formData.append("files", file);
 	});
+
 	Object.entries(data.shipping).forEach((entry: any) => {
 		if (typeof entry[1] === "object") {
 			if (entry[0] === "country" && entry[1]?.value) {
@@ -46,6 +47,7 @@ const parseOrderAddData = (data) => {
 				const office = entry[0].substring(0, 6);
 				const shippingCourier = data.shipping?.shippingMethodId?.label?.split(" ")[0]?.toLowerCase();
 				formData.append(`${office}Id`, shippingCourier === "speedy" ? entry[1]?.value : entry[1]?.data?.code);
+				formData.append(`${office}Name`, entry[1]?.label);
 			} else {
 				if (entry[1]?.value) {
 					formData.append(entry[0], entry[1]?.value);
@@ -68,13 +70,11 @@ const parseOrderAddData = (data) => {
 		}
 	});
 
-	// console.log(data);
-
 	return formData;
 };
 
 const OrdersFormWizard = (props: Props) => {
-	const { payload, maxSteps = 1, onClose } = props;
+	const { maxSteps = 1, onClose } = props;
 
 	const queryClient = useQueryClient();
 	const { t } = useTranslation();
@@ -89,12 +89,6 @@ const OrdersFormWizard = (props: Props) => {
 	const {
 		userValue: { user },
 	} = useAuthContext();
-
-	useEffect(() => {
-		if (payload) {
-			setData(payload);
-		}
-	}, [payload, setData]);
 
 	useEffect(() => {
 		if (user.roleName !== "ADMIN") {
@@ -138,6 +132,7 @@ const OrdersFormWizard = (props: Props) => {
 										className='p--0'
 										flavor='rounded'
 										col='auto'
+										tabIndex={-1}
 										active={currStep < step + 1}
 										pigment={currStep >= step + 1 ? "primary" : "default"}
 										onClick={() => setCurrStep(step + 1)}>
@@ -156,25 +151,27 @@ const OrdersFormWizard = (props: Props) => {
 				{currStep === 4 && <OrderStepFiles />}
 				{currStep === 5 && <OrderStepSummary />}
 			</Card.Body>
-			<Card.Footer>
-				<Flex wrap='nowrap' justify='space-between' className='w-100' style={{ flex: 1 }}>
-					<Flex.Col col='auto'>
-						{currStep > 1 && (
-							<Button pigment={null} pigmentColor='none' onClick={() => setCurrStep((prev: number) => prev - 1)}>
-								{t("common.back")}
+			{data?.payment?.companyId && (
+				<Card.Footer>
+					<Flex wrap='nowrap' justify='space-between' className='w-100' style={{ flex: 1 }}>
+						<Flex.Col col='auto'>
+							{currStep > 1 && (
+								<Button pigment={null} pigmentColor='none' onClick={() => setCurrStep((prev: number) => prev - 1)}>
+									{t("common.back")}
+								</Button>
+							)}
+						</Flex.Col>
+						<Flex.Col col='auto'>
+							<Button
+								pigment='primary'
+								isLoading={isLoadingAdd}
+								onClick={() => (currStep < maxSteps ? setCurrStep((prev: number) => prev + 1) : placeOrder())}>
+								{currStep < maxSteps ? t("common.next") : t("common.submit")}
 							</Button>
-						)}
-					</Flex.Col>
-					<Flex.Col col='auto'>
-						<Button
-							pigment='primary'
-							isLoading={isLoadingAdd}
-							onClick={() => (currStep < maxSteps ? setCurrStep((prev: number) => prev + 1) : placeOrder())}>
-							{currStep < maxSteps ? t("common.next") : t("common.submit")}
-						</Button>
-					</Flex.Col>
-				</Flex>
-			</Card.Footer>
+						</Flex.Col>
+					</Flex>
+				</Card.Footer>
+			)}
 		</>
 	);
 };

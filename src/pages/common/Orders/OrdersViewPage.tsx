@@ -14,6 +14,8 @@ import Image from "../../../components/ui/Image";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
+import { pickPigment } from "../../../components/util/table_cells/OrderStatusCell";
+import { useAuthContext } from "../../../context/AuthContext";
 import { parseDate } from "../../../helpers/dateHelpers";
 import { errorToast } from "../../../helpers/toastEmitter";
 import OrdersViewHistory from "./OrdersViewHistory";
@@ -24,10 +26,11 @@ const addressInfo = (order: { address: any }) => {
 	const mainAddress = [address?.country, address?.city, address?.zipCode].filter((entry) => entry);
 	const secondaryAddress = [address?.streetName, address?.streetNumber].filter((entry) => entry);
 
-	const main = mainAddress.length > 0 ? mainAddress.join(", ") : <span className='text--opaque'>N/A</span>;
-	const secondary = secondaryAddress.length > 0 ? secondaryAddress.join(" ") : <span className='text--opaque'>N/A</span>;
+	const main = mainAddress.length > 0 ? mainAddress.join(", ") : null;
+	const secondary = secondaryAddress.length > 0 ? secondaryAddress.join(" ") : null;
+	const office = address?.officeName ?? null;
 
-	return { main, secondary };
+	return { main, secondary, office };
 };
 
 const clientInfo = (order: { client: any }) => {
@@ -37,25 +40,43 @@ const clientInfo = (order: { client: any }) => {
 	const agentInfo = [client?.receiverAgentName, client?.receiverAgentPhone].filter((entry) => entry);
 	const contactInfo = [client?.phone, client?.email].filter((entry) => entry);
 
-	const receiver = receiverInfo.length > 0 ? receiverInfo.join(" | ") : <span className='text--opaque'>N/A</span>;
-	const agent = agentInfo.length > 0 ? agentInfo.join(" | ") : <span className='text--opaque'>N/A</span>;
-	const contact = contactInfo.length > 0 ? contactInfo.join(" | ") : <span className='text--opaque'>N/A</span>;
+	const receiver = receiverInfo.length > 0 ? receiverInfo.join(" | ") : null;
+	const agent = agentInfo.length > 0 ? agentInfo.join(" | ") : null;
+	const contact = contactInfo.length > 0 ? contactInfo.join(" | ") : null;
 
 	return { receiver, agent, contact };
 };
 
-const detailsInfo = (order) => {
+const paymentInfo = (order: { payment: any }) => {
+	const payment = order?.payment;
+
+	const shippingMethod = payment?.shippingMethodName;
+	const paidBy = payment?.shippingPaidBy;
+	const orderAmount = `${payment?.totalAmount} ${payment?.symbol}`;
+
+	return { shippingMethod, paidBy, orderAmount };
+};
+
+const detailsInfo = (order: { details: any; files: any }) => {
 	const details = order?.details;
 	const files = order?.files;
+	const companyId = order?.details?.companyId;
+	const companyName = order?.details?.companyName;
+	const status = order?.details?.status;
 
-	const note = details?.customerNote ?? <span className='text--opaque'>N/A</span>;
+	const note = details?.customerNote ?? null;
+	const company = { id: companyId, name: companyName };
 
-	return { note, files };
+	return { note, files, company, status };
 };
 
 const OrdersViewPage = () => {
 	const { id: orderId }: any = useParams();
 	const { t } = useTranslation();
+
+	const {
+		userValue: { user },
+	} = useAuthContext();
 
 	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
 
@@ -64,7 +85,6 @@ const OrdersViewPage = () => {
 	const { data: orderData } = useOrderById({
 		specs: {
 			filters: {
-				history: "true",
 				products: "true",
 				files: "true",
 			},
@@ -72,12 +92,16 @@ const OrdersViewPage = () => {
 		queryConfig: {
 			onError: (err: any) => errorToast(err),
 		},
-		specialKey: orderId,
+		specialKey: { orderId: orderId, filters: ["products", "files"] },
 	});
 
 	const { data: order } = orderData ?? { data: null };
 
-	console.log(order);
+	const noAddressData = !addressInfo(order).main && !addressInfo(order).secondary && !addressInfo(order).office;
+	const noClientData = !clientInfo(order).receiver && !clientInfo(order).agent && !clientInfo(order).contact;
+	const noDetailsData = detailsInfo(order).files?.length === 0 && !detailsInfo(order).note;
+
+	const NoResults = () => <strong className='text--opaque'>N/A</strong>;
 
 	return (
 		<PageWrapper>
@@ -162,26 +186,62 @@ const OrdersViewPage = () => {
 								<Card>
 									<Card.Body>
 										<Flex align='stretch' spacingX='md' spacingY='md'>
-											<Flex.Col col={{ base: "12", xl: "6" }} className='h--100'>
+											<Flex.Col col={{ base: "12", xl: "6", fhd: "4" }} className='h--100'>
 												<Heading as='p'>{t("orders.address")}</Heading>
-												<Text className='mb--1'>
-													Address: <strong>{addressInfo(order).main}</strong>
-												</Text>
-												<Text className='mb--0'>
-													Street: <strong>{addressInfo(order).secondary}</strong>
-												</Text>
+												{noAddressData && <NoResults />}
+												{addressInfo(order).main && (
+													<Text className='mb--1'>
+														Address: <strong>{addressInfo(order).main}</strong>
+													</Text>
+												)}
+												{addressInfo(order).secondary && (
+													<Text className='mb--0'>
+														Street: <strong>{addressInfo(order).secondary}</strong>
+													</Text>
+												)}
+												{addressInfo(order).office && (
+													<Text className='mb--0'>
+														Office: <strong>{addressInfo(order).office}</strong>
+													</Text>
+												)}
 											</Flex.Col>
-											<Flex.Col col={{ base: "12", xl: "6" }}>
-												<Heading as='p'>{t("orders.clientInfo")}</Heading>
-												<Text className='mb--1'>
-													Receiver: <strong>{clientInfo(order).receiver}</strong>
-												</Text>
-												<Text className='mb--1'>
-													Agent: <strong>{clientInfo(order).agent}</strong>
-												</Text>
-												<Text className='mb--0'>
-													Contact: <strong>{clientInfo(order).contact}</strong>
-												</Text>
+											<Flex.Col col={{ base: "12", xl: "6", fhd: "4" }}>
+												<Heading as='p'>{t("orders.client")}</Heading>
+												{noClientData && <NoResults />}
+												{clientInfo(order).receiver && (
+													<Text className='mb--1'>
+														Receiver: <strong>{clientInfo(order).receiver}</strong>
+													</Text>
+												)}
+												{clientInfo(order).agent && (
+													<Text className='mb--1'>
+														Agent: <strong>{clientInfo(order).agent}</strong>
+													</Text>
+												)}
+												{clientInfo(order).contact && (
+													<Text className='mb--0'>
+														Contact: <strong>{clientInfo(order).contact}</strong>
+													</Text>
+												)}
+											</Flex.Col>
+											<Flex.Col col={{ base: "12", xl: "12", fhd: "4" }}>
+												<Heading as='p'>{t("orders.payment")}</Heading>
+												{noClientData && <NoResults />}
+												{paymentInfo(order).shippingMethod && (
+													<Text className='mb--1'>
+														Ship Method: <strong>{paymentInfo(order).shippingMethod}</strong>
+													</Text>
+												)}
+												{paymentInfo(order).paidBy && (
+													<Text className='mb--1'>
+														Paid By: <strong>{paymentInfo(order).paidBy}</strong>
+													</Text>
+												)}
+												{paymentInfo(order).orderAmount && (
+													<Text className='mb--0'>
+														Amount: <strong>{paymentInfo(order).orderAmount}</strong>
+													</Text>
+												)}
 											</Flex.Col>
 										</Flex>
 									</Card.Body>
@@ -205,10 +265,21 @@ const OrdersViewPage = () => {
 						<Card className='temat__view__aside__card'>
 							<Card.Body>
 								<Heading as='p'>{t("orders.additionalInfo")}</Heading>
+								{noDetailsData && <NoResults />}
+								{detailsInfo(order).status && (
+									<Flex align='center' disableNegativeSpace className='mb--2 p--2 outline flavor--default'>
+										<Flex.Col>Status</Flex.Col>
+										<Flex.Col col='auto'>
+											<Badge pigment={pickPigment(detailsInfo(order).status)} sizing='lg'>
+												{detailsInfo(order).status}
+											</Badge>
+										</Flex.Col>
+									</Flex>
+								)}
 								{detailsInfo(order).files?.length > 0 && (
 									<ListGroup elevation='none' className='outline mb--2'>
 										<ListGroup.Header>Files</ListGroup.Header>
-										{detailsInfo(order).files?.map((file) => (
+										{detailsInfo(order).files?.map((file: any) => (
 											<ListGroup.Item
 												href={file?.link}
 												key={file?.link}
@@ -225,7 +296,20 @@ const OrdersViewPage = () => {
 										))}
 									</ListGroup>
 								)}
-								<Text className='mb--1'>Note: {detailsInfo(order).note}</Text>
+								{user?.roleName === "ADMIN" && detailsInfo(order).company.name && (
+									<ListGroup elevation='none' className='outline mb--2'>
+										<ListGroup.Header>Company Name</ListGroup.Header>
+										<ListGroup.Item as={Link} to={`/app/companies/${detailsInfo(order).company.id}`}>
+											{detailsInfo(order).company.name}
+										</ListGroup.Item>
+									</ListGroup>
+								)}
+								{detailsInfo(order).note && (
+									<ListGroup elevation='none' className='outline'>
+										<ListGroup.Header>Note</ListGroup.Header>
+										<ListGroup.Item>{detailsInfo(order).note}</ListGroup.Item>
+									</ListGroup>
+								)}
 							</Card.Body>
 						</Card>
 					</Flex.Col>

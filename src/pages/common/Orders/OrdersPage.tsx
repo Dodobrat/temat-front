@@ -2,7 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react
 import { useDebounce } from "@dodobrat/react-ui-kit";
 import { useOrders } from "../../../actions/fetchHooks";
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast } from "../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { ResponseColumnType } from "../../../types/global.types";
 import { Link } from "react-router-dom";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
@@ -19,13 +19,17 @@ import { Tooltip } from "@dodobrat/react-ui-kit";
 import DataTable from "../../../components/util/DataTable";
 import { ZoomPortal } from "@dodobrat/react-ui-kit";
 import { SlideIn } from "@dodobrat/react-ui-kit";
+import { useOrderDelete } from "../../../actions/mutateHooks";
+import { useQueryClient } from "react-query";
 
-const OrdersForm = lazy(() => import("./OrdersForm"));
+const OrdersForm = lazy(() => import("./order_forms/OrdersForm"));
+const OrdersUpdateForm = lazy(() => import("./order_forms/OrdersUpdateForm"));
 const OrdersDrawer = lazy(() => import("./OrdersDrawer"));
 
 const OrdersPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
+	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
 
 	const [queryParams, setQueryParams] = useState({
@@ -39,9 +43,11 @@ const OrdersPage = () => {
 	const [searchString, setSearchString] = useState("");
 	const [searchStringError, setSearchStringError] = useState(false);
 	const [showOrdersForm, setShowOrdersForm] = useState({ state: false, payload: null });
+	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
 	const [showFilters, setShowFilters] = useState(false);
 
 	const closeOrdersForm = () => setShowOrdersForm((prev) => ({ ...prev, state: false }));
+	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
 	const closeFilters = () => setShowFilters(false);
 
 	const { data, refetch, isFetching, isStale } = useOrders({
@@ -51,6 +57,16 @@ const OrdersPage = () => {
 			onError: (err: any) => errorToast(err),
 		},
 		specialKey: queryParams,
+	});
+
+	const { mutate: deleteOrder } = useOrderDelete({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("orders");
+			},
+			onError: (err: any) => errorToast(err),
+		},
 	});
 
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
@@ -97,16 +113,24 @@ const OrdersPage = () => {
 					}),
 				});
 			}
-			// if (userCan("orderUpdate")) {
-			// 	permittedActions.push({
-			// 		type: "edit",
-			// 		action: (entry: any) => setShowOrdersForm({ state: true, payload: entry }),
-			// 	});
-			// }
+			if (userCan("orderUpdate")) {
+				permittedActions.push({
+					type: "edit",
+					action: (entry: any) => setShowOrdersUpdateForm({ state: true, payload: entry }),
+				});
+			}
+			if (userCan("orderDelete")) {
+				permittedActions.push({
+					type: "delete",
+					withConfirmation: true,
+					action: (entry: any) => deleteOrder(entry.id),
+				});
+			}
+
 			return permittedActions;
 		}
 		return [];
-	}, [data, userCan]);
+	}, [data, userCan, deleteOrder]);
 
 	const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
 		setQueryParams((prev) => ({
@@ -197,6 +221,9 @@ const OrdersPage = () => {
 			<Suspense fallback={<div />}>
 				<ZoomPortal in={showOrdersForm.state}>
 					<OrdersForm onClose={closeOrdersForm} payload={showOrdersForm.payload} />
+				</ZoomPortal>
+				<ZoomPortal in={showOrdersUpdateForm.state}>
+					<OrdersUpdateForm onClose={closeOrdersUpdateForm} payload={showOrdersUpdateForm.payload} />
 				</ZoomPortal>
 				<SlideIn position='right' in={showFilters}>
 					<OrdersDrawer onClose={closeFilters} />

@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Card, Portal, Text, Heading } from "@dodobrat/react-ui-kit";
 import { IconClose } from "../ui/icons";
 import { useTranslation } from "react-i18next";
@@ -6,6 +5,7 @@ import { useTranslation } from "react-i18next";
 interface Props {
 	onClose: () => void;
 	payload?: () => void;
+	[key: string]: any;
 }
 
 const ActionConfirmation = (props: Props) => {

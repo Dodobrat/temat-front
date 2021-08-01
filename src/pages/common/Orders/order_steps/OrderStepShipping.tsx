@@ -109,12 +109,12 @@ const DeliveryAddress = ({ deliveryFields, handleValueUpdate }) => {
 	);
 };
 
-const OrderStepShipping = () => {
+const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 	const { t } = useTranslation();
 
 	const {
 		dataValue: { data, setData },
-	} = useOrdersContext();
+	} = useContext();
 
 	const [courierName, setCourierName] = useState(null);
 	const [deliveryType, setDeliveryType] = useState(null);

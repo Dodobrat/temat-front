@@ -66,6 +66,7 @@
 		"payAfter": "Pay On...",
 		"addressInfo": "Address Info",
 		"clientInfo": "Client Info",
+		"client": "Client",
 		"customerNote": "Customer Note",
 		"addOrder": "Add Order",
 		"updateOrder": "Update Order",

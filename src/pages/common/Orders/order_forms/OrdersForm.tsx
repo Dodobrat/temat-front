@@ -1,8 +1,9 @@
-import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
-import { IconClose } from "../../../components/ui/icons";
+import { Card, Text, Button } from "@dodobrat/react-ui-kit";
+import { IconClose } from "../../../../components/ui/icons";
 import { useTranslation } from "react-i18next";
 import OrdersFormWizard from "./OrdersFormWizard";
-import OrdersProvider from "../../../context/OrdersContext";
+import OrdersProvider from "../../../../context/OrdersContext";
+import { Portal } from "@dodobrat/react-ui-kit";
 
 interface Props {
 	onClose: () => void;
@@ -23,10 +24,10 @@ const OrdersForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? t("orders.updateOrder") : t("orders.addOrder")}</Text>
+					<Text className='mb--0'>{t("orders.addOrder")}</Text>
 				</Card.Header>
 				<OrdersProvider>
-					<OrdersFormWizard payload={payload} maxSteps={5} onClose={onClose} />
+					<OrdersFormWizard maxSteps={5} onClose={onClose} />
 				</OrdersProvider>
 			</Card>
 		</Portal>

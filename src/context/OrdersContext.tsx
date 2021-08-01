@@ -1,14 +1,15 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const OrdersContext = createContext(null);
 
 interface OrdersProviderProps {
 	initialData?: any;
+	initialStep?: number;
 	children?: React.ReactNode;
 }
 
-const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData }) => {
-	const [currStep, setCurrStep] = useState(0);
+const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData, initialStep }) => {
+	const [currStep, setCurrStep] = useState(initialStep ?? 0);
 	const [toggledSummaryPanels, setToggledSummaryPanels] = useState({
 		products: false,
 		shipping: false,
@@ -23,6 +24,18 @@ const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData }
 			files: [],
 		}
 	);
+
+	useEffect(() => {
+		if (initialData) {
+			setData(initialData);
+		}
+	}, [initialData]);
+
+	useEffect(() => {
+		if (initialStep) {
+			setCurrStep(initialStep);
+		}
+	}, [initialStep]);
 
 	const stepValue = useMemo(() => ({ currStep, setCurrStep }), [currStep, setCurrStep]);
 	const panelsValue = useMemo(() => ({ toggledSummaryPanels, setToggledSummaryPanels }), [toggledSummaryPanels, setToggledSummaryPanels]);

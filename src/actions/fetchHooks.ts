@@ -142,7 +142,7 @@ export const useOrderById: FetchQueryType = ({ specs, queryConfig, specialKey })
 	return useQuery(
 		["orderById", specialKey],
 		async ({ queryKey }) => {
-			const orderId = queryKey[1];
+			const orderId = queryKey[1]?.orderId;
 			const { data } = await axios.get(`${apiUrl}/orders/${orderId}?${parseParams(specs)}`);
 			return data;
 		},
@@ -172,23 +172,6 @@ export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specia
 		}
 	);
 };
-
-// export const useOrderPackInfoById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
-// 	return useQuery(
-// 		["orderPackingInfoById", specialKey],
-// 		async ({ queryKey }) => {
-// 			const orderId = queryKey[1];
-// 			const { data } = await axios.get(`${apiUrl}/orders/${orderId}?${parseParams(specs)}`);
-// 			return data;
-// 		},
-// 		{
-// 			...queryConfig,
-// 			enabled: queryConfig?.enabled ?? true,
-// 			cacheTime: halfDay,
-// 			staleTime: halfDay,
-// 		}
-// 	);
-// };
 
 //DELIVERIES
 export const useDeliveryMethods: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
@@ -301,7 +284,7 @@ export const useCurrency: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 	return useQuery(
 		["currency", specialKey],
 		async () => {
-			const { data } = await axios.get(`${apiUrl}/stores/currency?${parseParams(specs)}`);
+			const { data } = await axios.get(`${apiUrl}/helpers/currency?${parseParams(specs)}`);
 			return data;
 		},
 		{
@@ -319,7 +302,7 @@ export const usePaymentMethods: FetchQueryType = ({ specs, queryConfig, specialK
 	return useQuery(
 		["paymentMethods", specialKey],
 		async () => {
-			const { data } = await axios.get(`${apiUrl}/stores/paymentMethods?${parseParams(specs)}`);
+			const { data } = await axios.get(`${apiUrl}/helpers/paymentMethods?${parseParams(specs)}`);
 			return data;
 		},
 		{
