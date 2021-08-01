@@ -42,14 +42,18 @@ const ShippingDetails = ({ item, ...rest }) => {
 
 	return (
 		<ListGroup elevation='none'>
-			{Object.entries(item[1]).map((entry: any) => (
-				<ListGroup.Item key={entry[0]}>
-					<Flex align='center' wrap='nowrap' {...rest}>
-						<Flex.Col>{t(`orders.${entry[0]}`)}</Flex.Col>
-						<Flex.Col col='auto'>{entry[1]?.label ? entry[1]?.label : entry[1]}</Flex.Col>
-					</Flex>
-				</ListGroup.Item>
-			))}
+			{Object.entries(item[1])
+				.filter((entryItem) => entryItem[1])
+				.map((entry: any) => (
+					<ListGroup.Item key={entry[0]}>
+						<Flex align='center' wrap='nowrap' {...rest}>
+							<Flex.Col>{t(`orders.${entry[0]}`)}</Flex.Col>
+							<Flex.Col col='auto'>
+								{entry[1]?.label ? entry[1]?.label : typeof entry[1] === "boolean" ? entry[1].toString() : entry[1]}
+							</Flex.Col>
+						</Flex>
+					</ListGroup.Item>
+				))}
 		</ListGroup>
 	);
 };

@@ -11,6 +11,7 @@ interface OrdersUpdateProviderProps {
 const OrdersUpdateProvider: React.FC<OrdersUpdateProviderProps> = ({ children, initialData }) => {
 	const [data, setData] = useState(
 		initialData ?? {
+			orderId: null,
 			products: [],
 			shipping: {},
 			payment: {},

@@ -7,8 +7,10 @@ import { useState } from "react";
 // import cn from "classnames";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { useOrderById } from "../../../actions/fetchHooks";
+import { useOrderFinish } from "../../../actions/mutateHooks";
 import { LogoPdf } from "../../../components/ui/icons";
 import Image from "../../../components/ui/Image";
 import PageContent from "../../../components/ui/wrappers/PageContent";
@@ -17,7 +19,7 @@ import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import { pickPigment } from "../../../components/util/table_cells/OrderStatusCell";
 import { useAuthContext } from "../../../context/AuthContext";
 import { parseDate } from "../../../helpers/dateHelpers";
-import { errorToast } from "../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import OrdersViewHistory from "./OrdersViewHistory";
 
 const addressInfo = (order: { address: any }) => {
@@ -73,6 +75,7 @@ const detailsInfo = (order: { details: any; files: any }) => {
 const OrdersViewPage = () => {
 	const { id: orderId }: any = useParams();
 	const { t } = useTranslation();
+	const queryClient = useQueryClient();
 
 	const {
 		userValue: { user },
@@ -97,6 +100,20 @@ const OrdersViewPage = () => {
 
 	const { data: order } = orderData ?? { data: null };
 
+	const { mutate: finishOrder, isLoading: isLoadingFinish } = useOrderFinish({
+		specs: {
+			orderId: order?.details?.id,
+		},
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("orders");
+				queryClient.invalidateQueries("orderById");
+			},
+			onError: (err: any) => errorToast(err),
+		},
+	});
+
 	const noAddressData = !addressInfo(order).main && !addressInfo(order).secondary && !addressInfo(order).office;
 	const noClientData = !clientInfo(order).receiver && !clientInfo(order).agent && !clientInfo(order).contact;
 	const noDetailsData = detailsInfo(order).files?.length === 0 && !detailsInfo(order).note;
@@ -116,7 +133,15 @@ const OrdersViewPage = () => {
 						</Heading>
 					</Flex.Col>
 					<Flex.Col col='auto'>
-						<Button pigment='secondary'>{parseDate(order?.details?.dateCreated, true) ?? "Date Added"}</Button>
+						<Button pigment='none'>{parseDate(order?.details?.dateCreated, true) ?? "Date Added"}</Button>
+					</Flex.Col>
+					<Flex.Col col='auto'>
+						<Button
+							pigment='success'
+							onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
+							isLoading={isLoadingFinish}>
+							{order?.details?.status !== "Shipped" ? "Finish Order" : "Finished"}
+						</Button>
 					</Flex.Col>
 				</Flex>
 			</PageHeader>
@@ -189,6 +214,11 @@ const OrdersViewPage = () => {
 											<Flex.Col col={{ base: "12", xl: "6", fhd: "4" }} className='h--100'>
 												<Heading as='p'>{t("orders.address")}</Heading>
 												{noAddressData && <NoResults />}
+												{paymentInfo(order).shippingMethod && (
+													<Text className='mb--1'>
+														Ship Method: <strong>{paymentInfo(order).shippingMethod}</strong>
+													</Text>
+												)}
 												{addressInfo(order).main && (
 													<Text className='mb--1'>
 														Address: <strong>{addressInfo(order).main}</strong>
@@ -227,11 +257,6 @@ const OrdersViewPage = () => {
 											<Flex.Col col={{ base: "12", xl: "12", fhd: "4" }}>
 												<Heading as='p'>{t("orders.payment")}</Heading>
 												{noClientData && <NoResults />}
-												{paymentInfo(order).shippingMethod && (
-													<Text className='mb--1'>
-														Ship Method: <strong>{paymentInfo(order).shippingMethod}</strong>
-													</Text>
-												)}
 												{paymentInfo(order).paidBy && (
 													<Text className='mb--1'>
 														Paid By: <strong>{paymentInfo(order).paidBy}</strong>

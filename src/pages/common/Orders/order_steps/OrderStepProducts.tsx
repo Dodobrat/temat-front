@@ -115,7 +115,6 @@ const OrderStepProducts = ({ useContext = useOrdersContext }) => {
 							qty: product?.quantity ?? product?.required,
 						};
 
-						console.log(product);
 						return (
 							<ListGroup.Item key={productEntry.key} className='px--2'>
 								<Flex align='center' wrap={{ base: "wrap", sm: "nowrap" }}>

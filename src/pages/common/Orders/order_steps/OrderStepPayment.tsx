@@ -6,6 +6,7 @@ import WindowedSelect from "react-windowed-select";
 import { Input } from "@dodobrat/react-ui-kit";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
+import { useEffect } from "react";
 
 const selectProps = {
 	className: "temat__select__container",
@@ -14,11 +15,12 @@ const selectProps = {
 	isSearchable: false,
 };
 
-const paidByOptions = [
+export const paidByOptions = [
 	{ value: "receiver", label: "Receiver" },
 	{ value: "sender", label: "Sender" },
 ];
-const payAfterOptions = [
+
+export const payAfterOptions = [
 	{ value: "none", label: "Delivery" },
 	{ value: "view", label: "Delivery and View" },
 	{ value: "test", label: "Delivery and Test" },
@@ -41,51 +43,72 @@ const OrderStepPayment = ({ useContext = useOrdersContext }) => {
 		}));
 	};
 
+	useEffect(() => {
+		if (data?.payment?.paymentMethodId?.value === 1) {
+			setData((prev) => ({
+				...prev,
+				payment: {
+					...prev?.payment,
+					totalAmount: "",
+					currencyId: null,
+				},
+			}));
+		}
+	}, [data?.payment?.paymentMethodId?.value, setData]);
+
 	return (
 		<Flex>
 			<Flex.Col col='12'>
 				<FormControl label={t("orders.paymentMethod")} htmlFor='paymentMethodId' className={cn("")} hintMsg={""}>
 					<AsyncSelect
+						inputId='payment-method'
 						useFetch={usePaymentMethods}
 						value={data?.payment?.paymentMethodId}
 						onChange={(option) => handleValueUpdate("paymentMethodId", option)}
 					/>
 				</FormControl>
 			</Flex.Col>
-			<Flex.Col col='7'>
-				<FormControl label={t("orders.amount")} htmlFor='totalAmount' className={cn("")} hintMsg={""}>
-					<Input
-						type='number'
-						name='totalAmount'
-						value={data?.payment?.totalAmount ?? ""}
-						onChange={({ target }) => handleValueUpdate("totalAmount", target.value)}
-					/>
-				</FormControl>
-			</Flex.Col>
-			<Flex.Col col='5'>
-				<FormControl label={t("orders.currency")} htmlFor='currencyId' className={cn("")} hintMsg={""}>
-					<AsyncSelect
-						useFetch={useCurrency}
-						labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
-						value={data?.payment?.currencyId}
-						onChange={(option) => handleValueUpdate("currencyId", option)}
-					/>
-				</FormControl>
-			</Flex.Col>
-			<Flex.Col col='12'>
+			{data?.payment?.paymentMethodId?.value === 1 && (
+				<>
+					<Flex.Col col={{ base: "7", lg: "6" }}>
+						<FormControl label={t("orders.amount")} htmlFor='totalAmount' className={cn("")} hintMsg={""}>
+							<Input
+								type='number'
+								name='totalAmount'
+								value={data?.payment?.totalAmount ?? ""}
+								onChange={({ target }) => handleValueUpdate("totalAmount", target.value)}
+							/>
+						</FormControl>
+					</Flex.Col>
+					<Flex.Col col={{ base: "5", lg: "6" }}>
+						<FormControl label={t("orders.currency")} htmlFor='currencyId' className={cn("")} hintMsg={""}>
+							<AsyncSelect
+								useFetch={useCurrency}
+								inputId='currency'
+								labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
+								value={data?.payment?.currencyId}
+								onChange={(option) => handleValueUpdate("currencyId", option)}
+							/>
+						</FormControl>
+					</Flex.Col>
+				</>
+			)}
+			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl label={t("orders.paidBy")} htmlFor='shippingPaidBy' className={cn("")} hintMsg={""}>
 					<WindowedSelect
 						{...selectProps}
 						options={paidByOptions}
+						inputId='paid-by'
 						value={data?.payment?.shippingPaidBy}
 						onChange={(option) => handleValueUpdate("shippingPaidBy", option)}
 					/>
 				</FormControl>
 			</Flex.Col>
-			<Flex.Col col='12'>
+			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl label={t("orders.payAfter")} htmlFor='payAfter' className={cn("")} hintMsg={""}>
 					<WindowedSelect
 						{...selectProps}
+						inputId='pay-after'
 						options={payAfterOptions}
 						value={data?.payment?.payAfter}
 						onChange={(option) => handleValueUpdate("payAfter", option)}

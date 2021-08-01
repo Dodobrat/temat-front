@@ -314,3 +314,21 @@ export const usePaymentMethods: FetchQueryType = ({ specs, queryConfig, specialK
 		}
 	);
 };
+
+//PAYMENT METHODS
+export const usePhoneCodes: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["phoneCodes", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/phoneCode?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};

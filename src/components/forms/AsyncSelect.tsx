@@ -20,6 +20,7 @@ interface Props {
 
 const AsyncSelect = (props: Props) => {
 	const {
+		searchStringLength = 4,
 		useFetch,
 		valueKey = "id",
 		labelKey = "name",
@@ -62,9 +63,9 @@ const AsyncSelect = (props: Props) => {
 	};
 
 	const loadOptions = async (search: string, page: number) => {
-		if (search.length < 3 && search.length !== 0) {
+		if (search.length < searchStringLength && search.length !== 0) {
 			return {
-				options: [{ value: "min_char", label: "Min 3 characters", isDisabled: true }],
+				options: [{ value: "min_char", label: `Min ${searchStringLength} characters`, isDisabled: true }],
 				hasMore: false,
 				additional: {
 					page: page + 1,

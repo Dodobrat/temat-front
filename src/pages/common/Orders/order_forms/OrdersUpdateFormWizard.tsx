@@ -1,49 +1,24 @@
-import { Button } from "@dodobrat/react-ui-kit";
-import OrderStepProducts from "../order_steps/OrderStepProducts";
-import { useTranslation } from "react-i18next";
-import { Tabs } from "@dodobrat/react-ui-kit";
-import { useOrdersUpdateContext } from "../../../../context/OrdersUpdateContext";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import { Button, Tabs, Card } from "@dodobrat/react-ui-kit";
+
+import { useOrdersUpdateContext } from "../../../../context/OrdersUpdateContext";
+import { useOrderDetailsUpdate, useOrderFilesUpdate, useOrderProductUpdate } from "../../../../actions/mutateHooks";
+
+import { successToast } from "../../../../helpers/toastEmitter";
+import { parsedFetchedData, parseFilesToFormData, parseProductsToFormData, parseDetailsToFormData } from "../orderUpdateHelpers";
+
+import OrderStepProducts from "../order_steps/OrderStepProducts";
 import OrderStepShipping from "../order_steps/OrderStepShipping";
 import OrderStepPayment from "../order_steps/OrderStepPayment";
 import OrderStepFiles from "../order_steps/OrderStepFiles";
-import { Card } from "@dodobrat/react-ui-kit";
-import { useOrderProductUpdate } from "../../../../actions/mutateHooks";
-import { successToast } from "../../../../helpers/toastEmitter";
-import { useQueryClient } from "react-query";
+import { useWindowResize } from "@dodobrat/react-ui-kit";
 
 interface Props {
 	onClose: any;
 	payload?: any;
 }
-
-const parsedFetchedData = (order) => {
-	console.log(order);
-
-	const parsedOrderData: any = { products: [], shipping: {}, payment: {}, files: [] };
-	//Products
-	const productsWithIds = [];
-	for (const product of order?.products) {
-		productsWithIds.push({ ...product, value: product?.productId, quantity: product?.required });
-	}
-	parsedOrderData.products = productsWithIds;
-
-	//Payment
-	parsedOrderData.payment.companyId = order?.details?.companyId;
-
-	return parsedOrderData;
-};
-
-const parseProductsToFormData = (data) => {
-	const formData = new FormData();
-
-	data.products.forEach((product: { value: string; quantity: string }, idx: number) => {
-		formData.append(`products[${idx}][id]`, product.value);
-		formData.append(`products[${idx}][qty]`, product.quantity);
-	});
-
-	return formData;
-};
 
 const OrdersUpdateFormWizard = (props: Props) => {
 	const {
@@ -53,6 +28,8 @@ const OrdersUpdateFormWizard = (props: Props) => {
 
 	const { t } = useTranslation();
 	const queryClient = useQueryClient();
+
+	const { width } = useWindowResize(100);
 
 	const {
 		dataValue: { data, setData },
@@ -78,30 +55,57 @@ const OrdersUpdateFormWizard = (props: Props) => {
 		},
 	});
 
+	const { mutate: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
+		specs: {
+			orderId: payload?.details?.id,
+		},
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("orders");
+				queryClient.invalidateQueries("orderById");
+			},
+		},
+	});
+
+	const { mutate: updateFiles, isLoading: isLoadingFilesUpdate } = useOrderFilesUpdate({
+		specs: {
+			orderId: payload?.details?.id,
+		},
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("orderById");
+			},
+		},
+	});
+
 	const determineMutateFunction = () => {
 		switch (activeTab) {
 			case 0:
 				return updateProducts(parseProductsToFormData(data));
+			case 1:
+			case 2:
+				return updateDetails(parseDetailsToFormData(data));
+			case 3:
+				return updateFiles(parseFilesToFormData(data));
 			default:
 				return null;
 		}
 	};
 
-	const isLoadingMutation = isLoadingProductsUpdate;
+	const isLoadingMutation = isLoadingProductsUpdate || isLoadingFilesUpdate || isLoadingDetailsUpdate;
 
 	return (
 		<>
 			<Tabs
 				isLoading={isLoadingMutation}
-				orientation='vertical'
-				className='overflow--visible'
+				orientation={width < 1000 ? "horizontal" : "vertical"}
+				className='overflow--visible max-h--unset'
 				contentClassName='w--100'
 				elevation='none'
 				activeTab={activeTab}
-				onTabSelect={(tab: any) => {
-					console.log(tab);
-					setActiveTab(tab);
-				}}>
+				onTabSelect={(tab: number) => setActiveTab(tab)}>
 				<Tabs.Panel tab={t("orders.products")}>
 					<OrderStepProducts useContext={useOrdersUpdateContext} />
 				</Tabs.Panel>
@@ -112,10 +116,10 @@ const OrdersUpdateFormWizard = (props: Props) => {
 					<OrderStepPayment useContext={useOrdersUpdateContext} />
 				</Tabs.Panel>
 				<Tabs.Panel tab={t("orders.files")}>
-					<OrderStepFiles useContext={useOrdersUpdateContext} />
+					<OrderStepFiles useContext={useOrdersUpdateContext} updateForm />
 				</Tabs.Panel>
 			</Tabs>
-			<Card.Footer justify='flex-end' style={{ zIndex: 1 }}>
+			<Card.Footer justify='flex-end'>
 				<Button pigment='primary' onClick={determineMutateFunction}>
 					{t("common.submit")}
 				</Button>

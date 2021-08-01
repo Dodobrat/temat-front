@@ -210,6 +210,9 @@ svg {
 	background-color: $bg;
 }
 
+.max-h--unset {
+	max-height: unset;
+}
 .overflow--visible {
 	overflow: visible;
 }

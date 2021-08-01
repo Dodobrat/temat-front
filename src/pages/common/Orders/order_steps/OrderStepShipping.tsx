@@ -9,6 +9,7 @@ import {
 	useDeliveryMethods,
 	useDeliveryOffices,
 	useDeliveryStreets,
+	usePhoneCodes,
 } from "../../../../actions/fetchHooks";
 import { useEffect, useState } from "react";
 import { Input } from "@dodobrat/react-ui-kit";
@@ -19,19 +20,26 @@ import { Checkbox } from "@dodobrat/react-ui-kit";
 const receiverFields: any = [
 	{
 		type: "email",
-		name: "email",
+		field: "email",
 		col: "12",
 	},
-	{ name: "receiverName" },
-	{ name: "receiverPhone" },
+	{ field: "receiverName", col: "12" },
+	{
+		field: "receiverPhoneCodeId",
+		col: { base: "5", md: "4" },
+		useFetch: usePhoneCodes,
+		searchStringLength: 1,
+		labelComponent: (data) => <PhoneCode data={data} />,
+	},
+	{ field: "receiverPhone", col: { base: "7", md: "8" } },
 ];
 
-const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate }) => {
+const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate, useContext }) => {
 	const { t } = useTranslation();
 
 	const {
 		dataValue: { data },
-	} = useOrdersContext();
+	} = useContext();
 
 	return (
 		<Flex.Col col='12'>
@@ -41,19 +49,45 @@ const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate }) => {
 						Receiver Details
 					</Heading>
 				</Flex.Col>
-				{fields.map((field: any) => {
-					const Component = field.inputType ?? Input;
+				{fields.map((item: any) => {
+					const {
+						field,
+						formControlLabel,
+						col,
+						useFetch,
+						labelComponent,
+						querySpecs,
+						querySpecialKey,
+						dataValue,
+						inputProps,
+						searchStringLength,
+						inputType: Component = Input,
+					} = item;
 
 					return (
-						<Flex.Col col={field.col ?? { base: "12", sm: "6" }} key={field.name}>
-							<FormControl withLabel={field?.formControlLabel} label={t(`orders.${field.name}`)} htmlFor={field.name}>
-								<Component
-									type={field.type ?? "text"}
-									value={data.shipping[field.name] ?? ""}
-									onChange={({ target }) => handleValueUpdate(field.name, target[field?.dataValue ?? "value"])}
-									placeholder={field.name}
-									{...field?.inputProps}
-								/>
+						<Flex.Col col={col ?? { base: "12", sm: "6" }} key={field}>
+							<FormControl withLabel={formControlLabel} label={t(`orders.${field}`)} htmlFor={field}>
+								{useFetch ? (
+									<AsyncSelect
+										querySpecs={querySpecs}
+										querySpecialKey={querySpecialKey}
+										labelComponent={labelComponent}
+										searchStringLength={searchStringLength}
+										useFetch={useFetch}
+										value={data.shipping[field]}
+										onChange={(option) => handleValueUpdate(field, option)}
+										cacheUniqs={querySpecialKey}
+									/>
+								) : (
+									<Component
+										type={field.type ?? "text"}
+										value={data.shipping[field] ?? ""}
+										checked={data.shipping[field] ?? ""}
+										onChange={({ target }) => handleValueUpdate(field, target[dataValue ?? "value"])}
+										placeholder={field}
+										{...inputProps}
+									/>
+								)}
 							</FormControl>
 						</Flex.Col>
 					);
@@ -63,12 +97,12 @@ const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate }) => {
 	);
 };
 
-const DeliveryAddress = ({ deliveryFields, handleValueUpdate }) => {
+const DeliveryAddress = ({ deliveryFields, handleValueUpdate, useContext }) => {
 	const { t } = useTranslation();
 
 	const {
 		dataValue: { data },
-	} = useOrdersContext();
+	} = useContext();
 
 	return (
 		<Flex.Col col='12'>
@@ -109,6 +143,13 @@ const DeliveryAddress = ({ deliveryFields, handleValueUpdate }) => {
 	);
 };
 
+export const PhoneCode = ({ data }) => (
+	<span style={{ display: "flex", alignItems: "center" }}>
+		<img src={data?.flag} alt={data?.country ?? data?.code} style={{ height: "1em", width: "1em", marginRight: "0.5rem" }} />{" "}
+		{data?.code}
+	</span>
+);
+
 const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 	const { t } = useTranslation();
 
@@ -143,9 +184,12 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 				streetNumber: "",
 				email: prev.shipping?.email ?? "",
 				receiverName: prev.shipping?.receiverName ?? "",
+				receiverPhoneCodeId: prev.shipping?.receiverPhoneCodeId ?? null,
 				receiverPhone: prev.shipping?.receiverPhone ?? "",
-				receiverAgentName: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentName : "",
-				receiverAgentPhone: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentPhone : "",
+				receiverAgentName: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentName : null,
+				receiverAgentPhoneCodeId:
+					val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentPhoneCodeId : null,
+				receiverAgentPhone: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentPhone : null,
 			},
 		}));
 	};
@@ -227,16 +271,25 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 				</Flex.Col>
 			)}
 
-			{deliveryType === "address" && <DeliveryAddress deliveryFields={deliveryFields} handleValueUpdate={handleValueUpdate} />}
+			{deliveryType === "address" && (
+				<DeliveryAddress deliveryFields={deliveryFields} handleValueUpdate={handleValueUpdate} useContext={useContext} />
+			)}
 
 			{courierName === "econt" && (
 				<ReceiverInputs
 					fields={[
 						...receiverFields,
-						{ name: "receiverAgentName" },
-						{ name: "receiverAgentPhone" },
+						{ field: "receiverAgentName", col: "12" },
 						{
-							name: "receiverIsCompany",
+							field: "receiverAgentPhoneCodeId",
+							col: { base: "5", md: "4" },
+							useFetch: usePhoneCodes,
+							searchStringLength: 1,
+							labelComponent: (data) => <PhoneCode data={data} />,
+						},
+						{ field: "receiverAgentPhone", col: { base: "7", md: "8" } },
+						{
+							field: "receiverIsCompany",
 							formControlLabel: false,
 							col: "12",
 							inputType: Checkbox,
@@ -248,9 +301,10 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 						},
 					]}
 					handleValueUpdate={handleValueUpdate}
+					useContext={useContext}
 				/>
 			)}
-			{courierName === "speedy" && <ReceiverInputs handleValueUpdate={handleValueUpdate} />}
+			{courierName === "speedy" && <ReceiverInputs handleValueUpdate={handleValueUpdate} useContext={useContext} />}
 		</Flex>
 	);
 };

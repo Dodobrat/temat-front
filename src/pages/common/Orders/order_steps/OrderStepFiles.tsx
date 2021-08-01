@@ -1,16 +1,19 @@
-import { Input } from "@dodobrat/react-ui-kit";
-import { ListGroup } from "@dodobrat/react-ui-kit";
-import { Flex } from "@dodobrat/react-ui-kit";
-import { FormControl } from "@dodobrat/react-ui-kit";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IconTrash, LogoPdf } from "../../../../components/ui/icons";
-import { useOrdersContext } from "../../../../context/OrdersContext";
-import cn from "classnames";
-import { Button } from "@dodobrat/react-ui-kit";
+import { useQueryClient } from "react-query";
+import { Button, Input, ListGroup, Flex, FormControl } from "@dodobrat/react-ui-kit";
 
-const OrderStepFiles = ({ useContext = useOrdersContext }) => {
+import { useOrdersContext } from "../../../../context/OrdersContext";
+import { useOrderFileDelete } from "../../../../actions/mutateHooks";
+
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import cn from "classnames";
+
+import { IconTrash, LogoPdf } from "../../../../components/ui/icons";
+
+const OrderStepFiles = ({ useContext = useOrdersContext, updateForm = false }: { [key: string]: any }) => {
 	const { t } = useTranslation();
+	const queryClient = useQueryClient();
 
 	const {
 		dataValue: { data, setData },
@@ -38,6 +41,7 @@ const OrderStepFiles = ({ useContext = useOrdersContext }) => {
 			files: [...prev.files, e.target.files[0]],
 		}));
 		setCurrFile("");
+		setFileError(null);
 	};
 
 	const removeFileFromList = (file) => {
@@ -49,10 +53,20 @@ const OrderStepFiles = ({ useContext = useOrdersContext }) => {
 		}));
 	};
 
+	const { mutate: deleteFile, isLoading: isLoadingDelete } = useOrderFileDelete({
+		queryConfig: {
+			onSuccess: (res: any) => {
+				successToast(res);
+				queryClient.invalidateQueries("orderById");
+			},
+			onError: (err: any) => errorToast(err),
+		},
+	});
+
 	return (
 		<>
 			{data.files?.length > 0 && (
-				<ListGroup elevation='none' className='my--2 outline'>
+				<ListGroup elevation='none' className='my--2 outline' isLoading={isLoadingDelete}>
 					{data.files.map((file) => (
 						<ListGroup.Item key={file?.name} className='px--2'>
 							<Flex wrap='nowrap' align='center'>
@@ -61,7 +75,14 @@ const OrderStepFiles = ({ useContext = useOrdersContext }) => {
 								</Flex.Col>
 								<Flex.Col>{file?.name}</Flex.Col>
 								<Flex.Col col='auto'>
-									<Button equalDimensions pigment='danger' onClick={() => removeFileFromList(file)}>
+									<Button
+										equalDimensions
+										pigment='danger'
+										onClick={() =>
+											updateForm
+												? deleteFile({ orderId: data?.orderId, fileKey: file?.key })
+												: removeFileFromList(file)
+										}>
 										<IconTrash />
 									</Button>
 								</Flex.Col>

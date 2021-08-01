@@ -183,6 +183,50 @@ export const useOrderProductUpdate = ({ specs, queryConfig }: MutateHookType) =>
 	);
 };
 
+export const useOrderDetailsUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/orders/${specs.orderId}/details`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useOrderFilesUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/orders/${specs.orderId}/files`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useOrderFinish = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async () => {
+			return await axios.post(`${apiUrl}/orders/${specs.orderId}/pack`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useOrderFileDelete = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/orders/${data.orderId}/files/${data.fileKey}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 export const useOrderDelete = ({ queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
