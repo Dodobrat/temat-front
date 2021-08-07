@@ -97,3 +97,27 @@
 	// 	}
 	// }
 }
+
+.react-datepicker-wrapper {
+	width: 100%;
+}
+
+.react-datepicker-popper {
+	width: 100%;
+	.react-datepicker {
+		width: 100%;
+		background-color: $bgCard;
+		color: $mainFont;
+		font-size: 1rem;
+		border: none;
+		border-radius: $smBorderRadius;
+		box-shadow: 0 0 0 0.0625rem rgba($subFont, 0.25), map-get($elevations, "medium");
+		&__triangle {
+			display: none;
+		}
+		&__month-container {
+			width: 100%;
+			float: none;
+		}
+	}
+}

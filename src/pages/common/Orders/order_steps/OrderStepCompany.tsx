@@ -4,12 +4,12 @@ import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useCompanies } from "../../../../actions/fetchHooks";
 
-const OrderStepCompany = () => {
+const OrderStepCompany = ({ useContext = useOrdersContext }) => {
 	const { t } = useTranslation();
 
 	const {
 		dataValue: { data, setData },
-	} = useOrdersContext();
+	} = useContext();
 
 	const handleValueUpdate = (key, val) => {
 		setData((prev) => ({

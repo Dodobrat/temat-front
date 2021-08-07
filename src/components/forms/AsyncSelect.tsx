@@ -20,7 +20,8 @@ interface Props {
 
 const AsyncSelect = (props: Props) => {
 	const {
-		searchStringLength = 4,
+		searchStringLength = 3,
+		defaultSearchString = "",
 		useFetch,
 		valueKey = "id",
 		labelKey = "name",
@@ -57,7 +58,7 @@ const AsyncSelect = (props: Props) => {
 			filters: {
 				...prev.filters,
 				page,
-				searchString,
+				searchString: searchString === "" ? defaultSearchString : searchString,
 			},
 		}));
 	};

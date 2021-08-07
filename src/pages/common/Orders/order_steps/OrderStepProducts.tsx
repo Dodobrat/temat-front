@@ -12,7 +12,12 @@ import { Button } from "@dodobrat/react-ui-kit";
 import { IconAdd, IconMinus, IconTrash } from "../../../../components/ui/icons";
 import { Input } from "@dodobrat/react-ui-kit";
 
-const OrderStepProducts = ({ useContext = useOrdersContext }) => {
+interface Props {
+	useContext?: any;
+	companyId?: any;
+}
+
+const OrderStepProducts = ({ useContext = useOrdersContext, companyId }: Props) => {
 	const { t } = useTranslation();
 
 	const {
@@ -51,7 +56,7 @@ const OrderStepProducts = ({ useContext = useOrdersContext }) => {
 		const newProductList = data.products.map((item) => {
 			const IteratedUniqueId = item?.data?.id ?? item?.productId;
 			const ProductUniqueId = product?.data?.id ?? product?.productId;
-			const ItemQty = item?.quantity ?? item?.required;
+			const ItemQty = item?.quantity || item?.required || product?.expected;
 
 			if (IteratedUniqueId === ProductUniqueId) {
 				return { ...item, quantity: Math.min(ItemQty + 1, 99) };
@@ -69,7 +74,7 @@ const OrderStepProducts = ({ useContext = useOrdersContext }) => {
 		const newProductList = data.products.map((item) => {
 			const IteratedUniqueId = item?.data?.id ?? item?.productId;
 			const ProductUniqueId = product?.data?.id ?? product?.productId;
-			const ItemQty = item?.quantity ?? item?.required;
+			const ItemQty = item?.quantity || item?.required || product?.expected;
 
 			if (IteratedUniqueId === ProductUniqueId) {
 				return { ...item, quantity: Math.max(ItemQty - 1, 1) };
@@ -102,6 +107,8 @@ const OrderStepProducts = ({ useContext = useOrdersContext }) => {
 		}));
 	};
 
+	const innerSetCompanyId = data?.payment?.companyId?.value ?? data?.payment?.companyId;
+
 	return (
 		<>
 			{data.products?.length > 0 && (
@@ -112,7 +119,7 @@ const OrderStepProducts = ({ useContext = useOrdersContext }) => {
 							image: product?.image ?? product?.data?.image,
 							imageAlt: product?.data?.description ?? product?.description,
 							name: product?.name ?? product?.label,
-							qty: product?.quantity ?? product?.required,
+							qty: product?.quantity || product?.required || product?.expected,
 						};
 
 						return (
@@ -175,7 +182,7 @@ const OrderStepProducts = ({ useContext = useOrdersContext }) => {
 					useFetch={useProducts}
 					querySpecs={{
 						filters: {
-							companyId: data?.payment?.companyId?.value ?? data?.payment?.companyId,
+							companyId: companyId ?? innerSetCompanyId,
 						},
 					}}
 					isMulti

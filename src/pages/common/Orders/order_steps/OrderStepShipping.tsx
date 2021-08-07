@@ -113,7 +113,7 @@ const DeliveryAddress = ({ deliveryFields, handleValueUpdate, useContext }) => {
 					</Heading>
 				</Flex.Col>
 				{deliveryFields.map((item) => {
-					const { field, col, useFetch, querySpecs, querySpecialKey } = item;
+					const { field, col, useFetch, querySpecs, querySpecialKey, defaultSearchString } = item;
 
 					return (
 						<Flex.Col col={col} key={field}>
@@ -126,6 +126,7 @@ const DeliveryAddress = ({ deliveryFields, handleValueUpdate, useContext }) => {
 										value={data.shipping[field]}
 										onChange={(option) => handleValueUpdate(field, option)}
 										cacheUniqs={querySpecialKey}
+										defaultSearchString={defaultSearchString}
 									/>
 								) : (
 									<Input
@@ -212,6 +213,7 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 					courier: courierName,
 				},
 				querySpecialKey: [courierName, deliveryType],
+				defaultSearchString: "bulgaria",
 			},
 			{
 				col: { base: "12", sm: "8" },

@@ -11,6 +11,7 @@ import reportWebVitals from "./reportWebVitals";
 import AuthProvider from "./context/AuthContext";
 
 import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
+import { PortalWrapper } from "@dodobrat/react-ui-kit";
 
 const queryClient = new QueryClient();
 
@@ -26,17 +27,19 @@ ReactDOM.render(
 			</AuthProvider>
 			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</QueryClientProvider>
-		<ToastContainer
-			position='bottom-left'
-			autoClose={5000}
-			hideProgressBar={false}
-			newestOnTop
-			closeOnClick
-			rtl={false}
-			pauseOnFocusLoss
-			draggable
-			pauseOnHover
-		/>
+		<PortalWrapper>
+			<ToastContainer
+				position='bottom-left'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
+		</PortalWrapper>
 	</ConfigProvider>,
 	document.getElementById("root")
 );

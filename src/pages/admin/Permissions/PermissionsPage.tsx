@@ -133,12 +133,12 @@ const UsersPage = () => {
 					action: (entry: any) => setShowPermissionForm({ state: true, payload: entry }),
 				});
 			}
-			if (userCan("permissionUpdatePermissionUsers")) {
-				permittedActions.push({
-					type: "edit-users",
-					action: (entry: any) => console.log(entry),
-				});
-			}
+			// if (userCan("permissionUpdatePermissionUsers")) {
+			// 	permittedActions.push({
+			// 		type: "edit-users",
+			// 		action: (entry: any) => console.log(entry),
+			// 	});
+			// }
 			if (userCan("permissionDelete")) {
 				permittedActions.push({
 					type: "delete",

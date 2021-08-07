@@ -238,6 +238,40 @@ export const useOrderDelete = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
+//SHIPPING PLANS
+export const useShippingPlanAdd = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/plans`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useShippingPlanUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/plans/${specs.planId}`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useShippingPlanDelete = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/plans/${data}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 //USERS
 export const useUserAdd = ({ queryConfig }: MutateHookType) => {
 	return useMutation(

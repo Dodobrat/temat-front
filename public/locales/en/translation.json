@@ -36,6 +36,7 @@
 		"companies": "Companies",
 		"products": "Products",
 		"orders": "Orders",
+		"shippingPlans": "Shipping Plans",
 		"settings": "Settings"
 	},
 	"dashboard": {},

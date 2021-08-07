@@ -112,7 +112,7 @@ const CompaniesForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? t("companies.updateCompany") : t("companies.addCompany")}</Text>
 				</Card.Header>
 				<Card.Body>
-					<Form id='companies-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='companies-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
@@ -343,7 +343,7 @@ const CompaniesForm = (props: Props) => {
 					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='companies-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
+					<Button type='submit' form='companies-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
 						{payload ? t("common.update") : t("common.submit")}{" "}
 					</Button>
 				</Card.Footer>

@@ -8,14 +8,14 @@ export const pickPigment = (status: string) => {
 	const parsedStatus = status.trim().replace(" ", "").toLowerCase();
 
 	switch (parsedStatus) {
+		case "rejected":
 		case "cancelled":
 			return "danger";
-		case "onhold":
+		case "partial":
 			return "warning";
 		case "processing":
 		case "created":
 			return "info";
-		case "shipped":
 		case "received":
 			return "success";
 		default:
@@ -23,7 +23,7 @@ export const pickPigment = (status: string) => {
 	}
 };
 
-const OrderStatusCell = (props: Props) => {
+const ShippingPlanStatusCell = (props: Props) => {
 	const { cell, ...rest } = props;
 
 	return (
@@ -33,4 +33,4 @@ const OrderStatusCell = (props: Props) => {
 	);
 };
 
-export default OrderStatusCell;
+export default ShippingPlanStatusCell;

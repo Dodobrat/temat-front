@@ -157,7 +157,7 @@ const UsersForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? t("users.updateUser") : t("users.addUser")}</Text>
 				</Card.Header>
 				<Card.Body>
-					<Form id='users-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='users-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
@@ -428,7 +428,7 @@ const UsersForm = (props: Props) => {
 				<Card.Footer justify='flex-end'>
 					<Button
 						type='submit'
-						form='users-add-form'
+						form='users-form'
 						className='ml--2'
 						isLoading={isLoadingAdd || isLoadingPersonalUpdate || isLoadingCredentialsUpdate}>
 						{payload ? t("common.update") : t("common.submit")}

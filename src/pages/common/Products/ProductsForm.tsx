@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
@@ -39,6 +39,19 @@ const ProductsForm = (props: Props) => {
 		},
 	});
 
+	const noAdditionalData = useMemo(() => {
+		if (!payload) {
+			return true;
+		} else {
+			let isCollapsedPanel = true;
+			if (payload?.image || payload?.width || payload?.height || payload?.weight || payload?.length) {
+				isCollapsedPanel = false;
+			}
+			return isCollapsedPanel;
+		}
+	}, [payload]);
+
+	const [isCollapsed, setIsCollapsed] = useState(noAdditionalData);
 	const [selectValue, setSelectValue] = useState(() => (payload ? { value: payload?.companyId, label: payload?.companyName } : null));
 	const [selectError, setSelectError] = useState(null);
 
@@ -156,7 +169,7 @@ const ProductsForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? t("products.updateProduct") : t("products.addProduct")}</Text>
 				</Card.Header>
 				<Card.Body>
-					<Form id='permissions-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='permissions-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col='12'>
 								<FormControl
@@ -266,7 +279,11 @@ const ProductsForm = (props: Props) => {
 							</Flex.Col>
 							{userCan("productAddAdditionalDetails") && (
 								<Flex.Col col='12'>
-									<Collapse elevation='none' className='temat__form__collapse'>
+									<Collapse
+										elevation='none'
+										className='temat__form__collapse'
+										isCollapsed={isCollapsed}
+										onToggle={(collapsed) => setIsCollapsed(!collapsed)}>
 										<Collapse.Toggle collapseIndicator={false} className='justify--center'>
 											<Text className='mb--0'>{t("products.addAdditionalData")}</Text>
 										</Collapse.Toggle>
@@ -281,7 +298,7 @@ const ProductsForm = (props: Props) => {
 														})}
 														hintMsg={
 															<>
-																{payload ? (
+																{payload?.image ? (
 																	<>
 																		<a
 																			href={payload?.image}
@@ -389,7 +406,7 @@ const ProductsForm = (props: Props) => {
 					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='permissions-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
+					<Button type='submit' form='permissions-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
 						{payload ? t("common.update") : t("common.submit")}
 					</Button>
 				</Card.Footer>

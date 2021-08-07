@@ -3,13 +3,13 @@ import { Button } from "@dodobrat/react-ui-kit";
 import { Badge } from "@dodobrat/react-ui-kit";
 import { CollapseFade } from "@dodobrat/react-ui-kit";
 import { Heading, Card, Flex, Text } from "@dodobrat/react-ui-kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import cn from "classnames";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
-import { useOrderById } from "../../../actions/fetchHooks";
+import { useOrderById, useOrderFileDownloadById } from "../../../actions/fetchHooks";
 import { useOrderFinish } from "../../../actions/mutateHooks";
 import { LogoPdf } from "../../../components/ui/icons";
 import Image from "../../../components/ui/Image";
@@ -82,6 +82,7 @@ const OrdersViewPage = () => {
 	} = useAuthContext();
 
 	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
+	const [clickedFileKey, setClickedFileKey] = useState(null);
 
 	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
 
@@ -97,6 +98,23 @@ const OrdersViewPage = () => {
 		},
 		specialKey: { orderId: orderId, filters: ["products", "files"] },
 	});
+
+	const { data: file } = useOrderFileDownloadById({
+		queryConfig: {
+			enabled: !!clickedFileKey,
+			onError: (err: any) => errorToast(err),
+		},
+		specialKey: { orderId: orderId, fileKey: clickedFileKey },
+	});
+
+	useEffect(() => {
+		if (file) {
+			const link = file?.data?.link;
+			if (link) {
+				window.open(file?.data?.link, "_blank");
+			}
+		}
+	}, [file]);
 
 	const { data: order } = orderData ?? { data: null };
 
@@ -305,12 +323,7 @@ const OrdersViewPage = () => {
 									<ListGroup elevation='none' className='outline mb--2'>
 										<ListGroup.Header>Files</ListGroup.Header>
 										{detailsInfo(order).files?.map((file: any) => (
-											<ListGroup.Item
-												href={file?.link}
-												key={file?.link}
-												target='_blank'
-												rel='noopener noreferrer'
-												download>
+											<ListGroup.Item key={file?.key} onClick={() => setClickedFileKey(file?.key)}>
 												<Flex wrap='nowrap' align='center'>
 													<Flex.Col col='auto'>
 														<LogoPdf height='2rem' width='2rem' />

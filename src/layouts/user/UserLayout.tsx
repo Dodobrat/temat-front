@@ -9,6 +9,7 @@ import {
 	IconInventory,
 	IconBriefcase,
 	IconArchive,
+	IconReceipt,
 } from "../../components/ui/icons";
 import { useLoadUser } from "../../actions/fetchHooks";
 import { useAuthContext } from "../../context/AuthContext";
@@ -30,11 +31,13 @@ const CompaniesPage = lazy(() => import("../../pages/admin/Companies/CompaniesPa
 const DashboardPage = lazy(() => import("../../pages/common/Dashboard/DashboardPage"));
 const ProductsPage = lazy(() => import("../../pages/common/Products/ProductsPage"));
 const OrdersPage = lazy(() => import("../../pages/common/Orders/OrdersPage"));
+const ShippingPlansPage = lazy(() => import("../../pages/common/ShippingPlans/ShippingPlansPage"));
 const SettingsPage = lazy(() => import("../../pages/common/Settings/SettingsPage"));
 //VIEW PAGES
 const CompaniesViewPage = lazy(() => import("../../pages/admin/Companies/CompaniesViewPage"));
 const ProductsViewPage = lazy(() => import("../../pages/common/Products/ProductsViewPage"));
 const OrdersViewPage = lazy(() => import("../../pages/common/Orders/OrdersViewPage"));
+const ShippingPlansViewPage = lazy(() => import("../../pages/common/ShippingPlans/ShippingPlansViewPage"));
 // FALLBACK
 const NotFoundPage = lazy(() => import("../../pages/common/NotFoundPage"));
 
@@ -71,11 +74,39 @@ const UserLayout = () => {
 				permission: "routeDashboard",
 			},
 			{
+				path: "/app/orders",
+				component: OrdersPage,
+				icon: <IconArchive />,
+				label: t("pages.orders"),
+				permission: "routeOrders",
+			},
+			{
+				path: "/app/products",
+				component: ProductsPage,
+				icon: <IconInventory />,
+				label: t("pages.products"),
+				permission: "routeProducts",
+			},
+			{
+				path: "/app/plans",
+				component: ShippingPlansPage,
+				icon: <IconReceipt />,
+				label: t("pages.shippingPlans"),
+				permission: "routeShippingPlans",
+			},
+			{
 				path: "/app/users",
 				component: UsersPage,
 				icon: <IconUsers />,
 				label: t("pages.users"),
 				permission: "routeUsers",
+			},
+			{
+				path: "/app/companies",
+				component: CompaniesPage,
+				icon: <IconBriefcase />,
+				label: t("pages.companies"),
+				permission: "routeCompanies",
 			},
 			{
 				path: "/app/permissions",
@@ -90,27 +121,6 @@ const UserLayout = () => {
 				icon: <IconBadge />,
 				label: t("pages.roles"),
 				permission: "routeRoles",
-			},
-			{
-				path: "/app/companies",
-				component: CompaniesPage,
-				icon: <IconBriefcase />,
-				label: t("pages.companies"),
-				permission: "routeCompanies",
-			},
-			{
-				path: "/app/products",
-				component: ProductsPage,
-				icon: <IconInventory />,
-				label: t("pages.products"),
-				permission: "routeProducts",
-			},
-			{
-				path: "/app/orders",
-				component: OrdersPage,
-				icon: <IconArchive />,
-				label: t("pages.orders"),
-				permission: "routeOrders",
 			},
 			{
 				path: "/app/settings",
@@ -134,6 +144,11 @@ const UserLayout = () => {
 				path: "/app/orders/:id",
 				component: OrdersViewPage,
 				permission: "orderReadSingle",
+			},
+			{
+				path: "/app/plans/:id",
+				component: ShippingPlansViewPage,
+				permission: "planReadSingle",
 			},
 		];
 	}, [t]);

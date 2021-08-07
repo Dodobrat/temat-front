@@ -84,7 +84,7 @@ const RolesForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? "Edit" : "Add"} Role</Text>
 				</Card.Header>
 				<Card.Body>
-					<Form id='roles-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='roles-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col='12'>
 								<FormControl
@@ -125,7 +125,7 @@ const RolesForm = (props: Props) => {
 					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='roles-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
+					<Button type='submit' form='roles-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
 						{payload ? "Update" : "Submit"}
 					</Button>
 				</Card.Footer>

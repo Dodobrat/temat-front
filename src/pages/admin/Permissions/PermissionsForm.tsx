@@ -121,7 +121,7 @@ const PermissionsForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? "Edit" : "Add"} Permission</Text>
 				</Card.Header>
 				<Card.Body>
-					<Form id='permissions-add-form' onSubmit={handleSubmit(onSubmit)}>
+					<Form id='permissions-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col='12'>
 								<FormControl
@@ -184,7 +184,7 @@ const PermissionsForm = (props: Props) => {
 					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='permissions-add-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
+					<Button type='submit' form='permissions-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
 						{payload ? "Update" : "Submit"}
 					</Button>
 				</Card.Footer>

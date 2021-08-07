@@ -18,6 +18,7 @@ import ContactsCell from "./table_cells/ContactsCell";
 import PermissionRolesCell from "./table_cells/PermissionRolesCell";
 import OrderStatusCell from "./table_cells/OrderStatusCell";
 import { AllElevationOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
+import ShippingPlanStatusCell from "./table_cells/ShippingPlanStatusCell";
 
 interface Props {
 	columns: any[];
@@ -124,6 +125,9 @@ const DataTable = ({
 						}
 						case "OrderStatus": {
 							return <OrderStatusCell cell={cell} {...cell.getCellProps()} />;
+						}
+						case "ShippingPlanStatus": {
+							return <ShippingPlanStatusCell cell={cell} {...cell.getCellProps()} />;
 						}
 						case "ProductDetails": {
 							return <ProductDetailsCell cell={cell} {...cell.getCellProps()} />;

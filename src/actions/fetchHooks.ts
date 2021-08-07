@@ -173,6 +173,59 @@ export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specia
 	);
 };
 
+export const useOrderFileDownloadById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderFileDownloadById", specialKey],
+		async ({ queryKey }) => {
+			const orderId = queryKey[1]?.orderId;
+			const fileKey = queryKey[1]?.fileKey;
+			const { data } = await axios.get(`${apiUrl}/orders/${orderId}/files/${fileKey}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+//SHIPPING PLANS
+export const useShippingPlans: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["shippingPlans", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/plans?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+export const useShippingPlanById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["shippingPlanById", specialKey],
+		async ({ queryKey }) => {
+			const planId = queryKey[1]?.planId;
+			const { data } = await axios.get(`${apiUrl}/plans/${planId}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			enabled: queryConfig?.enabled ?? true,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 //DELIVERIES
 export const useDeliveryMethods: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
@@ -278,6 +331,10 @@ export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => 
 		}
 	);
 };
+
+// -----------------------------------
+// HELPERS
+// -----------------------------------
 
 //CURRENCY
 export const useCurrency: FetchQueryType = ({ specs, queryConfig, specialKey }) => {

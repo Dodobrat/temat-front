@@ -14,12 +14,12 @@ const ContactsCell = (props: Props) => {
 		<Table.Cell {...rest}>
 			{rowValues?.phone && (
 				<a href={`tel:${rowValues?.phone}`} className='bgtext--default d--block temat__table__contact'>
-					<IconPhone /> {rowValues?.phone}
+					<IconPhone className='mr--1' /> {rowValues?.phone}
 				</a>
 			)}
 			{rowValues?.email && (
 				<a href={`mailto:${rowValues?.email}`} className='bgtext--default d--block temat__table__contact'>
-					<IconMail /> {rowValues?.email}
+					<IconMail className='mr--1' /> {rowValues?.email}
 				</a>
 			)}
 		</Table.Cell>

@@ -15,7 +15,7 @@ export const successToast = (data: { success: string }) => {
 };
 
 export const errorToast = (data) => {
-	const { message } = data;
+	const message = data?.response?.data?.message;
 
 	return toast.error(message, {
 		position: "bottom-left",
