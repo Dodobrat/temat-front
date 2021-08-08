@@ -11,6 +11,9 @@ export const parseOrderAddData = (data) => {
 	});
 
 	Object.entries(data.shipping).forEach((entry: any) => {
+		if (entry[1] instanceof Date) {
+			formData.append(entry[0], entry[1]?.toISOString().slice(0, 10));
+		}
 		if (typeof entry[1] === "object") {
 			if (entry[0] === "country" && entry[1]?.value) {
 				formData.append(`${entry[0]}Id`, entry[1]?.value);

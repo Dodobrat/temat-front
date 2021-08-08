@@ -18,6 +18,7 @@ export const parsedFetchedData = (order) => {
 
 	//Shipping
 
+	parsedOrderData.shipping.shipDate = new Date(order?.details?.shipDate);
 	parsedOrderData.shipping.shippingMethodId = { value: order?.payment?.shippingMethodId, label: order?.payment?.shippingMethodName };
 	parsedOrderData.shipping.city = { value: order?.address?.cityId, label: order?.address?.city };
 	parsedOrderData.shipping.country = { value: order?.address?.countryId, label: order?.address?.country };
@@ -87,6 +88,9 @@ export const parseDetailsToFormData = (data) => {
 	const formData = new FormData();
 
 	Object.entries(data.shipping).forEach((entry: any) => {
+		if (entry[1] instanceof Date) {
+			formData.append(entry[0], entry[1]?.toISOString().slice(0, 10));
+		}
 		if (typeof entry[1] === "object") {
 			if (entry[0] === "country" && entry[1]?.value) {
 				formData.append(`${entry[0]}Id`, entry[1]?.value);

@@ -32,6 +32,23 @@ export const useLoadUser: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 	);
 };
 
+//DASHBOARD
+export const useOrderStatistics: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderStatistics", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/companies/stats/${specs?.companyId}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			enabled: queryConfig?.enabled ?? true,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 //PERMISSIONS
 export const usePermissions: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
@@ -166,6 +183,23 @@ export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specia
 		{
 			...queryConfig,
 			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+export const useOrderLabelDownloadById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderLabelDownloadById", specialKey],
+		async ({ queryKey }) => {
+			const orderId = queryKey[1]?.orderId;
+			const { data } = await axios.get(`${apiUrl}/deliveries/label/${orderId}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
 			enabled: queryConfig?.enabled ?? false,
 			cacheTime: halfDay,
 			staleTime: halfDay,

@@ -119,5 +119,135 @@
 			width: 100%;
 			float: none;
 		}
+		&__header {
+			&:not(.react-datepicker__header--has-time-select) {
+				border-radius: 0;
+			}
+			padding: 0.625rem;
+			background-color: transparent;
+			border-bottom: 1px solid rgba($mainFont, 0.2);
+		}
+		&__navigation {
+			width: 2rem;
+			height: 2rem;
+			margin-top: 0.3125rem;
+			border-radius: $smBorderRadius;
+			display: grid;
+			align-content: center;
+			background-color: rgba($mainFont, 0.2);
+			&:hover {
+				background-color: rgba($mainFont, 0.1);
+			}
+			&--previous {
+				margin-left: 0.3125rem;
+			}
+			&--next {
+				margin-right: 0.3125rem;
+			}
+			&-icon {
+				border-color: $mainFont;
+				position: relative;
+				display: grid;
+				align-content: center;
+				font-size: 0;
+				&::before {
+					border-color: $mainFont;
+					position: relative;
+					top: unset;
+					right: unset;
+					left: unset;
+					width: 0.625rem;
+					height: 0.625rem;
+				}
+			}
+		}
+		&__current-month {
+			color: $mainFont;
+			font-size: 1rem;
+			padding-bottom: 0.625rem;
+		}
+		&__day-names {
+			margin-bottom: 0;
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+		&__day-name {
+			color: $subFont;
+			margin: 0.3125rem 0 0 0;
+			width: 2rem;
+			line-height: 1.4;
+		}
+		&__month {
+			margin: 0;
+			padding: 0.625rem;
+		}
+		&__week {
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+			padding-bottom: 0.3125rem;
+		}
+		&__week-number {
+			margin: 0;
+			width: 2rem;
+			height: 2rem;
+			display: grid;
+			align-content: center;
+			line-height: 1;
+			color: $primaryBg;
+			font-size: 0.75rem;
+			font-weight: 900;
+		}
+		&__day {
+			margin: 0;
+			width: 2rem;
+			height: 2rem;
+			display: grid;
+			align-content: center;
+			line-height: 1;
+			border-radius: $smBorderRadius;
+			color: $mainFont;
+			font-weight: 600;
+			&:hover {
+				background-color: rgba($mainFont, 0.1);
+			}
+			&--disabled {
+				color: $dangerBg;
+				background-color: rgba($dangerBg, 0.1);
+				&:hover {
+					background-color: rgba($dangerBg, 0.1);
+				}
+			}
+			&--outside-month {
+				opacity: 0.5;
+				background-color: $bgCard;
+			}
+			&--weekend {
+				color: $dangerBg;
+				&:hover {
+					background-color: rgba($dangerBg, 0.1);
+				}
+			}
+			&--today {
+				box-shadow: 0 0 0 0.125rem $primaryBg;
+				&.react-datepicker__day--weekend,
+				&.react-datepicker__day--disabled {
+					box-shadow: 0 0 0 0.125rem $dangerBg;
+				}
+			}
+			&--keyboard-selected {
+				background-color: transparent;
+				box-shadow: 0 0 0 0.25rem rgba($primaryBg, 0.25);
+			}
+			&--selected {
+				background-color: $primaryBg;
+				color: $primaryFont;
+				box-shadow: 0 0 0 0.25rem rgba($primaryBg, 0.25);
+				&:hover {
+					background-color: rgba($primaryBg, 0.75);
+				}
+			}
+		}
 	}
 }

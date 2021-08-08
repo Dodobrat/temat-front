@@ -8,6 +8,7 @@ import Image from "../../../../components/ui/Image";
 import { ListGroup } from "@dodobrat/react-ui-kit";
 import { FormControl } from "@dodobrat/react-ui-kit";
 import { TextArea } from "@dodobrat/react-ui-kit";
+import { parseDate } from "../../../../helpers/dateHelpers";
 
 const EmptyEntry = () => (
 	<Heading as='p' centered className='my--3'>
@@ -40,6 +41,22 @@ const ShippingDetails = ({ item, ...rest }) => {
 
 	if (values.length === 0) return <EmptyEntry />;
 
+	const parseShippingEntry = (entry) => {
+		if (entry) {
+			if (entry.label) {
+				return entry.label;
+			}
+			if (typeof entry === "boolean") {
+				return entry.toString();
+			}
+			if (entry instanceof Date) {
+				return parseDate(entry.toString());
+			}
+			return entry;
+		}
+		return null;
+	};
+
 	return (
 		<ListGroup elevation='none'>
 			{Object.entries(item[1])
@@ -48,9 +65,7 @@ const ShippingDetails = ({ item, ...rest }) => {
 					<ListGroup.Item key={entry[0]}>
 						<Flex align='center' wrap='nowrap' {...rest}>
 							<Flex.Col>{t(`orders.${entry[0]}`)}</Flex.Col>
-							<Flex.Col col='auto'>
-								{entry[1]?.label ? entry[1]?.label : typeof entry[1] === "boolean" ? entry[1].toString() : entry[1]}
-							</Flex.Col>
+							<Flex.Col col='auto'>{parseShippingEntry(entry[1])}</Flex.Col>
 						</Flex>
 					</ListGroup.Item>
 				))}

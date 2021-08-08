@@ -16,6 +16,7 @@ import { Input } from "@dodobrat/react-ui-kit";
 import { Heading } from "@dodobrat/react-ui-kit";
 import { useMemo } from "react";
 import { Checkbox } from "@dodobrat/react-ui-kit";
+import CalendarPicker from "../../../../components/util/DatePicker";
 
 const receiverFields: any = [
 	{
@@ -243,6 +244,15 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 
 	return (
 		<Flex>
+			<Flex.Col col='12'>
+				<FormControl label={t("plans.shipDate")} htmlFor='shipDate'>
+					<CalendarPicker
+						id='shipDate'
+						selected={data?.shipping?.shipDate}
+						onChange={(date) => handleValueUpdate("shipDate", date)}
+					/>
+				</FormControl>
+			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl label={t("orders.delivery")} htmlFor='shippingMethodId' className={cn("")} hintMsg={""}>
 					<AsyncSelect

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Flex, Input, FormControl } from "@dodobrat/react-ui-kit";
+import { Button, Card, Flex, FormControl } from "@dodobrat/react-ui-kit";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../../../../context/AuthContext";
@@ -7,12 +7,11 @@ import OrderStepProducts from "../../Orders/order_steps/OrderStepProducts";
 import { useShippingPlansContext } from "../../../../context/ShippingPlansContext";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useCompanies } from "../../../../actions/fetchHooks";
-import DatePicker, { registerLocale } from "react-datepicker";
 import { TextArea } from "@dodobrat/react-ui-kit";
 
-import enGb from "date-fns/locale/en-GB";
 import { useShippingPlanAdd, useShippingPlanUpdate } from "../../../../actions/mutateHooks";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import CalendarPicker from "../../../../components/util/DatePicker";
 
 interface Props {
 	payload: any;
@@ -41,8 +40,6 @@ const parseProductsToContext = (products) => {
 };
 
 const ShippingPlansFormWizard = (props: Props) => {
-	registerLocale("en-gb", enGb);
-
 	const { onClose, payload } = props;
 
 	const queryClient = useQueryClient();
@@ -114,25 +111,6 @@ const ShippingPlansFormWizard = (props: Props) => {
 		},
 	});
 
-	const isNotSunday = (date) => {
-		const day = new Date(date).getDay();
-		return day !== 0;
-	};
-
-	const excludeUnavailableDates = () => {
-		const excludedDates = [];
-
-		const currDate = new Date();
-		const isCurrSaturday = currDate.getDay() === 6;
-		const currHour = currDate.getHours();
-
-		if (isCurrSaturday && currHour > 12) {
-			excludedDates.push(currDate);
-		}
-
-		return excludedDates;
-	};
-
 	return (
 		<>
 			<Card.Body>
@@ -153,21 +131,10 @@ const ShippingPlansFormWizard = (props: Props) => {
 						</Flex.Col>
 						<Flex.Col col='12'>
 							<FormControl label={t("plans.dateExpected")} htmlFor='dateExpected'>
-								<DatePicker
+								<CalendarPicker
+									id='dateExpected'
 									selected={data?.dateExpected}
 									onChange={(date) => handleValueUpdate("dateExpected", date)}
-									className='w--100'
-									id='dateExpected'
-									dateFormat={"dd MMMM, yyyy"}
-									calendarStartDay={1}
-									locale='en-gb'
-									fixedHeight
-									minDate={new Date()}
-									showWeekNumbers
-									shouldCloseOnSelect
-									excludeDates={excludeUnavailableDates()}
-									filterDate={isNotSunday}
-									customInput={<Input />}
 								/>
 							</FormControl>
 						</Flex.Col>

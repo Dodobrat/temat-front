@@ -107,6 +107,11 @@
 		"files": "Files",
 		"companyId": "Company"
 	},
+	"plans": {
+		"dateExpected": "Date Expected",
+		"extraInfo": "Extra Information",
+		"shipDate": "Ship Date"
+	},
 	"permissions": {},
 	"roles": {},
 	"companies": {

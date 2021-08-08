@@ -9,7 +9,7 @@ import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
-import { useOrderById, useOrderFileDownloadById } from "../../../actions/fetchHooks";
+import { useOrderById, useOrderFileDownloadById, useOrderLabelDownloadById } from "../../../actions/fetchHooks";
 import { useOrderFinish } from "../../../actions/mutateHooks";
 import { LogoPdf } from "../../../components/ui/icons";
 import Image from "../../../components/ui/Image";
@@ -65,11 +65,12 @@ const detailsInfo = (order: { details: any; files: any }) => {
 	const companyId = order?.details?.companyId;
 	const companyName = order?.details?.companyName;
 	const status = order?.details?.status;
+	const shipDate = parseDate(order?.details?.shipDate);
 
 	const note = details?.customerNote ?? null;
 	const company = { id: companyId, name: companyName };
 
-	return { note, files, company, status };
+	return { note, files, company, status, shipDate };
 };
 
 const OrdersViewPage = () => {
@@ -79,6 +80,7 @@ const OrdersViewPage = () => {
 
 	const {
 		userValue: { user },
+		userCan,
 	} = useAuthContext();
 
 	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
@@ -99,6 +101,13 @@ const OrdersViewPage = () => {
 		specialKey: { orderId: orderId, filters: ["products", "files"] },
 	});
 
+	const { data: label, refetch: geOrderLabel } = useOrderLabelDownloadById({
+		queryConfig: {
+			onError: (err: any) => errorToast(err),
+		},
+		specialKey: { orderId: orderId },
+	});
+
 	const { data: file } = useOrderFileDownloadById({
 		queryConfig: {
 			enabled: !!clickedFileKey,
@@ -106,6 +115,15 @@ const OrdersViewPage = () => {
 		},
 		specialKey: { orderId: orderId, fileKey: clickedFileKey },
 	});
+
+	useEffect(() => {
+		if (label) {
+			const link = label?.data?.link;
+			if (link) {
+				window.open(label?.data?.link, "_blank");
+			}
+		}
+	}, [label]);
 
 	useEffect(() => {
 		if (file) {
@@ -153,6 +171,13 @@ const OrdersViewPage = () => {
 					<Flex.Col col='auto'>
 						<Button pigment='none'>{parseDate(order?.details?.dateCreated, true) ?? "Date Added"}</Button>
 					</Flex.Col>
+					{userCan("deliveryLabelCreate") && (
+						<Flex.Col col='auto'>
+							<Button pigment='info' onClick={geOrderLabel}>
+								Get Label
+							</Button>
+						</Flex.Col>
+					)}
 					<Flex.Col col='auto'>
 						<Button
 							pigment='success'
@@ -232,6 +257,11 @@ const OrdersViewPage = () => {
 											<Flex.Col col={{ base: "12", xl: "6", fhd: "4" }} className='h--100'>
 												<Heading as='p'>{t("orders.address")}</Heading>
 												{noAddressData && <NoResults />}
+												{detailsInfo(order).shipDate && (
+													<Text className='mb--1'>
+														Ship Date: <strong>{detailsInfo(order).shipDate}</strong>
+													</Text>
+												)}
 												{paymentInfo(order).shippingMethod && (
 													<Text className='mb--1'>
 														Ship Method: <strong>{paymentInfo(order).shippingMethod}</strong>
