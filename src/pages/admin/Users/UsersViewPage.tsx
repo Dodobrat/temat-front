@@ -5,6 +5,7 @@ import ComingSoon from "../../../components/ui/ComingSoon";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
+import { Flex } from "@dodobrat/react-ui-kit";
 
 const UsersViewPage = () => {
 	const { id }: any = useParams();
@@ -15,9 +16,13 @@ const UsersViewPage = () => {
 				<title>Temat | User #{id}</title>
 			</Helmet>
 			<PageHeader>
-				<Heading as='h6' className='mb--0'>
-					User #{id}
-				</Heading>
+				<Flex align='center'>
+					<Flex.Col>
+						<Heading as='p' className='mb--0'>
+							User #{id}
+						</Heading>
+					</Flex.Col>
+				</Flex>
 			</PageHeader>
 			<PageContent>
 				<ComingSoon />

@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
-import { Heading } from "@dodobrat/react-ui-kit";
+import { Heading, Flex } from "@dodobrat/react-ui-kit";
 import ComingSoon from "../../../components/ui/ComingSoon";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
@@ -15,9 +15,13 @@ const CompaniesViewPage = () => {
 				<title>Temat | Company #{id}</title>
 			</Helmet>
 			<PageHeader>
-				<Heading as='h6' className='mb--0'>
-					Company #{id}
-				</Heading>
+				<Flex align='center'>
+					<Flex.Col>
+						<Heading as='p' className='mb--0'>
+							Company #{id}
+						</Heading>
+					</Flex.Col>
+				</Flex>
 			</PageHeader>
 			<PageContent>
 				<ComingSoon />
