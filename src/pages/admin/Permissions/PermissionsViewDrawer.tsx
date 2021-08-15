@@ -2,6 +2,7 @@ import { Drawer, Card, Button, Text, Flex, Badge } from "@dodobrat/react-ui-kit"
 import { IconClose } from "../../../components/ui/icons";
 import cn from "classnames";
 import { parseDate } from "../../../helpers/dateHelpers";
+import { parseRoles } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -45,10 +46,14 @@ const PermissionsViewDrawer = (props: Props) => {
 							<Text className='mb--0'>{payload?.description}</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Role</Badge>
+							<Badge pigment='secondary'>Roles</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
-							<Text className='mb--0'>{payload?.roleName}</Text>
+							{parseRoles(payload?.roles).map((role) => (
+								<Badge key={role.value} pigment='warning' className='mr--2'>
+									{role.label}
+								</Badge>
+							))}
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
 							<Badge pigment='secondary'>Status</Badge>

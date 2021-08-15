@@ -9,6 +9,16 @@
 @import "toast";
 @import "forms";
 
+.fill__accent {
+	fill: $primaryBg;
+}
+.fill__highlights {
+	fill: $primaryFont;
+}
+.fill__shadows {
+	fill: black;
+}
+
 svg {
 	fill: currentColor;
 }

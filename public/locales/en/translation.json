@@ -11,7 +11,9 @@
 		"back": "Back",
 		"next": "Next",
 		"show": "Show",
-		"hide": "Hide"
+		"hide": "Hide",
+		"comingSoon": "Coming Soon",
+		"underDevelopment": "We're still under development"
 	},
 	"auth": {
 		"login": "Login"

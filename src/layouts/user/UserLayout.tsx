@@ -34,6 +34,7 @@ const OrdersPage = lazy(() => import("../../pages/common/Orders/OrdersPage"));
 const ShippingPlansPage = lazy(() => import("../../pages/common/ShippingPlans/ShippingPlansPage"));
 const SettingsPage = lazy(() => import("../../pages/common/Settings/SettingsPage"));
 //VIEW PAGES
+const UsersViewPage = lazy(() => import("../../pages/admin/Users/UsersViewPage"));
 const CompaniesViewPage = lazy(() => import("../../pages/admin/Companies/CompaniesViewPage"));
 const ProductsViewPage = lazy(() => import("../../pages/common/Products/ProductsViewPage"));
 const OrdersViewPage = lazy(() => import("../../pages/common/Orders/OrdersViewPage"));
@@ -130,6 +131,11 @@ const UserLayout = () => {
 				permission: "routeSettings",
 			},
 			//VIEW PAGES
+			{
+				path: "/app/users/:id",
+				component: UsersViewPage,
+				permission: "userReadSingle",
+			},
 			{
 				path: "/app/companies/:id",
 				component: CompaniesViewPage,

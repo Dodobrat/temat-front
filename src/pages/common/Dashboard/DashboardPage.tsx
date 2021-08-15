@@ -1,11 +1,12 @@
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
-import { Heading, Text } from "@dodobrat/react-ui-kit";
+import { Heading, Card } from "@dodobrat/react-ui-kit";
 import { Helmet } from "react-helmet";
 import { useOrderStatistics } from "../../../actions/fetchHooks";
 import { errorToast } from "../../../helpers/toastEmitter";
 import { useAuthContext } from "../../../context/AuthContext";
+import ComingSoon from "../../../components/ui/ComingSoon";
 
 const DashboardPage = () => {
 	const {
@@ -38,7 +39,12 @@ const DashboardPage = () => {
 				</Heading>
 			</PageHeader>
 			<PageContent>
-				<Text>Page Content</Text>
+				<Card>
+					<Card.Header>Statistics</Card.Header>
+					<Card.Body>
+						<ComingSoon elevation='none' />
+					</Card.Body>
+				</Card>
 			</PageContent>
 		</PageWrapper>
 	);

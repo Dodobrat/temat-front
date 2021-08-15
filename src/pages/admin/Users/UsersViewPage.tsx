@@ -6,17 +6,17 @@ import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 
-const CompaniesViewPage = () => {
+const UsersViewPage = () => {
 	const { id }: any = useParams();
 
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Company #{id}</title>
+				<title>Temat | User #{id}</title>
 			</Helmet>
 			<PageHeader>
 				<Heading as='h6' className='mb--0'>
-					Company #{id}
+					User #{id}
 				</Heading>
 			</PageHeader>
 			<PageContent>
@@ -26,4 +26,4 @@ const CompaniesViewPage = () => {
 	);
 };
 
-export default CompaniesViewPage;
+export default UsersViewPage;
