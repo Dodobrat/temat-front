@@ -11,6 +11,7 @@ import AsyncSelect from "../../../components/forms/AsyncSelect";
 import { useRoles } from "../../../actions/fetchHooks";
 import { useState } from "react";
 import { useEffect } from "react";
+import { confirmOnExit } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -146,7 +147,7 @@ const UsersForm = (props: Props) => {
 	const { ref: innerRefConfirmPassword, ...restConfirmPassword } = register("confirmPassword");
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={

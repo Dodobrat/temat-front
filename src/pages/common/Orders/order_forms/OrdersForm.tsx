@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import OrdersFormWizard from "./OrdersFormWizard";
 import OrdersProvider from "../../../../context/OrdersContext";
 import { Portal } from "@dodobrat/react-ui-kit";
+import { confirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -16,7 +17,7 @@ const OrdersForm = (props: Props) => {
 	const { t } = useTranslation();
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest} withFocusLock>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest} withFocusLock>
 			<Card>
 				<Card.Header
 					actions={

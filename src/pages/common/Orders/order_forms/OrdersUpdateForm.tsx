@@ -7,6 +7,7 @@ import { useOrderById } from "../../../../actions/fetchHooks";
 import { errorToast } from "../../../../helpers/toastEmitter";
 import OrdersUpdateFormWizard from "./OrdersUpdateFormWizard";
 import { useMemo } from "react";
+import { confirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -39,7 +40,7 @@ const OrdersUpdateForm = (props: Props) => {
 	}, [data]);
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest} withFocusLock>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest} withFocusLock>
 			<Card isLoading={isFetching}>
 				<Card.Header
 					actions={

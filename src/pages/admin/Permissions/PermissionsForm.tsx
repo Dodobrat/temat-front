@@ -9,6 +9,7 @@ import { useQueryClient } from "react-query";
 import { useRoles } from "../../../actions/fetchHooks";
 import { useState } from "react";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { confirmOnExit } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -110,7 +111,7 @@ const PermissionsForm = (props: Props) => {
 	});
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={

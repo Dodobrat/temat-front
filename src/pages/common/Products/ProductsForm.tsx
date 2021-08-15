@@ -13,6 +13,7 @@ import { IconClose } from "../../../components/ui/icons";
 import AsyncSelect from "../../../components/forms/AsyncSelect";
 import cn from "classnames";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { confirmOnExit } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -158,7 +159,7 @@ const ProductsForm = (props: Props) => {
 	});
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={

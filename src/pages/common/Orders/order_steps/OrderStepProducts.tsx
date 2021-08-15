@@ -11,7 +11,6 @@ import Image from "../../../../components/ui/Image";
 import { Button } from "@dodobrat/react-ui-kit";
 import { IconAdd, IconMinus, IconTrash } from "../../../../components/ui/icons";
 import { Input } from "@dodobrat/react-ui-kit";
-
 interface Props {
 	useContext?: any;
 	companyId?: any;

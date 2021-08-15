@@ -130,9 +130,8 @@ const ShippingPlansFormWizard = (props: Props) => {
 							<OrderStepProducts useContext={useShippingPlansContext} companyId={data?.companyId?.value ?? data?.companyId} />
 						</Flex.Col>
 						<Flex.Col col='12'>
-							<FormControl label={t("plans.dateExpected")} htmlFor='dateExpected'>
+							<FormControl label={t("plans.dateExpected")}>
 								<CalendarPicker
-									id='dateExpected'
 									selected={data?.dateExpected}
 									onChange={(date) => handleValueUpdate("dateExpected", date)}
 								/>

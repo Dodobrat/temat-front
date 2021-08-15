@@ -5,6 +5,7 @@ import {
 } from "react-select-async-paginate";
 import { useStateWithPromise } from "../../hooks/useStateWithPromise";
 import { errorToast } from "../../helpers/toastEmitter";
+import { useState } from "react";
 
 // import { WindowedMenuList } from "react-windowed-select";
 
@@ -15,11 +16,13 @@ interface Props {
 	valueKey?: string;
 	labelKey?: string;
 	querySpecs?: any;
+	cacheUniqs?: any[];
 	[key: string]: any;
 }
 
 const AsyncSelect = (props: Props) => {
 	const {
+		clearCacheOnMenuOpen,
 		searchStringLength = 3,
 		defaultSearchString = "",
 		useFetch,
@@ -29,8 +32,13 @@ const AsyncSelect = (props: Props) => {
 		querySpecs = {},
 		querySpecialKey,
 		className,
+		cacheUniqs = [],
 		...rest
 	} = props;
+
+	const [clearCacheCounter, setClearCacheCounter] = useState(0);
+
+	const clearCache = () => setClearCacheCounter((prev) => prev + 1);
 
 	const [queryParams, setQueryParams] = useStateWithPromise({
 		filters: {
@@ -107,6 +115,7 @@ const AsyncSelect = (props: Props) => {
 				// 'async-select',
 				className
 			)}
+			onMenuOpen={clearCacheOnMenuOpen && clearCache}
 			classNamePrefix='temat__select'
 			debounceTimeout={300}
 			// components={{ MenuList: WindowedList as any }}
@@ -116,6 +125,7 @@ const AsyncSelect = (props: Props) => {
 
 				return result;
 			}}
+			cacheUniqs={[clearCacheCounter, ...cacheUniqs]}
 			{...rest}
 			additional={{
 				page: 0,

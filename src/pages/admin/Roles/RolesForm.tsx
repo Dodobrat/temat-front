@@ -6,6 +6,7 @@ import cn from "classnames";
 import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { confirmOnExit } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -73,7 +74,7 @@ const RolesForm = (props: Props) => {
 	});
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={

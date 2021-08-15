@@ -77,7 +77,7 @@ const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate, useContext
 										useFetch={useFetch}
 										value={data.shipping[field]}
 										onChange={(option) => handleValueUpdate(field, option)}
-										cacheUniqs={querySpecialKey}
+										cacheUniqs={[querySpecialKey]}
 									/>
 								) : (
 									<Component
@@ -126,8 +126,9 @@ const DeliveryAddress = ({ deliveryFields, handleValueUpdate, useContext }) => {
 										useFetch={useFetch}
 										value={data.shipping[field]}
 										onChange={(option) => handleValueUpdate(field, option)}
-										cacheUniqs={querySpecialKey}
+										cacheUniqs={[querySpecialKey]}
 										defaultSearchString={defaultSearchString}
+										clearCacheOnMenuOpen
 									/>
 								) : (
 									<Input
@@ -245,12 +246,8 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 	return (
 		<Flex>
 			<Flex.Col col='12'>
-				<FormControl label={t("plans.shipDate")} htmlFor='shipDate'>
-					<CalendarPicker
-						id='shipDate'
-						selected={data?.shipping?.shipDate}
-						onChange={(date) => handleValueUpdate("shipDate", date)}
-					/>
+				<FormControl label={t("plans.shipDate")}>
+					<CalendarPicker selected={data?.shipping?.shipDate} onChange={(date) => handleValueUpdate("shipDate", date)} />
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
@@ -269,7 +266,7 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 
 			{deliveryType === "office" && (
 				<Flex.Col col='12'>
-					<FormControl label={t("orders.office")} htmlFor='officeId' className={cn("")} hintMsg={""}>
+					<FormControl label={`${t("orders.office")}*`} htmlFor='officeId' className={cn("")} hintMsg={""}>
 						<AsyncSelect
 							useFetch={useDeliveryOffices}
 							querySpecs={{ courier: courierName }}

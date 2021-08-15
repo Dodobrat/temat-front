@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useShippingPlanById } from "../../../../actions/fetchHooks";
 import { IconClose } from "../../../../components/ui/icons";
 import ShippingPlansProvider from "../../../../context/ShippingPlansContext";
+import { confirmOnExit } from "../../../../helpers/helpers";
 import { errorToast } from "../../../../helpers/toastEmitter";
 import ShippingPlansFormWizard from "./ShippingPlansFormWizard";
 
@@ -35,7 +36,7 @@ const ShippingPlansForm = (props: Props) => {
 	}, [data]);
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card isLoading={isFetching}>
 				<Card.Header
 					actions={
