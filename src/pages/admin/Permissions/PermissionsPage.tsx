@@ -1,20 +1,20 @@
-import { useCallback, useMemo, useState, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
+import { Helmet } from "react-helmet";
+import { useQueryClient } from "react-query";
+import { Heading, Flex, Button, PortalWrapper, Input, Tooltip, ZoomPortal, useDebounce, SlideIn } from "@dodobrat/react-ui-kit";
+
+import { usePermissions } from "../../../actions/fetchHooks";
+import { usePermissionDelete, usePermissionUpdate } from "../../../actions/mutateHooks";
+import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
+
+import { useAuthContext } from "../../../context/AuthContext";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
+
+import { IconAdd, IconFilter, IconErrorCircle } from "../../../components/ui/icons";
+import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
-import { Heading, Flex, Button, PortalWrapper, Input, Tooltip, ZoomPortal } from "@dodobrat/react-ui-kit";
-import { Helmet } from "react-helmet";
-import { usePermissions } from "../../../actions/fetchHooks";
-import { useEffect } from "react";
-import DataTable from "../../../components/util/DataTable";
-import { useAuthContext } from "../../../context/AuthContext";
-import { usePermissionDelete, usePermissionUpdate } from "../../../actions/mutateHooks";
-import { useQueryClient } from "react-query";
-import { useDebounce } from "@dodobrat/react-ui-kit";
-import { IconAdd, IconFilter, IconErrorCircle } from "../../../components/ui/icons";
-import { SlideIn } from "@dodobrat/react-ui-kit";
-import { ResponseColumnType } from "../../../types/global.types";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const PermissionsForm = lazy(() => import("./PermissionsForm"));
 const PermissionsDrawer = lazy(() => import("./PermissionsDrawer"));
@@ -25,33 +25,6 @@ const UsersPage = () => {
 
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
-
-	const [queryParams, setQueryParams] = useState({
-		sortBy: [],
-		filters: {
-			page: 0,
-			perPage: 10,
-			searchString: "",
-		},
-	});
-	const [searchString, setSearchString] = useState("");
-	const [searchStringError, setSearchStringError] = useState(false);
-	const [showFilters, setShowFilters] = useState(false);
-	const [showPermissionForm, setShowPermissionForm] = useState({ state: false, payload: null });
-	const [viewPermission, setViewPermission] = useState({ state: false, payload: null });
-
-	const closeFilters = () => setShowFilters(false);
-	const closePermissionsForm = () => setShowPermissionForm((prev) => ({ ...prev, state: false }));
-	const closePermissionView = () => setViewPermission((prev) => ({ ...prev, state: false }));
-
-	const { data, refetch, isFetching, isStale } = usePermissions({
-		specs: queryParams,
-		queryConfig: {
-			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => errorToast(err),
-		},
-		specialKey: queryParams,
-	});
 
 	const { mutate: deletePermission } = usePermissionDelete({
 		queryConfig: {
@@ -73,6 +46,50 @@ const UsersPage = () => {
 		},
 	});
 
+	const {
+		tableProps,
+		state: { setQueryParams },
+	} = useDataTableGenerate({
+		useFetch: usePermissions,
+		columns: [
+			{
+				type: "Switch",
+				action: ({ value, entry }) => {
+					const data = { id: entry.id, active: value };
+					updatePermissionStatus(data);
+				},
+			},
+		],
+		actions: [
+			{
+				permission: "permissionReadSingle",
+				type: "view",
+				action: (entry: any) => setViewPermission({ state: true, payload: entry }),
+			},
+			{
+				permission: "permissionUpdate",
+				type: "edit",
+				action: (entry: any) => setShowPermissionForm({ state: true, payload: entry }),
+			},
+			{
+				permission: "permissionDelete",
+				type: "delete",
+				withConfirmation: true,
+				action: (entry: any) => deletePermission(entry.id),
+			},
+		],
+	});
+
+	const [searchString, setSearchString] = useState("");
+	const [searchStringError, setSearchStringError] = useState(false);
+	const [showFilters, setShowFilters] = useState(false);
+	const [showPermissionForm, setShowPermissionForm] = useState({ state: false, payload: null });
+	const [viewPermission, setViewPermission] = useState({ state: false, payload: null });
+
+	const closeFilters = () => setShowFilters(false);
+	const closePermissionsForm = () => setShowPermissionForm((prev) => ({ ...prev, state: false }));
+	const closePermissionView = () => setViewPermission((prev) => ({ ...prev, state: false }));
+
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
 
 	const handleOnSearchChange = (e: any) => {
@@ -86,83 +103,6 @@ const UsersPage = () => {
 		}
 	};
 
-	const fetchedData = useMemo(() => data?.data ?? [], [data]);
-	const fetchedMeta = useMemo(() => data?.meta ?? null, [data]);
-
-	const columns = useMemo(() => {
-		if (data) {
-			return data.columns.map((col: ResponseColumnType) => {
-				if (col?.type === "Switch") {
-					return {
-						Header: col.title,
-						accessor: col.accessor,
-						disableSortBy: !col.canSort,
-						type: col?.type,
-						id: col?.id,
-						action: ({ value, entry }) => {
-							const data = { id: entry.id, active: value };
-							updatePermissionStatus(data);
-						},
-					};
-				}
-				return {
-					Header: col.title,
-					accessor: col.accessor,
-					disableSortBy: !col.canSort,
-					type: col?.type,
-					id: col?.id,
-				};
-			});
-		}
-		return [];
-	}, [data, updatePermissionStatus]);
-
-	const actions = useMemo(() => {
-		if (data) {
-			const permittedActions = [];
-
-			if (userCan("permissionReadSingle")) {
-				permittedActions.push({
-					type: "view",
-					action: (entry: any) => setViewPermission({ state: true, payload: entry }),
-				});
-			}
-			if (userCan("permissionUpdate")) {
-				permittedActions.push({
-					type: "edit",
-					action: (entry: any) => setShowPermissionForm({ state: true, payload: entry }),
-				});
-			}
-			// if (userCan("permissionUpdatePermissionUsers")) {
-			// 	permittedActions.push({
-			// 		type: "edit-users",
-			// 		action: (entry: any) => console.log(entry),
-			// 	});
-			// }
-			if (userCan("permissionDelete")) {
-				permittedActions.push({
-					type: "delete",
-					withConfirmation: true,
-					action: (entry: any) => deletePermission(entry.id),
-				});
-			}
-			return permittedActions;
-		}
-		return [];
-	}, [data, userCan, deletePermission]);
-
-	const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
-		setQueryParams((prev) => ({
-			...prev,
-			sortBy,
-			filters: {
-				...prev.filters,
-				page: pageIndex,
-				perPage: pageSize,
-			},
-		}));
-	}, []);
-
 	useEffect(() => {
 		setQueryParams((prev) => ({
 			...prev,
@@ -171,13 +111,7 @@ const UsersPage = () => {
 				searchString: debouncedSearchString,
 			},
 		}));
-	}, [debouncedSearchString]);
-
-	useEffect(() => {
-		if (isStale) {
-			refetch();
-		}
-	}, [queryParams, refetch, isStale]);
+	}, [debouncedSearchString, setQueryParams]);
 
 	return (
 		<PageWrapper>
@@ -227,15 +161,7 @@ const UsersPage = () => {
 						</Flex.Col>
 					</Flex>
 				</PortalWrapper>
-				<DataTable
-					columns={columns}
-					data={fetchedData}
-					fetchData={fetchData}
-					loading={isFetching}
-					actions={actions}
-					serverPageCount={fetchedMeta?.lastPage}
-					serverTotalResults={fetchedMeta?.total}
-				/>
+				<DataTable {...tableProps} />
 			</PageContent>
 			<Suspense fallback={<div />}>
 				<ZoomPortal in={showPermissionForm.state}>

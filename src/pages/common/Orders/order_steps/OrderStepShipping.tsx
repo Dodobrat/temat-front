@@ -16,7 +16,7 @@ import { Input } from "@dodobrat/react-ui-kit";
 import { Heading } from "@dodobrat/react-ui-kit";
 import { useMemo } from "react";
 import { Checkbox } from "@dodobrat/react-ui-kit";
-import CalendarPicker from "../../../../components/util/DatePicker";
+import CalendarPicker from "../../../../components/util/CalendarPicker";
 
 const receiverFields: any = [
 	{

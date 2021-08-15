@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useMemo, useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy } from "react";
+import { Helmet } from "react-helmet";
+import { useQueryClient } from "react-query";
+import { Heading, Flex, Button, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
+
+import { useRoles } from "../../../actions/fetchHooks";
+import { useRoleDelete } from "../../../actions/mutateHooks";
+import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
+
+import { useAuthContext } from "../../../context/AuthContext";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
+
+import { IconAdd } from "../../../components/ui/icons";
+import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
-import { useQueryClient } from "react-query";
-import { useRoles } from "../../../actions/fetchHooks";
-import { useAuthContext } from "../../../context/AuthContext";
-import { IconAdd } from "../../../components/ui/icons";
-import { SlideIn } from "@dodobrat/react-ui-kit";
-import DataTable from "../../../components/util/DataTable";
-import { Helmet } from "react-helmet";
-import { Heading, Flex, Button, ZoomPortal } from "@dodobrat/react-ui-kit";
-import { useRoleDelete } from "../../../actions/mutateHooks";
-import { ResponseColumnType } from "../../../types/global.types";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const RolesForm = lazy(() => import("./RolesForm"));
 const RolesViewDrawer = lazy(() => import("./RolesViewDrawer"));
@@ -20,29 +22,6 @@ const RolesViewDrawer = lazy(() => import("./RolesViewDrawer"));
 const RolesPage = () => {
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
-
-	const [queryParams, setQueryParams] = useState({
-		sortBy: [],
-		filters: {
-			page: 0,
-			perPage: 10,
-			searchString: "",
-		},
-	});
-	const [showRolesForm, setShowRolesForm] = useState({ state: false, payload: null });
-	const [viewRole, setViewRole] = useState({ state: false, payload: null });
-
-	const closeRolesForm = () => setShowRolesForm((prev) => ({ ...prev, state: false }));
-	const closeRoleView = () => setViewRole((prev) => ({ ...prev, state: false }));
-
-	const { data, refetch, isFetching, isStale } = useRoles({
-		specs: queryParams,
-		queryConfig: {
-			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => errorToast(err),
-		},
-		specialKey: queryParams,
-	});
 
 	const { mutate: deleteRole } = useRoleDelete({
 		queryConfig: {
@@ -54,69 +33,33 @@ const RolesPage = () => {
 		},
 	});
 
-	const fetchedData = useMemo(() => data?.data ?? [], [data]);
-	const fetchedMeta = useMemo(() => data?.meta ?? null, [data]);
-
-	const columns = useMemo(() => {
-		if (data) {
-			return data.columns.map((col: ResponseColumnType) => {
-				return {
-					Header: col.title,
-					accessor: col.accessor,
-					disableSortBy: !col.canSort,
-					type: col?.type,
-					id: col?.id,
-				};
-			});
-		}
-		return [];
-	}, [data]);
-
-	const actions = useMemo(() => {
-		if (data) {
-			const permittedActions = [];
-
-			if (userCan("userRoleView")) {
-				permittedActions.push({
-					type: "view",
-					action: (entry: any) => setViewRole({ state: true, payload: entry }),
-				});
-			}
-			if (userCan("userRoleEdit")) {
-				permittedActions.push({
-					type: "edit",
-					action: (entry: any) => setShowRolesForm({ state: true, payload: entry }),
-				});
-			}
-			if (userCan("userRoleDelete")) {
-				permittedActions.push({
-					type: "delete",
-					withConfirmation: true,
-					action: (entry: any) => deleteRole(entry.id),
-				});
-			}
-			return permittedActions;
-		}
-		return [];
-	}, [data, userCan, deleteRole]);
-
-	const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
-		setQueryParams((prev) => ({
-			...prev,
-			sortBy,
-			filters: {
-				...prev.filters,
-				page: pageIndex,
-				perPage: pageSize,
+	const { tableProps } = useDataTableGenerate({
+		useFetch: useRoles,
+		actions: [
+			{
+				permission: "userRoleView",
+				type: "view",
+				action: (entry: any) => setViewRole({ state: true, payload: entry }),
 			},
-		}));
-	}, []);
+			{
+				permission: "userRoleEdit",
+				type: "edit",
+				action: (entry: any) => setShowRolesForm({ state: true, payload: entry }),
+			},
+			{
+				permission: "userRoleDelete",
+				type: "delete",
+				withConfirmation: true,
+				action: (entry: any) => deleteRole(entry.id),
+			},
+		],
+	});
 
-	useEffect(() => {
-		if (isStale) {
-			refetch();
-		}
-	}, [queryParams, refetch, isStale]);
+	const [showRolesForm, setShowRolesForm] = useState({ state: false, payload: null });
+	const [viewRole, setViewRole] = useState({ state: false, payload: null });
+
+	const closeRolesForm = () => setShowRolesForm((prev) => ({ ...prev, state: false }));
+	const closeRoleView = () => setViewRole((prev) => ({ ...prev, state: false }));
 
 	return (
 		<PageWrapper>
@@ -140,15 +83,7 @@ const RolesPage = () => {
 				</Flex>
 			</PageHeader>
 			<PageContent>
-				<DataTable
-					columns={columns}
-					data={fetchedData}
-					fetchData={fetchData}
-					loading={isFetching}
-					actions={actions}
-					serverPageCount={fetchedMeta?.lastPage}
-					serverTotalResults={fetchedMeta?.total}
-				/>
+				<DataTable {...tableProps} />
 			</PageContent>
 			<Suspense fallback={<div />}>
 				<ZoomPortal in={showRolesForm.state}>

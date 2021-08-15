@@ -15,14 +15,14 @@ const PageWrapper = ({ children, ...rest }: Props) => {
 	const { width } = useWindowResize();
 	const history = useHistory();
 
-	useEffect(() => {
-		return history.listen(() => {
+	useEffect(() =>
+		history.listen(() => {
 			window.scrollTo({ top: 0 });
 			if (width <= sidebarBreakpointState) {
 				setSidebarState(false);
 			}
-		});
-	});
+		})
+	);
 
 	return <article {...rest}>{children}</article>;
 };

@@ -1,18 +1,21 @@
-import { useCallback, useEffect, useMemo, useState, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
+import { Helmet } from "react-helmet";
 import { useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
 import { useDebounce, Flex, Heading, Button, PortalWrapper, Input, Tooltip, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
+
 import { useProducts } from "../../../actions/fetchHooks";
 import { useProductDelete, useProductUpdate } from "../../../actions/mutateHooks";
+import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
+
 import { useAuthContext } from "../../../context/AuthContext";
-import { ResponseColumnType } from "../../../types/global.types";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
+
 import { IconAdd, IconFilter, IconErrorCircle } from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 const ProductsForm = lazy(() => import("./ProductsForm"));
 const ProductsDrawer = lazy(() => import("./ProductsDrawer"));
@@ -22,32 +25,6 @@ const ProductsPage = () => {
 
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
-
-	const [queryParams, setQueryParams] = useState({
-		sortBy: [],
-		filters: {
-			page: 0,
-			perPage: 10,
-			searchString: "",
-		},
-	});
-
-	const [searchString, setSearchString] = useState("");
-	const [searchStringError, setSearchStringError] = useState(false);
-	const [showFilters, setShowFilters] = useState(false);
-	const [showProductForm, setShowProductForm] = useState({ state: false, payload: null });
-
-	const closeFilters = () => setShowFilters(false);
-	const closeProductsForm = () => setShowProductForm((prev) => ({ ...prev, state: false }));
-
-	const { data, refetch, isFetching, isStale } = useProducts({
-		specs: queryParams,
-		queryConfig: {
-			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => errorToast(err),
-		},
-		specialKey: queryParams,
-	});
 
 	const { mutate: deleteProduct } = useProductDelete({
 		queryConfig: {
@@ -69,6 +46,53 @@ const ProductsPage = () => {
 		},
 	});
 
+	const {
+		tableProps,
+		state: { setQueryParams },
+	} = useDataTableGenerate({
+		useFetch: useProducts,
+		columns: [
+			{
+				type: "Switch",
+				action: ({ value, entry }) => {
+					const formData = new FormData();
+					formData.append("active", value);
+					const data = { id: entry.id, formData };
+					updateProductStatus(data);
+				},
+			},
+		],
+		actions: [
+			{
+				permission: "productReadSingle",
+				type: "view",
+				props: (entry) => ({
+					as: Link,
+					to: `/app/products/${entry.id}`,
+				}),
+			},
+			{
+				permission: "productUpdate",
+				type: "edit",
+				action: (entry: any) => setShowProductForm({ state: true, payload: entry }),
+			},
+			{
+				permission: "productDelete",
+				type: "delete",
+				withConfirmation: true,
+				action: (entry: any) => deleteProduct(entry.id),
+			},
+		],
+	});
+
+	const [searchString, setSearchString] = useState("");
+	const [searchStringError, setSearchStringError] = useState(false);
+	const [showFilters, setShowFilters] = useState(false);
+	const [showProductForm, setShowProductForm] = useState({ state: false, payload: null });
+
+	const closeFilters = () => setShowFilters(false);
+	const closeProductsForm = () => setShowProductForm((prev) => ({ ...prev, state: false }));
+
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
 
 	const handleOnSearchChange = (e: any) => {
@@ -82,82 +106,6 @@ const ProductsPage = () => {
 		}
 	};
 
-	const fetchedData = useMemo(() => data?.data ?? [], [data]);
-	const fetchedMeta = useMemo(() => data?.meta ?? null, [data]);
-
-	const columns = useMemo(() => {
-		if (data) {
-			return data.columns.map((col: ResponseColumnType) => {
-				if (col?.type === "Switch") {
-					return {
-						Header: col.title,
-						accessor: col.accessor,
-						disableSortBy: !col.canSort,
-						type: col?.type,
-						id: col?.id,
-						action: ({ value, entry }) => {
-							const formData = new FormData();
-							formData.append("active", value);
-							const data = { id: entry.id, formData };
-							updateProductStatus(data);
-						},
-					};
-				}
-				return {
-					Header: col.title,
-					accessor: col.accessor,
-					disableSortBy: !col.canSort,
-					type: col?.type,
-					id: col?.id,
-				};
-			});
-		}
-		return [];
-	}, [data, updateProductStatus]);
-
-	const actions = useMemo(() => {
-		if (data) {
-			const permittedActions = [];
-
-			if (userCan("productReadSingle")) {
-				permittedActions.push({
-					type: "view",
-					props: (entry) => ({
-						as: Link,
-						to: `/app/products/${entry.id}`,
-					}),
-				});
-			}
-			if (userCan("productUpdate")) {
-				permittedActions.push({
-					type: "edit",
-					action: (entry: any) => setShowProductForm({ state: true, payload: entry }),
-				});
-			}
-			if (userCan("productDelete")) {
-				permittedActions.push({
-					type: "delete",
-					withConfirmation: true,
-					action: (entry: any) => deleteProduct(entry.id),
-				});
-			}
-			return permittedActions;
-		}
-		return [];
-	}, [data, userCan, deleteProduct]);
-
-	const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
-		setQueryParams((prev) => ({
-			...prev,
-			sortBy,
-			filters: {
-				...prev.filters,
-				page: pageIndex,
-				perPage: pageSize,
-			},
-		}));
-	}, []);
-
 	useEffect(() => {
 		setQueryParams((prev) => ({
 			...prev,
@@ -166,13 +114,7 @@ const ProductsPage = () => {
 				searchString: debouncedSearchString,
 			},
 		}));
-	}, [debouncedSearchString]);
-
-	useEffect(() => {
-		if (isStale) {
-			refetch();
-		}
-	}, [queryParams, refetch, isStale]);
+	}, [debouncedSearchString, setQueryParams]);
 
 	return (
 		<PageWrapper>
@@ -222,15 +164,7 @@ const ProductsPage = () => {
 						</Flex.Col>
 					</Flex>
 				</PortalWrapper>
-				<DataTable
-					columns={columns}
-					data={fetchedData}
-					fetchData={fetchData}
-					loading={isFetching}
-					actions={actions}
-					serverPageCount={fetchedMeta?.lastPage}
-					serverTotalResults={fetchedMeta?.total}
-				/>
+				<DataTable {...tableProps} />
 			</PageContent>
 			<Suspense fallback={<div />}>
 				<ZoomPortal in={showProductForm.state}>

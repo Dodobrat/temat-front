@@ -1,26 +1,21 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { useDebounce } from "@dodobrat/react-ui-kit";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
+import { useQueryClient } from "react-query";
+import { useDebounce, Flex, Heading, Button, PortalWrapper, Input, Tooltip, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
+
 import { useOrders } from "../../../actions/fetchHooks";
+import { useOrderDelete } from "../../../actions/mutateHooks";
+import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
+
 import { useAuthContext } from "../../../context/AuthContext";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import { ResponseColumnType } from "../../../types/global.types";
-import { Link } from "react-router-dom";
-import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
-import { Helmet } from "react-helmet";
-import PageHeader from "../../../components/ui/wrappers/PageHeader";
-import { Flex } from "@dodobrat/react-ui-kit";
-import { Heading } from "@dodobrat/react-ui-kit";
-import { Button } from "@dodobrat/react-ui-kit";
+
 import { IconAdd, IconErrorCircle, IconFilter } from "../../../components/ui/icons";
+import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
+import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
-import { PortalWrapper } from "@dodobrat/react-ui-kit";
-import { Input } from "@dodobrat/react-ui-kit";
-import { Tooltip } from "@dodobrat/react-ui-kit";
 import DataTable from "../../../components/util/DataTable";
-import { ZoomPortal } from "@dodobrat/react-ui-kit";
-import { SlideIn } from "@dodobrat/react-ui-kit";
-import { useOrderDelete } from "../../../actions/mutateHooks";
-import { useQueryClient } from "react-query";
 
 const OrdersForm = lazy(() => import("./order_forms/OrdersForm"));
 const OrdersUpdateForm = lazy(() => import("./order_forms/OrdersUpdateForm"));
@@ -32,33 +27,6 @@ const OrdersPage = () => {
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
 
-	const [queryParams, setQueryParams] = useState({
-		sortBy: [],
-		filters: {
-			page: 0,
-			perPage: 10,
-			searchString: "",
-		},
-	});
-	const [searchString, setSearchString] = useState("");
-	const [searchStringError, setSearchStringError] = useState(false);
-	const [showOrdersForm, setShowOrdersForm] = useState({ state: false, payload: null });
-	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
-	const [showFilters, setShowFilters] = useState(false);
-
-	const closeOrdersForm = () => setShowOrdersForm((prev) => ({ ...prev, state: false }));
-	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
-	const closeFilters = () => setShowFilters(false);
-
-	const { data, refetch, isFetching, isStale } = useOrders({
-		specs: queryParams,
-		queryConfig: {
-			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => errorToast(err),
-		},
-		specialKey: queryParams,
-	});
-
 	const { mutate: deleteOrder } = useOrderDelete({
 		queryConfig: {
 			onSuccess: (res: any) => {
@@ -68,6 +36,44 @@ const OrdersPage = () => {
 			onError: (err: any) => errorToast(err),
 		},
 	});
+
+	const {
+		tableProps,
+		state: { setQueryParams },
+	} = useDataTableGenerate({
+		useFetch: useOrders,
+		actions: [
+			{
+				permission: "orderReadSingle",
+				type: "view",
+				props: (entry) => ({
+					as: Link,
+					to: `/app/orders/${entry.id}`,
+				}),
+			},
+			{
+				permission: "orderUpdate",
+				type: "edit",
+				action: (entry: any) => setShowOrdersUpdateForm({ state: true, payload: entry }),
+			},
+			{
+				permission: "orderDelete",
+				type: "delete",
+				withConfirmation: true,
+				action: (entry: any) => deleteOrder(entry.id),
+			},
+		],
+	});
+
+	const [searchString, setSearchString] = useState("");
+	const [searchStringError, setSearchStringError] = useState(false);
+	const [showOrdersForm, setShowOrdersForm] = useState({ state: false, payload: null });
+	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
+	const [showFilters, setShowFilters] = useState(false);
+
+	const closeOrdersForm = () => setShowOrdersForm((prev) => ({ ...prev, state: false }));
+	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
+	const closeFilters = () => setShowFilters(false);
 
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
 
@@ -82,68 +88,6 @@ const OrdersPage = () => {
 		}
 	};
 
-	const fetchedData = useMemo(() => data?.data ?? [], [data]);
-	const fetchedMeta = useMemo(() => data?.meta ?? null, [data]);
-
-	const columns = useMemo(() => {
-		if (data) {
-			return data.columns.map((col: ResponseColumnType) => {
-				return {
-					Header: col.title,
-					accessor: col.accessor,
-					disableSortBy: !col.canSort,
-					type: col?.type,
-					id: col?.id,
-				};
-			});
-		}
-		return [];
-	}, [data]);
-
-	const actions = useMemo(() => {
-		if (data) {
-			const permittedActions = [];
-
-			if (userCan("orderReadSingle")) {
-				permittedActions.push({
-					type: "view",
-					props: (entry) => ({
-						as: Link,
-						to: `/app/orders/${entry.id}`,
-					}),
-				});
-			}
-			if (userCan("orderUpdate")) {
-				permittedActions.push({
-					type: "edit",
-					action: (entry: any) => setShowOrdersUpdateForm({ state: true, payload: entry }),
-				});
-			}
-			if (userCan("orderDelete")) {
-				permittedActions.push({
-					type: "delete",
-					withConfirmation: true,
-					action: (entry: any) => deleteOrder(entry.id),
-				});
-			}
-
-			return permittedActions;
-		}
-		return [];
-	}, [data, userCan, deleteOrder]);
-
-	const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
-		setQueryParams((prev) => ({
-			...prev,
-			sortBy,
-			filters: {
-				...prev.filters,
-				page: pageIndex,
-				perPage: pageSize,
-			},
-		}));
-	}, []);
-
 	useEffect(() => {
 		setQueryParams((prev) => ({
 			...prev,
@@ -152,13 +96,7 @@ const OrdersPage = () => {
 				searchString: debouncedSearchString,
 			},
 		}));
-	}, [debouncedSearchString]);
-
-	useEffect(() => {
-		if (isStale) {
-			refetch();
-		}
-	}, [queryParams, refetch, isStale]);
+	}, [debouncedSearchString, setQueryParams]);
 
 	return (
 		<PageWrapper>
@@ -172,7 +110,7 @@ const OrdersPage = () => {
 							Orders
 						</Heading>
 					</Flex.Col>
-					{userCan("orderCreate") && (
+					{userCan(["orderCreate", "orderCreateTheir"]) && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowOrdersForm({ state: true, payload: null })} iconStart={<IconAdd />}>
 								Add New
@@ -208,15 +146,7 @@ const OrdersPage = () => {
 						</Flex.Col>
 					</Flex>
 				</PortalWrapper>
-				<DataTable
-					columns={columns}
-					data={fetchedData}
-					fetchData={fetchData}
-					loading={isFetching}
-					actions={actions}
-					serverPageCount={fetchedMeta?.lastPage}
-					serverTotalResults={fetchedMeta?.total}
-				/>
+				<DataTable {...tableProps} />
 			</PageContent>
 			<Suspense fallback={<div />}>
 				<ZoomPortal in={showOrdersForm.state}>

@@ -1,4 +1,3 @@
-import React from "react";
 import { Table, Heading } from "@dodobrat/react-ui-kit";
 
 const NoDataRow = () => {

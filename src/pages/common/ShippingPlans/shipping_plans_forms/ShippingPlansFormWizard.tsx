@@ -11,7 +11,7 @@ import { TextArea } from "@dodobrat/react-ui-kit";
 
 import { useShippingPlanAdd, useShippingPlanUpdate } from "../../../../actions/mutateHooks";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
-import CalendarPicker from "../../../../components/util/DatePicker";
+import CalendarPicker from "../../../../components/util/CalendarPicker";
 
 interface Props {
 	payload: any;
