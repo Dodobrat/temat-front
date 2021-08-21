@@ -44,7 +44,7 @@ const OrdersPage = () => {
 		useFetch: useOrders,
 		actions: [
 			{
-				permission: "orderReadSingle",
+				permission: ["orderReadSingle", "orderReadSingleTheir"],
 				type: "view",
 				props: (entry) => ({
 					as: Link,
@@ -52,12 +52,12 @@ const OrdersPage = () => {
 				}),
 			},
 			{
-				permission: "orderUpdate",
+				permission: ["orderUpdate", "orderUpdateTheir"],
 				type: "edit",
 				action: (entry: any) => setShowOrdersUpdateForm({ state: true, payload: entry }),
 			},
 			{
-				permission: "orderDelete",
+				permission: ["orderDelete", "orderDeleteTheir"],
 				type: "delete",
 				withConfirmation: true,
 				action: (entry: any) => deleteOrder(entry.id),

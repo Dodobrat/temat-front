@@ -64,7 +64,7 @@ const ProductsPage = () => {
 		],
 		actions: [
 			{
-				permission: "productReadSingle",
+				permission: ["productReadSingle", "productReadSingleTheir"],
 				type: "view",
 				props: (entry) => ({
 					as: Link,
@@ -72,12 +72,12 @@ const ProductsPage = () => {
 				}),
 			},
 			{
-				permission: "productUpdate",
+				permission: ["productUpdate", "productUpdateTheir"],
 				type: "edit",
 				action: (entry: any) => setShowProductForm({ state: true, payload: entry }),
 			},
 			{
-				permission: "productDelete",
+				permission: ["productDelete", "productDeleteTheir"],
 				type: "delete",
 				withConfirmation: true,
 				action: (entry: any) => deleteProduct(entry.id),

@@ -37,7 +37,7 @@ const ShippingPlansPage = () => {
 		useFetch: useShippingPlans,
 		actions: [
 			{
-				permission: "planReadSingle",
+				permission: ["planReadSingle", "planReadSingleTheir"],
 				type: "view",
 				props: (entry) => ({
 					as: Link,
@@ -45,12 +45,12 @@ const ShippingPlansPage = () => {
 				}),
 			},
 			{
-				permission: "planUpdate",
+				permission: ["planUpdate", "planUpdateTheir"],
 				type: "edit",
 				action: (entry: any) => setShowShippingPlansForm({ state: true, payload: entry }),
 			},
 			{
-				permission: "planDelete",
+				permission: ["planDelete", "planDeleteTheir"],
 				type: "delete",
 				withConfirmation: true,
 				action: (entry: any) => deleteShippingPlan(entry.id),
