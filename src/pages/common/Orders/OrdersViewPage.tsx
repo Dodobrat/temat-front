@@ -118,12 +118,16 @@ const OrdersViewPage = () => {
 
 	useEffect(() => {
 		if (label) {
-			const link = label?.data?.link;
+			const {link, file} = label?.data;
+
 			if (link) {
-				window.open(label?.data?.link, "_blank");
+			 	window.open(link, "_blank");
+			 } else if(file) {
+				let pdfWindow = window.open("");
+				pdfWindow.document.write("<iframe width='100%' height='100%' src='data:application/pdf;base64," + encodeURI(label.data.file) + "'></iframe>")
+			 }
 			}
-		}
-	}, [label]);
+		}, [label]);
 
 	useEffect(() => {
 		if (file) {
@@ -173,7 +177,7 @@ const OrdersViewPage = () => {
 					</Flex.Col>
 					{userCan("deliveryLabelCreate") && (
 						<Flex.Col col='auto'>
-							<Button pigment='info' onClick={geOrderLabel}>
+							<Button pigment='info' onClick={geOrderLabel} >
 								Get Label
 							</Button>
 						</Flex.Col>

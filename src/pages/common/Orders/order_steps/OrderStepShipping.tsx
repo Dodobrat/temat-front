@@ -33,6 +33,7 @@ const receiverFields: any = [
 		labelComponent: (data) => <PhoneCode data={data} />,
 	},
 	{ field: "receiverPhone", col: { base: "7", md: "8" } },
+	{ field: "receiverAgentName", col: "12" },
 ];
 
 const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate, useContext }) => {
@@ -288,7 +289,6 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 				<ReceiverInputs
 					fields={[
 						...receiverFields,
-						{ field: "receiverAgentName", col: "12" },
 						{
 							field: "receiverAgentPhoneCodeId",
 							col: { base: "5", md: "4" },
@@ -313,7 +313,20 @@ const OrderStepShipping = ({ useContext = useOrdersContext }) => {
 					useContext={useContext}
 				/>
 			)}
-			{courierName === "speedy" && <ReceiverInputs handleValueUpdate={handleValueUpdate} useContext={useContext} />}
+			{courierName === "speedy" && <ReceiverInputs fields={[
+						...receiverFields,
+						{
+							field: "receiverIsCompany",
+							formControlLabel: false,
+							col: "12",
+							inputType: Checkbox,
+							dataValue: "checked",
+							inputProps: {
+								seamless: true,
+								children: t("orders.receiverIsCompany"),
+							},
+						},
+					]} handleValueUpdate={handleValueUpdate} useContext={useContext} />}
 		</Flex>
 	);
 };
