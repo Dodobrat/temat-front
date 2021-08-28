@@ -182,14 +182,14 @@ const OrdersViewPage = () => {
 							</Button>
 						</Flex.Col>
 					)}
-					<Flex.Col col='auto'>
+					{userCan("orderFinishPack") && (<Flex.Col col='auto'>
 						<Button
 							pigment='success'
 							onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
 							isLoading={isLoadingFinish}>
 							{order?.details?.status !== "Shipped" ? "Finish Order" : "Finished"}
 						</Button>
-					</Flex.Col>
+					</Flex.Col>)}
 				</Flex>
 			</PageHeader>
 			<PageContent>

@@ -149,7 +149,7 @@ const UserLayout = () => {
 			{
 				path: "/app/orders/:id",
 				component: OrdersViewPage,
-				permission: "orderReadSingle",
+				permission: ["orderReadSingle", "orderReadSingleTheir"],
 			},
 			{
 				path: "/app/plans/:id",
