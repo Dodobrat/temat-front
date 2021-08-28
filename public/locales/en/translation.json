@@ -156,6 +156,7 @@
 	"settings": {
 		"appearance": "Appearance",
 		"changeTheme": "Change Theme",
+		"changeLocale": "Change Locale",
 		"changeRoundness": "Change Roundness"
 	}
 }
