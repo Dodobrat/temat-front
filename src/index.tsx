@@ -13,7 +13,14 @@ import AuthProvider from "./context/AuthContext";
 import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 import { PortalWrapper } from "@dodobrat/react-ui-kit";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retryDelay: 5000,
+			retry: 1,
+		},
+	},
+});
 
 const appConfig: GlobalOptions = {
 	containerSize: "fhd",

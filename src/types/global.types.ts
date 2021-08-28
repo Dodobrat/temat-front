@@ -5,7 +5,7 @@ export type PagesOptionsType = {
 	component: React.LazyExoticComponent<() => JSX.Element> | any;
 	icon?: React.ReactNode;
 	label?: string;
-	permission: string | Array<string>;
+	permission: string | string[];
 	exact?: boolean;
 	subPages?: PagesOptionsType[];
 };

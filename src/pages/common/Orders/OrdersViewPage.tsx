@@ -2,6 +2,7 @@ import { ListGroup } from "@dodobrat/react-ui-kit";
 import { Button } from "@dodobrat/react-ui-kit";
 import { Badge } from "@dodobrat/react-ui-kit";
 import { CollapseFade } from "@dodobrat/react-ui-kit";
+import { Portal } from "@dodobrat/react-ui-kit";
 import { Heading, Card, Flex, Text } from "@dodobrat/react-ui-kit";
 import { useEffect, useState } from "react";
 // import cn from "classnames";
@@ -11,7 +12,7 @@ import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { useOrderById, useOrderFileDownloadById, useOrderLabelDownloadById } from "../../../actions/fetchHooks";
 import { useOrderFinish } from "../../../actions/mutateHooks";
-import { LogoPdf } from "../../../components/ui/icons";
+import { IconClose, LogoPdf } from "../../../components/ui/icons";
 import Image from "../../../components/ui/Image";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
@@ -86,6 +87,10 @@ const OrdersViewPage = () => {
 	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
 	const [clickedFileKey, setClickedFileKey] = useState(null);
 
+	const [downloadPopUp, setDownloadPopUp] = useState({ state: false, payload: null });
+
+	const closeDownloadPopUp = () => setDownloadPopUp({ state: false, payload: null });
+
 	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
 
 	const { data: orderData } = useOrderById({
@@ -118,22 +123,29 @@ const OrdersViewPage = () => {
 
 	useEffect(() => {
 		if (label) {
-			const {link, file} = label?.data;
+			const { link, file } = label?.data;
+			let fileURL: string;
 
 			if (link) {
-			 	window.open(link, "_blank");
-			 } else if(file) {
-				let pdfWindow = window.open("");
-				pdfWindow.document.write("<iframe width='100%' height='100%' src='data:application/pdf;base64," + encodeURI(label.data.file) + "'></iframe>")
-			 }
+				fileURL = link;
+			} else if (file) {
+				fileURL = `data:application/pdf;base64,${encodeURI(file)}`;
 			}
-		}, [label]);
+
+			setDownloadPopUp({
+				state: true,
+				payload: (
+					<iframe title='shipping_label' width='100%' height='100%' style={{ border: "none", minHeight: "60vh" }} src={fileURL} />
+				),
+			});
+		}
+	}, [label]);
 
 	useEffect(() => {
 		if (file) {
-			const link = file?.data?.link;
+			const { link } = file?.data;
 			if (link) {
-				window.open(file?.data?.link, "_blank");
+				window.open(link, "_blank");
 			}
 		}
 	}, [file]);
@@ -156,7 +168,6 @@ const OrdersViewPage = () => {
 
 	const noAddressData = !addressInfo(order).main && !addressInfo(order).secondary && !addressInfo(order).office;
 	const noClientData = !clientInfo(order).receiver && !clientInfo(order).agent && !clientInfo(order).contact;
-	const noDetailsData = detailsInfo(order).files?.length === 0 && !detailsInfo(order).note;
 
 	const NoResults = () => <strong className='text--opaque'>N/A</strong>;
 
@@ -177,19 +188,21 @@ const OrdersViewPage = () => {
 					</Flex.Col>
 					{userCan("deliveryLabelCreate") && (
 						<Flex.Col col='auto'>
-							<Button pigment='info' onClick={geOrderLabel} >
+							<Button pigment='info' onClick={geOrderLabel}>
 								Get Label
 							</Button>
 						</Flex.Col>
 					)}
-					{userCan("orderFinishPack") && (<Flex.Col col='auto'>
-						<Button
-							pigment='success'
-							onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
-							isLoading={isLoadingFinish}>
-							{order?.details?.status !== "Shipped" ? "Finish Order" : "Finished"}
-						</Button>
-					</Flex.Col>)}
+					{userCan("orderFinishPack") && (
+						<Flex.Col col='auto'>
+							<Button
+								pigment='success'
+								onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
+								isLoading={isLoadingFinish}>
+								{order?.details?.status !== "Shipped" ? "Finish Order" : "Finished"}
+							</Button>
+						</Flex.Col>
+					)}
 				</Flex>
 			</PageHeader>
 			<PageContent>
@@ -342,7 +355,6 @@ const OrdersViewPage = () => {
 						<Card className='temat__view__aside__card'>
 							<Card.Body>
 								<Heading as='p'>{t("orders.additionalInfo")}</Heading>
-								{noDetailsData && <NoResults />}
 								{detailsInfo(order).status && (
 									<Flex align='center' disableNegativeSpace className='mb--2 p--2 outline flavor--default'>
 										<Flex.Col>Status</Flex.Col>
@@ -353,10 +365,10 @@ const OrdersViewPage = () => {
 										</Flex.Col>
 									</Flex>
 								)}
-								{detailsInfo(order).files?.length > 0 && (
-									<ListGroup elevation='none' className='outline mb--2'>
-										<ListGroup.Header>Files</ListGroup.Header>
-										{detailsInfo(order).files?.map((file: any) => (
+								<ListGroup elevation='none' className='outline mb--2'>
+									<ListGroup.Header>Files</ListGroup.Header>
+									{detailsInfo(order).files?.length > 0 ? (
+										detailsInfo(order)?.files?.map((file: any) => (
 											<ListGroup.Item key={file?.key} onClick={() => setClickedFileKey(file?.key)}>
 												<Flex wrap='nowrap' align='center'>
 													<Flex.Col col='auto'>
@@ -365,9 +377,13 @@ const OrdersViewPage = () => {
 													<Flex.Col>{file?.name}</Flex.Col>
 												</Flex>
 											</ListGroup.Item>
-										))}
-									</ListGroup>
-								)}
+										))
+									) : (
+										<ListGroup.Item>
+											<NoResults />
+										</ListGroup.Item>
+									)}
+								</ListGroup>
 								{user?.roleName === "ADMIN" && detailsInfo(order).company.name && (
 									<ListGroup elevation='none' className='outline mb--2'>
 										<ListGroup.Header>Company Name</ListGroup.Header>
@@ -376,17 +392,28 @@ const OrdersViewPage = () => {
 										</ListGroup.Item>
 									</ListGroup>
 								)}
-								{detailsInfo(order).note && (
-									<ListGroup elevation='none' className='outline'>
-										<ListGroup.Header>Note</ListGroup.Header>
-										<ListGroup.Item>{detailsInfo(order).note}</ListGroup.Item>
-									</ListGroup>
-								)}
+								<ListGroup elevation='none' className='outline'>
+									<ListGroup.Header>Note</ListGroup.Header>
+									<ListGroup.Item>{detailsInfo(order).note ?? <NoResults />}</ListGroup.Item>
+								</ListGroup>
 							</Card.Body>
 						</Card>
 					</Flex.Col>
 				</Flex>
 			</PageContent>
+			<Portal animation='zoom' sizing='lg' isOpen={downloadPopUp.state} onClose={closeDownloadPopUp}>
+				<Card>
+					<Card.Header
+						actions={
+							<Button equalDimensions sizing='sm' onClick={closeDownloadPopUp} pigment='default'>
+								<IconClose />
+							</Button>
+						}>
+						<Text className='mb--0'>Download File</Text>
+					</Card.Header>
+					<Card.Body>{downloadPopUp.payload}</Card.Body>
+				</Card>
+			</Portal>
 		</PageWrapper>
 	);
 };
