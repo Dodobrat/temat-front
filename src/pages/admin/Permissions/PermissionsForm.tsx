@@ -1,13 +1,14 @@
-import { Form } from "@dodobrat/react-ui-kit";
-import { Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
-import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { Controller, useForm } from "react-hook-form";
+import { Form, Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
+import { useRoles } from "../../../actions/fetchHooks";
+import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHooks";
+
 import { IconClose } from "../../../components/ui/icons";
 import AsyncSelect from "../../../components/forms/AsyncSelect";
-import cn from "classnames";
-import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHooks";
-import { useQueryClient } from "react-query";
-import { useRoles } from "../../../actions/fetchHooks";
-import { useState } from "react";
+
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { confirmOnExit, parseRoles } from "../../../helpers/helpers";
 
@@ -24,6 +25,7 @@ const PermissionsForm = (props: Props) => {
 	const {
 		register,
 		handleSubmit,
+		control,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
@@ -31,9 +33,6 @@ const PermissionsForm = (props: Props) => {
 			roles: payload ? parseRoles(payload?.roles) : null,
 		},
 	});
-
-	const [selectValue, setSelectValue] = useState(() => (payload ? parseRoles(payload?.roles) : null));
-	const [selectError, setSelectError] = useState(null);
 
 	const { mutate: addPermission, isLoading: isLoadingAdd } = usePermissionAdd({
 		queryConfig: {
@@ -58,13 +57,7 @@ const PermissionsForm = (props: Props) => {
 	});
 
 	const onSubmit = (data: any) => {
-		if (!selectValue || selectValue?.length === 0) {
-			return setSelectError({ message: "Field is required" });
-		} else {
-			setSelectError(null);
-		}
-
-		const extractedRoles = selectValue.reduce((prev: number[], curr: { value: number }) => {
+		const extractedRoles = data.roles.reduce((prev: number[], curr: { value: number }) => {
 			return [...prev, curr.value];
 		}, []);
 
@@ -73,6 +66,7 @@ const PermissionsForm = (props: Props) => {
 			roles: extractedRoles,
 			description: data.description,
 		};
+
 		if (payload) {
 			sanitizedData["id"] = payload?.id;
 			return updatePermission(sanitizedData);
@@ -80,21 +74,18 @@ const PermissionsForm = (props: Props) => {
 		return addPermission(sanitizedData);
 	};
 
-	const handleOnChangeRoles = (option: any) => {
-		setSelectValue(option);
-		if (selectError && option) {
-			setSelectError(null);
-		}
-	};
-
 	const { ref: innerRefName, ...restName } = register("name", {
 		required: "Field is required",
-		minLength: { value: 6, message: "Min 6 characters" },
-		maxLength: { value: 99, message: "Max 99 characters" },
+		pattern: {
+			value: /^[a-zA-Z]+$/,
+			message: "Invalid Name characters",
+		},
+		minLength: { value: 2, message: "Min 2 characters" },
+		maxLength: { value: 50, message: "Max 50 characters" },
 	});
 	const { ref: innerRefDescription, ...restDescription } = register("description", {
 		required: "Field is required",
-		minLength: { value: 6, message: "Min 6 characters" },
+		minLength: { value: 2, message: "Min 2 characters" },
 		maxLength: { value: 250, message: "Max 250 characters" },
 	});
 
@@ -134,20 +125,29 @@ const PermissionsForm = (props: Props) => {
 									label='Role'
 									htmlFor='roleId'
 									className={cn({
-										"text--danger": selectError,
+										"text--danger": errors?.roles,
 									})}
-									hintMsg={selectError?.message}>
-									<AsyncSelect
-										useFetch={useRoles}
-										isMulti
-										isClearable={false}
-										closeMenuOnSelect={false}
-										value={selectValue}
-										onChange={handleOnChangeRoles}
-										className={cn({
-											"temat__select__container--danger": selectError,
-										})}
-										placeholder='Select Role'
+									hintMsg={errors?.roles?.message}>
+									<Controller
+										render={({ field }) => (
+											<AsyncSelect
+												useFetch={useRoles}
+												isMulti
+												isClearable={false}
+												closeMenuOnSelect={false}
+												className={cn({
+													"temat__select__container--danger": errors?.roles,
+												})}
+												placeholder='Select Role'
+												{...field}
+											/>
+										)}
+										name='roles'
+										control={control}
+										defaultValue={[]}
+										rules={{
+											required: "Field is required",
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -164,7 +164,8 @@ const PermissionsForm = (props: Props) => {
 										placeholder='Enter Description'
 										{...restDescription}
 										innerRef={innerRefDescription}
-										maxLength={250}
+										// maxLength={250}
+										withCharacterCount={false}
 										pigment={errors?.description ? "danger" : "primary"}
 									/>
 								</FormControl>

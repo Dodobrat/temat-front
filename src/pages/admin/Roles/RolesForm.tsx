@@ -64,13 +64,13 @@ const RolesForm = (props: Props) => {
 
 	const { ref: innerRefName, ...restName } = register("name", {
 		required: "Field is required",
-		minLength: { value: 3, message: "Min 3 characters" },
-		maxLength: { value: 39, message: "Max 39 characters" },
+		minLength: { value: 2, message: "Min 2 characters" },
+		maxLength: { value: 50, message: "Max 50 characters" },
 	});
 	const { ref: innerRefDescription, ...restDescription } = register("description", {
 		required: "Field is required",
-		minLength: { value: 3, message: "Min 3 characters" },
-		maxLength: { value: 150, message: "Max 150 characters" },
+		minLength: { value: 2, message: "Min 2 characters" },
+		maxLength: { value: 250, message: "Max 250 characters" },
 	});
 
 	return (
@@ -117,7 +117,8 @@ const RolesForm = (props: Props) => {
 										placeholder='Enter Description'
 										{...restDescription}
 										innerRef={innerRefDescription}
-										maxLength={150}
+										// maxLength={250}
+										withCharacterCount={false}
 										pigment={errors?.description ? "danger" : "primary"}
 									/>
 								</FormControl>

@@ -1,3 +1,4 @@
+import { forwardRef, useState } from "react";
 import cn from "classnames";
 import {
 	AsyncPaginate,
@@ -5,7 +6,6 @@ import {
 } from "react-select-async-paginate";
 import { useStateWithPromise } from "../../hooks/useStateWithPromise";
 import { errorToast } from "../../helpers/toastEmitter";
-import { useState } from "react";
 
 // import { WindowedMenuList } from "react-windowed-select";
 
@@ -20,7 +20,7 @@ interface Props {
 	[key: string]: any;
 }
 
-const AsyncSelect = (props: Props) => {
+const AsyncSelect = forwardRef((props: Props, ref) => {
 	const {
 		clearCacheOnMenuOpen,
 		searchStringLength = 3,
@@ -127,11 +127,12 @@ const AsyncSelect = (props: Props) => {
 			}}
 			cacheUniqs={[clearCacheCounter, ...cacheUniqs]}
 			{...rest}
+			selectRef={ref}
 			additional={{
 				page: 0,
 			}}
 		/>
 	);
-};
+});
 
 export default AsyncSelect;

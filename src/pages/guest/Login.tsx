@@ -4,6 +4,7 @@ import { useLogin } from "../../actions/mutateHooks";
 import { useAuthContext } from "../../context/AuthContext";
 import cn from "classnames";
 import { errorToast } from "../../helpers/toastEmitter";
+import { Helmet } from "react-helmet";
 
 const Login = () => {
 	const {
@@ -32,17 +33,34 @@ const Login = () => {
 		login(data);
 	};
 
-	const { ref: innerRefUsername, ...restUsername } = register("username", { required: "Field is required" });
+	const { ref: innerRefUsername, ...restUsername } = register("username", {
+		required: "Field is required",
+		pattern: {
+			value: /^[a-zA-Z0-9]+$/,
+			message: "Invalid Username characters",
+		},
+		minLength: {
+			value: 2,
+			message: "Min 2 characters",
+		},
+		maxLength: {
+			value: 50,
+			message: "Max 50 characters",
+		},
+	});
 	const { ref: innerRefPassword, ...restPassword } = register("password", {
 		required: "Field is required",
-		// pattern: {
-		// 	value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,50}$/g,
-		// 	message: "Password format doesn't match requirements",
-		// },
+		pattern: {
+			value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,250}$/,
+			message: "Password format doesn't match requirements",
+		},
 	});
 
 	return (
 		<Flex>
+			<Helmet>
+				<title>Temat | Login</title>
+			</Helmet>
 			<Flex.Col col={{ base: "12", xs: "10", sm: "8", md: "6" }}>
 				<Card elevation='medium' className='p--base--0 p--sm--4'>
 					<Card.Body>
@@ -62,6 +80,7 @@ const Login = () => {
 											preffix={<IconUser />}
 											{...restUsername}
 											innerRef={innerRefUsername}
+											pigment={errors?.username ? "danger" : "primary"}
 										/>
 									</FormControl>
 								</Flex.Col>
@@ -79,6 +98,7 @@ const Login = () => {
 											preffix={<IconLock />}
 											{...restPassword}
 											innerRef={innerRefPassword}
+											pigment={errors?.password ? "danger" : "primary"}
 										/>
 									</FormControl>
 								</Flex.Col>

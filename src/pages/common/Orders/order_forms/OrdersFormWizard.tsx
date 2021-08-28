@@ -36,10 +36,12 @@ const OrdersFormWizard = (props: Props) => {
 
 	const {
 		userValue: { user },
+		userCan,
 	} = useAuthContext();
 
 	useEffect(() => {
-		if (user.roleName !== "ADMIN") {
+		if (userCan("orderCreateTheir")) {
+			setCurrStep(1);
 			setData((prev) => ({
 				...prev,
 				payment: {
@@ -48,7 +50,7 @@ const OrdersFormWizard = (props: Props) => {
 				},
 			}));
 		}
-	}, [setData, user?.companyId, user.roleName]);
+	}, [setData, setCurrStep, user?.companyId, userCan]);
 
 	const { mutate: addOrder, isLoading: isLoadingAdd } = useOrderAdd({
 		queryConfig: {
@@ -92,7 +94,7 @@ const OrdersFormWizard = (props: Props) => {
 						</div>
 					</div>
 				</CollapseFade>
-				{currStep === 0 && user?.roleName === "ADMIN" && <OrderStepCompany />}
+				{currStep === 0 && userCan("orderCreate") && <OrderStepCompany />}
 				{currStep === 1 && <OrderStepProducts />}
 				{currStep === 2 && <OrderStepShipping />}
 				{currStep === 3 && <OrderStepPayment />}
