@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Heading, Card } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
-import { UnderDevelopment } from "./graphics";
+import { IconEngineering } from "./icons";
 
 const ComingSoon = ({ className, ...rest }: any) => {
 	const { t } = useTranslation();
@@ -17,13 +17,15 @@ const ComingSoon = ({ className, ...rest }: any) => {
 					</div>
 				</Flex.Col>
 				<Flex.Col col={{ base: "12", md: "6" }}>
-					<div className='d--grid'>
-						<UnderDevelopment
+					<Flex justify='center' align='center'>
+						<IconEngineering
 							style={{
-								maxHeight: "clamp(17.5rem, 25vw, 30rem)",
+								height: "clamp(17.5rem, 25vw, 30rem)",
+								width: "auto",
+								opacity: 0.2,
 							}}
 						/>
-					</div>
+					</Flex>
 				</Flex.Col>
 			</Flex>
 		</Card>
