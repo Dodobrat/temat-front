@@ -14,3 +14,18 @@ export const parseDate: (date: string, time?: boolean) => string = (date, time =
 	}
 	return "N/A";
 };
+
+export const parseToISODate: (dateString: string | Date) => string = (dateString) => {
+	if (dateString) {
+		const initDate = new Date(dateString);
+		const year = initDate.getFullYear();
+		const month = initDate.getMonth() + 1;
+		const date = initDate.getDate();
+
+		const parsedMonth = month <= 9 ? `0${month}` : month;
+		const parsedDate = date <= 9 ? `0${date}` : date;
+
+		return `${year}-${parsedMonth}-${parsedDate}`;
+	}
+	return "";
+};

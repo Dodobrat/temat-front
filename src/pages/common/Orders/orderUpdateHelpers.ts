@@ -1,3 +1,4 @@
+import { parseToISODate } from "../../../helpers/dateHelpers";
 import { paidByOptions, payAfterOptions } from "./order_steps/OrderStepPayment";
 
 export const parsedFetchedData = (order) => {
@@ -89,7 +90,7 @@ export const parseDetailsToFormData = (data) => {
 
 	Object.entries(data.shipping).forEach((entry: any) => {
 		if (entry[1] instanceof Date) {
-			formData.append(entry[0], entry[1]?.toISOString().slice(0, 10));
+			formData.append(entry[0], parseToISODate(entry[1]));
 		}
 		if (typeof entry[1] === "object") {
 			if (entry[0] === "country" && entry[1]?.value) {
