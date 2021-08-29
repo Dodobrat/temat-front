@@ -17,6 +17,7 @@ import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import { IconAdd, IconErrorCircle, IconFilter } from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
+import { parseDefaultValues } from "../../../helpers/formValidations";
 
 const UsersForm = lazy(() => import("./UsersForm"));
 const UsersDrawer = lazy(() => import("./UsersDrawer"));
@@ -75,7 +76,7 @@ const UsersPage = () => {
 			{
 				permission: ["userUpdatePersonal", "userUpdateLogin"],
 				type: "edit",
-				action: (entry: any) => setShowUsersForm({ state: true, payload: entry }),
+				action: (entry: any) => setShowUsersForm({ state: true, payload: parseDefaultValues(entry) }),
 			},
 			{
 				permission: "userDelete",

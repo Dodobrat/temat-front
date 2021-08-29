@@ -1,10 +1,15 @@
-import { Flex, Form, FormControl, Heading, IconUser, Input, IconLock, Button, Card, useLocalStorage } from "@dodobrat/react-ui-kit";
-import { useForm } from "react-hook-form";
-import { useLogin } from "../../actions/mutateHooks";
-import { useAuthContext } from "../../context/AuthContext";
-import cn from "classnames";
-import { errorToast } from "../../helpers/toastEmitter";
 import { Helmet } from "react-helmet";
+import { Controller, useForm } from "react-hook-form";
+import { Flex, Form, FormControl, Heading, Input, Button, Card, useLocalStorage } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
+import { useLogin } from "../../actions/mutateHooks";
+
+import { useAuthContext } from "../../context/AuthContext";
+
+import { IconEye, IconEyeCrossed, IconLock, IconUser } from "../../components/ui/icons";
+
+import { errorToast } from "../../helpers/toastEmitter";
 
 const Login = () => {
 	const {
@@ -12,7 +17,7 @@ const Login = () => {
 	} = useAuthContext();
 
 	const {
-		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm();
@@ -33,29 +38,6 @@ const Login = () => {
 		login(data);
 	};
 
-	const { ref: innerRefUsername, ...restUsername } = register("username", {
-		required: "Field is required",
-		pattern: {
-			value: /^[a-zA-Z0-9]+$/,
-			message: "Invalid Username characters",
-		},
-		minLength: {
-			value: 2,
-			message: "Min 2 characters",
-		},
-		maxLength: {
-			value: 50,
-			message: "Max 50 characters",
-		},
-	});
-	const { ref: innerRefPassword, ...restPassword } = register("password", {
-		required: "Field is required",
-		pattern: {
-			value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,250}$/,
-			message: "Password format doesn't match requirements",
-		},
-	});
-
 	return (
 		<Flex>
 			<Helmet>
@@ -75,12 +57,37 @@ const Login = () => {
 											"text--danger": errors?.username,
 										})}
 										hintMsg={errors?.username?.message}>
-										<Input
-											placeholder='Username'
-											preffix={<IconUser />}
-											{...restUsername}
-											innerRef={innerRefUsername}
-											pigment={errors?.username ? "danger" : "primary"}
+										<Controller
+											render={({ field }) => {
+												const { ref, ...fieldRest } = field;
+												return (
+													<Input
+														placeholder='Username'
+														preffix={<IconUser className='dui__icon' />}
+														{...fieldRest}
+														innerRef={ref}
+														pigment={errors?.username ? "danger" : "primary"}
+													/>
+												);
+											}}
+											name='username'
+											control={control}
+											defaultValue=''
+											rules={{
+												required: "Field is required",
+												pattern: {
+													value: /^[a-zA-Z0-9]+$/,
+													message: "Invalid Username characters",
+												},
+												minLength: {
+													value: 2,
+													message: "Min 2 characters",
+												},
+												maxLength: {
+													value: 50,
+													message: "Max 50 characters",
+												},
+											}}
 										/>
 									</FormControl>
 								</Flex.Col>
@@ -92,13 +99,37 @@ const Login = () => {
 											"text--danger": errors?.password,
 										})}
 										hintMsg={errors?.password?.message}>
-										<Input
-											type='password'
-											placeholder='Password'
-											preffix={<IconLock />}
-											{...restPassword}
-											innerRef={innerRefPassword}
-											pigment={errors?.password ? "danger" : "primary"}
+										<Controller
+											render={({ field }) => {
+												const { ref, ...fieldRest } = field;
+												return (
+													<Input
+														type='password'
+														placeholder='Password'
+														preffix={<IconLock className='dui__icon' />}
+														passwordRevealComponent={(isVisible) =>
+															isVisible ? (
+																<IconEyeCrossed className='dui__icon' />
+															) : (
+																<IconEye className='dui__icon' />
+															)
+														}
+														{...fieldRest}
+														innerRef={ref}
+														pigment={errors?.password ? "danger" : "primary"}
+													/>
+												);
+											}}
+											name='password'
+											control={control}
+											defaultValue=''
+											rules={{
+												required: "Field is required",
+												pattern: {
+													value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,250}$/,
+													message: "Password format doesn't match requirements",
+												},
+											}}
 										/>
 									</FormControl>
 								</Flex.Col>

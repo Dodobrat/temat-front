@@ -1,17 +1,19 @@
-import { Form } from "@dodobrat/react-ui-kit";
-import { Portal, Card, Text, Button, Flex, FormControl, Input } from "@dodobrat/react-ui-kit";
-import { useForm } from "react-hook-form";
-import { IconClose } from "../../../components/ui/icons";
-import { useUserAdd, useUserPersonalUpdate, useUserCredentialsUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
+import { Controller, useForm } from "react-hook-form";
+import { Form, Portal, Card, Text, Button, Flex, FormControl, Input } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+
+import { useUserAdd, useUserPersonalUpdate, useUserCredentialsUpdate } from "../../../actions/mutateHooks";
+import { usePhoneCodes, useRoles } from "../../../actions/fetchHooks";
+
 import AsyncSelect from "../../../components/forms/AsyncSelect";
-import { useRoles } from "../../../actions/fetchHooks";
-import { useState } from "react";
-import { useEffect } from "react";
+import { IconClose, IconEye, IconEyeCrossed } from "../../../components/ui/icons";
+import { PhoneCode } from "../../common/Orders/order_steps/OrderStepShipping";
+
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { confirmOnExit } from "../../../helpers/helpers";
+import { imageValidator } from "../../../helpers/formValidations";
 
 interface Props {
 	onClose: () => void;
@@ -25,9 +27,9 @@ const UsersForm = (props: Props) => {
 	const queryClient = useQueryClient();
 
 	const {
-		register,
+		watch,
+		control,
 		handleSubmit,
-		setValue,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
@@ -37,12 +39,8 @@ const UsersForm = (props: Props) => {
 		},
 	});
 
-	const [selectValue, setSelectValue] = useState(() => (payload ? { value: payload?.roleId, label: payload?.roleName } : null));
-	const [selectError, setSelectError] = useState(null);
-	const [updatedUser, setUpdatedUser] = useState({
-		personal: false,
-		credentials: false,
-	});
+	const watchPass = watch("password", "");
+	const watchPhone = watch("phone");
 
 	const { mutate: addUser, isLoading: isLoadingAdd } = useUserAdd({
 		queryConfig: {
@@ -57,56 +55,32 @@ const UsersForm = (props: Props) => {
 
 	const { mutate: updatePersonalUser, isLoading: isLoadingPersonalUpdate } = useUserPersonalUpdate({
 		queryConfig: {
-			onSuccess: (res) => {
-				successToast(res);
-				setUpdatedUser((prev) => ({ ...prev, personal: true }));
-			},
+			onSuccess: (res) => successToast(res),
 			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const { mutate: updateCredentialUser, isLoading: isLoadingCredentialsUpdate } = useUserCredentialsUpdate({
 		queryConfig: {
-			onSuccess: (res) => {
-				successToast(res);
-				setUpdatedUser((prev) => ({ ...prev, credentials: true }));
-			},
+			onSuccess: (res) => successToast(res),
 			onError: (err: any) => errorToast(err),
 		},
 	});
 
-	useEffect(() => {
-		if (updatedUser.credentials && updatedUser.personal) {
-			queryClient.invalidateQueries("users");
-			onClose();
-		}
-	}, [updatedUser, onClose, queryClient]);
-
-	const onSubmit = (data: any) => {
-		if (!data.roleId?.value) {
-			return setSelectError({ message: "Field is required" });
-		} else {
-			setSelectError(null);
-		}
+	const onSubmit = async (data: any) => {
 		const formData = new FormData();
-		formData.append("username", data.username);
-		formData.append("phone", data.phone);
-		formData.append("email", data.email);
-		formData.append("firstName", data.firstName);
-		formData.append("lastName", data.lastName);
-		if (data.image?.[0]) {
-			formData.append("image", data.image[0]);
+
+		for (const entry of Object.entries(data)) {
+			if (!!entry[1]) {
+				if (entry[1] instanceof FileList) {
+					formData.append(entry[0], entry[1][0]);
+				} else if (typeof entry[1] === "object") {
+					formData.append(entry[0], entry[1]["value"]);
+				} else if (typeof entry[1] === "string") {
+					formData.append(entry[0], entry[1]);
+				}
+			}
 		}
-		formData.append("streetNumber", data.streetNumber);
-		formData.append("streetName", data.streetName);
-		formData.append("country", data.country);
-		if (data.password) {
-			formData.append("password", data.password);
-		}
-		if (data.confirmPassword) {
-			formData.append("confirmPassword", data.confirmPassword);
-		}
-		formData.append("roleId", data.roleId?.value);
 
 		if (payload) {
 			const toSend = {
@@ -119,32 +93,6 @@ const UsersForm = (props: Props) => {
 		}
 		return addUser(formData);
 	};
-
-	const handleOnChangeRoleId = (option: any) => {
-		setValue("roleId", option);
-		setSelectValue(option);
-		if (selectError && option) {
-			setSelectError(null);
-		}
-	};
-
-	const { ref: innerRefUsername, ...restUsername } = register("username", {
-		required: `${t("validation.fieldRequired")}`,
-		minLength: { value: 3, message: `${t("validation.min3Chars")}` },
-		maxLength: { value: 50, message: `${t("validation.max50Chars")}` },
-	});
-	const { ref: innerRefFirstName, ...restFirstName } = register("firstName");
-	const { ref: innerRefLastName, ...restLastName } = register("lastName");
-	const { ref: innerRefEmail, ...restEmail } = register("email");
-	const { ref: innerRefPhone, ...restPhone } = register("phone");
-	const { ref: innerRefCountry, ...restCountry } = register("country");
-	const { ref: innerRefCity, ...restCity } = register("city");
-	const { ref: innerRefZipCode, ...restZipCode } = register("zipCode");
-	const { ref: innerRefStreetName, ...restStreetName } = register("streetName");
-	const { ref: innerRefStreetNumber, ...restStreetNumber } = register("streetNumber");
-	const { ref: innerRefImage, ...restImage } = register("image");
-	const { ref: innerRefPassword, ...restPassword } = register("password");
-	const { ref: innerRefConfirmPassword, ...restConfirmPassword } = register("confirmPassword");
 
 	return (
 		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
@@ -168,12 +116,27 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.firstName,
 									})}
 									hintMsg={errors?.firstName?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													name='firstName'
+													placeholder={t("users.firstName")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.firstName ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='firstName'
-										placeholder={t("users.firstName")}
-										{...restFirstName}
-										innerRef={innerRefFirstName}
-										pigment={errors?.firstName ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -185,12 +148,27 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.lastName,
 									})}
 									hintMsg={errors?.lastName?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													name='lastName'
+													placeholder={t("users.lastName")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.lastName ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='lastName'
-										placeholder={t("users.lastName")}
-										{...restLastName}
-										innerRef={innerRefLastName}
-										pigment={errors?.lastName ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -202,16 +180,71 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.username,
 									})}
 									hintMsg={errors?.username?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													name='username'
+													placeholder={t("users.username")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.username ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='username'
-										placeholder={t("users.username")}
-										{...restUsername}
-										innerRef={innerRefUsername}
-										pigment={errors?.username ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											pattern: {
+												value: /^[a-zA-Z0-9]+$/,
+												message: "Invalid Username characters",
+											},
+											minLength: {
+												value: 2,
+												message: "Min 2 characters",
+											},
+											maxLength: {
+												value: 50,
+												message: "Max 50 characters",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
+							<Flex.Col col={{ base: "5", md: "4" }}>
+								<FormControl
+									label={t("users.phoneCode")}
+									htmlFor='phoneCodeId'
+									className={cn({
+										"text--danger": errors?.phoneCodeId,
+									})}
+									hintMsg={errors?.phoneCodeId?.message}>
+									<Controller
+										render={({ field }) => (
+											<AsyncSelect
+												useFetch={usePhoneCodes}
+												isClearable={false}
+												searchStringLength={1}
+												labelComponent={(data) => <PhoneCode data={data} />}
+												className={cn({
+													"temat__select__container--danger": errors?.phoneCodeId,
+												})}
+												{...field}
+											/>
+										)}
+										name='phoneCodeId'
+										control={control}
+										defaultValue={null}
+										rules={{
+											validate: () => (!!watchPhone ? "Field is required" : true),
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "7", xs: "8" }}>
 								<FormControl
 									label={t("users.phone")}
 									htmlFor='phone'
@@ -219,17 +252,34 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.phone,
 									})}
 									hintMsg={errors?.phone?.message}>
-									<Input
-										type='tel'
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													type='tel'
+													placeholder={t("users.phone")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.phone ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='phone'
-										placeholder={t("users.phone")}
-										{...restPhone}
-										innerRef={innerRefPhone}
-										pigment={errors?.phone ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											pattern: {
+												value: /^[0-9]{9}$/,
+												message: "Invalid characters supplied",
+											},
+											minLength: { value: 9, message: "Min 9 characters" },
+											maxLength: { value: 9, message: "Max 9 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
+							<Flex.Col col='12'>
 								<FormControl
 									label={t("users.email")}
 									htmlFor='email'
@@ -237,13 +287,29 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.email,
 									})}
 									hintMsg={errors?.email?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													type='email'
+													placeholder={t("users.email")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.email ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='email'
-										type='email'
-										placeholder={t("users.email")}
-										{...restEmail}
-										innerRef={innerRefEmail}
-										pigment={errors?.email ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											pattern: {
+												value: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
+												message: "Invalid Email",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -255,12 +321,25 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.country,
 									})}
 									hintMsg={errors?.country?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("users.country")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.country ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='country'
-										placeholder={t("users.country")}
-										{...restCountry}
-										innerRef={innerRefCountry}
-										pigment={errors?.country ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -272,12 +351,25 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.city,
 									})}
 									hintMsg={errors?.city?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("users.city")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.city ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='city'
-										placeholder={t("users.city")}
-										{...restCity}
-										innerRef={innerRefCity}
-										pigment={errors?.city ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 60, message: "Max 60 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -289,12 +381,25 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.zipCode,
 									})}
 									hintMsg={errors?.zipCode?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("users.zipCode")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.zipCode ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='zipCode'
-										placeholder={t("users.zipCode")}
-										{...restZipCode}
-										innerRef={innerRefZipCode}
-										pigment={errors?.zipCode ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 3, message: "Min 3 characters" },
+											maxLength: { value: 10, message: "Max 10 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -306,12 +411,25 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.streetName,
 									})}
 									hintMsg={errors?.streetName?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("users.streetName")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.streetName ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='streetName'
-										placeholder={t("users.streetName")}
-										{...restStreetName}
-										innerRef={innerRefStreetName}
-										pigment={errors?.streetName ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -323,12 +441,25 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.streetNumber,
 									})}
 									hintMsg={errors?.streetNumber?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("users.streetNumber")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.streetNumber ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='streetNumber'
-										placeholder={t("users.streetNumber")}
-										{...restStreetNumber}
-										innerRef={innerRefStreetNumber}
-										pigment={errors?.streetNumber ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 1, message: "Min 1 characters" },
+											maxLength: { value: 10, message: "Max 10 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -341,7 +472,7 @@ const UsersForm = (props: Props) => {
 									})}
 									hintMsg={
 										<>
-											{payload ? (
+											{payload?.image ? (
 												<>
 													<a
 														href={payload?.image}
@@ -358,13 +489,28 @@ const UsersForm = (props: Props) => {
 											{errors?.image?.message ?? ""}
 										</>
 									}>
-									<Input
-										type='file'
+									<Controller
+										render={({ field }) => {
+											const { ref, onChange, value, ...fieldRest } = field;
+											return (
+												<Input
+													type='file'
+													accept='image/*'
+													placeholder={t("users.image")}
+													{...fieldRest}
+													onChange={(e) => onChange(e.target.files)}
+													value={value?.[0]?.filename}
+													innerRef={ref}
+													pigment={errors?.image ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='image'
-										placeholder={t("users.image")}
-										{...restImage}
-										innerRef={innerRefImage}
-										pigment={errors?.image ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											validate: (files) => imageValidator({ file: files?.[0] }),
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -376,14 +522,24 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.roleId,
 									})}
 									hintMsg={errors?.roleId?.message}>
-									<AsyncSelect
-										useFetch={useRoles}
-										value={selectValue}
-										onChange={handleOnChangeRoleId}
-										className={cn({
-											"temat__select__container--danger": selectError,
-										})}
-										placeholder='Select Role'
+									<Controller
+										render={({ field }) => (
+											<AsyncSelect
+												useFetch={useRoles}
+												isClearable={false}
+												className={cn({
+													"temat__select__container--danger": errors?.roleId,
+												})}
+												placeholder='Select Role'
+												{...field}
+											/>
+										)}
+										name='roleId'
+										control={control}
+										defaultValue={null}
+										rules={{
+											required: "Field is required",
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -395,13 +551,36 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.password,
 									})}
 									hintMsg={errors?.password?.message}>
-									<Input
-										type='password'
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													type='password'
+													placeholder='Password'
+													passwordRevealComponent={(isVisible) =>
+														isVisible ? (
+															<IconEyeCrossed className='dui__icon' />
+														) : (
+															<IconEye className='dui__icon' />
+														)
+													}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.password ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='password'
-										placeholder={t("users.password")}
-										{...restPassword}
-										innerRef={innerRefPassword}
-										pigment={errors?.password ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: payload ? false : "Field is required",
+											pattern: {
+												value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,250}$/,
+												message: "Password format doesn't match requirements",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -413,13 +592,33 @@ const UsersForm = (props: Props) => {
 										"text--danger": errors?.confirmPassword,
 									})}
 									hintMsg={errors?.confirmPassword?.message}>
-									<Input
-										type='password'
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													type='password'
+													placeholder='Password'
+													passwordRevealComponent={(isVisible) =>
+														isVisible ? (
+															<IconEyeCrossed className='dui__icon' />
+														) : (
+															<IconEye className='dui__icon' />
+														)
+													}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.confirmPassword ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='confirmPassword'
-										placeholder={t("users.confirmPassword")}
-										{...restConfirmPassword}
-										innerRef={innerRefConfirmPassword}
-										pigment={errors?.confirmPassword ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											validate: (val) => val === watchPass || "Passwords don't match",
+											required: !payload ? "Field is required" : false,
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>

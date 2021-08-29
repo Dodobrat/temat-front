@@ -1,10 +1,12 @@
-import { Form } from "@dodobrat/react-ui-kit";
-import { Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
-import { useForm } from "react-hook-form";
-import { IconClose } from "../../../components/ui/icons";
-import cn from "classnames";
-import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
+import { Form, Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
+import { Controller, useForm } from "react-hook-form";
+import cn from "classnames";
+
+import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
+
+import { IconClose } from "../../../components/ui/icons";
+
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { confirmOnExit } from "../../../helpers/helpers";
 
@@ -19,7 +21,7 @@ const RolesForm = (props: Props) => {
 	const queryClient = useQueryClient();
 
 	const {
-		register,
+		control,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -62,17 +64,6 @@ const RolesForm = (props: Props) => {
 		return addRole(sanitizedData);
 	};
 
-	const { ref: innerRefName, ...restName } = register("name", {
-		required: "Field is required",
-		minLength: { value: 2, message: "Min 2 characters" },
-		maxLength: { value: 50, message: "Max 50 characters" },
-	});
-	const { ref: innerRefDescription, ...restDescription } = register("description", {
-		required: "Field is required",
-		minLength: { value: 2, message: "Min 2 characters" },
-		maxLength: { value: 250, message: "Max 250 characters" },
-	});
-
 	return (
 		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card>
@@ -95,12 +86,26 @@ const RolesForm = (props: Props) => {
 										"text--danger": errors?.name,
 									})}
 									hintMsg={errors?.name?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder='Name'
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.name ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='name'
-										placeholder='Name'
-										{...restName}
-										innerRef={innerRefName}
-										pigment={errors?.name ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -112,14 +117,28 @@ const RolesForm = (props: Props) => {
 										"text--danger": errors?.description,
 									})}
 									hintMsg={errors?.description?.message}>
-									<TextArea
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<TextArea
+													placeholder='Enter Description'
+													{...fieldRest}
+													innerRef={ref}
+													// maxLength={250}
+													withCharacterCount={false}
+													pigment={errors?.description ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='description'
-										placeholder='Enter Description'
-										{...restDescription}
-										innerRef={innerRefDescription}
-										// maxLength={250}
-										withCharacterCount={false}
-										pigment={errors?.description ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 250, message: "Max 250 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>

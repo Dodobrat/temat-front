@@ -23,7 +23,6 @@ const PermissionsForm = (props: Props) => {
 	const queryClient = useQueryClient();
 
 	const {
-		register,
 		handleSubmit,
 		control,
 		formState: { errors },
@@ -74,21 +73,6 @@ const PermissionsForm = (props: Props) => {
 		return addPermission(sanitizedData);
 	};
 
-	const { ref: innerRefName, ...restName } = register("name", {
-		required: "Field is required",
-		pattern: {
-			value: /^[a-zA-Z]+$/,
-			message: "Invalid Name characters",
-		},
-		minLength: { value: 2, message: "Min 2 characters" },
-		maxLength: { value: 50, message: "Max 50 characters" },
-	});
-	const { ref: innerRefDescription, ...restDescription } = register("description", {
-		required: "Field is required",
-		minLength: { value: 2, message: "Min 2 characters" },
-		maxLength: { value: 250, message: "Max 250 characters" },
-	});
-
 	return (
 		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
 			<Card>
@@ -111,12 +95,30 @@ const PermissionsForm = (props: Props) => {
 										"text--danger": errors?.name,
 									})}
 									hintMsg={errors?.name?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder='Name'
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.name ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='name'
-										placeholder='Name'
-										{...restName}
-										innerRef={innerRefName}
-										pigment={errors?.name ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											pattern: {
+												value: /^[a-zA-Z]+$/,
+												message: "Invalid Name characters",
+											},
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -159,14 +161,28 @@ const PermissionsForm = (props: Props) => {
 										"text--danger": errors?.description,
 									})}
 									hintMsg={errors?.description?.message}>
-									<TextArea
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<TextArea
+													placeholder='Enter Description'
+													{...fieldRest}
+													innerRef={ref}
+													// maxLength={250}
+													withCharacterCount={false}
+													pigment={errors?.description ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='description'
-										placeholder='Enter Description'
-										{...restDescription}
-										innerRef={innerRefDescription}
-										// maxLength={250}
-										withCharacterCount={false}
-										pigment={errors?.description ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 250, message: "Max 250 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>

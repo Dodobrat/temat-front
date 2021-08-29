@@ -93,6 +93,19 @@ const OrdersViewPage = () => {
 
 	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
 
+	const parseLabelLink = (data) => {
+		const { link, file } = data?.data;
+		let fileURL: string;
+
+		if (link) {
+			fileURL = link;
+		} else if (file) {
+			fileURL = `data:application/pdf;base64,${encodeURI(file)}`;
+		}
+
+		return fileURL;
+	};
+
 	const { data: orderData } = useOrderById({
 		specs: {
 			filters: {
@@ -108,6 +121,20 @@ const OrdersViewPage = () => {
 
 	const { data: label, refetch: geOrderLabel } = useOrderLabelDownloadById({
 		queryConfig: {
+			onSuccess: (res) => {
+				setDownloadPopUp({
+					state: true,
+					payload: (
+						<iframe
+							title='shipping_label'
+							width='100%'
+							height='100%'
+							style={{ border: "none", minHeight: "60vh" }}
+							src={parseLabelLink(res)}
+						/>
+					),
+				});
+			},
 			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { orderId: orderId },
@@ -123,21 +150,18 @@ const OrdersViewPage = () => {
 
 	useEffect(() => {
 		if (label) {
-			const { link, file } = label?.data;
-			let fileURL: string;
-
-			if (link) {
-				fileURL = link;
-			} else if (file) {
-				fileURL = `data:application/pdf;base64,${encodeURI(file)}`;
-			}
-
-			setDownloadPopUp({
-				state: true,
+			setDownloadPopUp((prev) => ({
+				...prev,
 				payload: (
-					<iframe title='shipping_label' width='100%' height='100%' style={{ border: "none", minHeight: "60vh" }} src={fileURL} />
+					<iframe
+						title='shipping_label'
+						width='100%'
+						height='100%'
+						style={{ border: "none", minHeight: "60vh" }}
+						src={parseLabelLink(label)}
+					/>
 				),
-			});
+			}));
 		}
 	}, [label]);
 
