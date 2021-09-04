@@ -12,6 +12,8 @@ import { TextArea } from "@dodobrat/react-ui-kit";
 import { useShippingPlanAdd, useShippingPlanUpdate } from "../../../../actions/mutateHooks";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import CalendarPicker from "../../../../components/util/CalendarPicker";
+import ShippingPlanStepCompany from "../shipping_plans_steps/ShippingPlanStepCompany";
+import ShippingPlanStepSummary from "../shipping_plans_steps/ShippingPlanStepSummary";
 
 interface Props {
 	payload: any;
@@ -78,13 +80,6 @@ const ShippingPlansFormWizard = (props: Props) => {
 		}
 	}, [setData, payload]);
 
-	const handleValueUpdate = (key, val) => {
-		setData((prev) => ({
-			...prev,
-			[key]: val,
-		}));
-	};
-
 	const { mutate: addShippingPlan, isLoading: isLoadingAdd } = useShippingPlanAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
@@ -114,61 +109,26 @@ const ShippingPlansFormWizard = (props: Props) => {
 	return (
 		<>
 			<Card.Body>
-				{!canProceed && user?.roleName === "ADMIN" && (
-					<FormControl label={t("orders.companyId")} htmlFor='companyId'>
-						<AsyncSelect
-							useFetch={useCompanies}
-							isClearable={false}
-							value={data?.companyId}
-							onChange={(option: any) => setData((prev: any) => ({ ...prev, companyId: option }))}
-						/>
-					</FormControl>
-				)}
-				{data?.companyId && canProceed && (
-					<Flex>
-						<Flex.Col col='12'>
-							<OrderStepProducts useContext={useShippingPlansContext} companyId={data?.companyId?.value ?? data?.companyId} />
-						</Flex.Col>
-						<Flex.Col col='12'>
-							<FormControl label={t("plans.dateExpected")}>
-								<CalendarPicker
-									selected={data?.dateExpected}
-									onChange={(date) => handleValueUpdate("dateExpected", date)}
-								/>
-							</FormControl>
-						</Flex.Col>
-						<Flex.Col col='12'>
-							<FormControl label={t("plans.extraInfo")} htmlFor='extraInfo'>
-								<TextArea
-									value={data?.extraInfo}
-									name='extraInfo'
-									maxLength={250}
-									onChange={(e) => handleValueUpdate("extraInfo", e.target.value)}
-								/>
-							</FormControl>
-						</Flex.Col>
-					</Flex>
-				)}
+				{!canProceed && user?.roleName === "ADMIN" && <ShippingPlanStepCompany canProceed={setCanProceed} />}
+				{canProceed && data?.companyId && <ShippingPlanStepSummary />}
 			</Card.Body>
-			{data?.companyId && (
-				<Card.Footer justify='flex-end'>
-					<Button
-						pigment='primary'
-						isLoading={isLoadingAdd || isLoadingUpdate}
-						onClick={() => {
-							if (data?.companyId && !canProceed) {
-								return setCanProceed(true);
-							}
-							if (!payload) {
-								return addShippingPlan(parseShippingPlanData(data));
-							} else {
-								return updateShippingPlan(parseShippingPlanData(data));
-							}
-						}}>
-						{!canProceed ? t("common.next") : t("common.submit")}
-					</Button>
-				</Card.Footer>
-			)}
+			<Card.Footer justify='flex-end' id='shipping-plan-form-footer'>
+				{/* <Button
+					pigment='primary'
+					isLoading={isLoadingAdd || isLoadingUpdate}
+					onClick={() => {
+						if (data?.companyId && !canProceed) {
+							return setCanProceed(true);
+						}
+						if (!payload) {
+							return addShippingPlan(parseShippingPlanData(data));
+						} else {
+							return updateShippingPlan(parseShippingPlanData(data));
+						}
+					}}>
+					{!canProceed ? t("common.next") : t("common.submit")}
+				</Button> */}
+			</Card.Footer>
 		</>
 	);
 };

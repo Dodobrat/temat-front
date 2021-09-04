@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useState } from "react";
 import cn from "classnames";
 import {
 	AsyncPaginate,
@@ -30,13 +30,26 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 		labelKey = "name",
 		labelComponent = null,
 		querySpecs = {},
+		queryFilters = {},
 		querySpecialKey,
+		preSelectOption = false,
 		className,
 		cacheUniqs = [],
+		value,
+		onChange,
 		...rest
 	} = props;
 
 	const [clearCacheCounter, setClearCacheCounter] = useState(0);
+	const [selectValue, setSelectValue] = useState(value);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const _onChange = useCallback((val) => onChange?.(val), []);
+
+	useEffect(() => {
+		setSelectValue(value);
+		_onChange(value);
+	}, [value, _onChange]);
 
 	const clearCache = () => setClearCacheCounter((prev) => prev + 1);
 
@@ -46,6 +59,7 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 			page: 0,
 			perPage: 10,
 			searchString: "",
+			...queryFilters,
 		},
 	});
 
@@ -123,9 +137,16 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 				await updateQueryPage({ page, searchString: search });
 				const result = await loadOptions(search, page);
 
+				if (preSelectOption && (typeof value !== "object" || typeof value === "undefined" || value === null)) {
+					setSelectValue(result?.options?.[0]);
+					_onChange(result?.options?.[0]);
+				}
+
 				return result;
 			}}
 			cacheUniqs={[clearCacheCounter, ...cacheUniqs]}
+			value={selectValue}
+			onChange={_onChange}
 			{...rest}
 			selectRef={ref}
 			additional={{

@@ -226,7 +226,10 @@ const UsersForm = (props: Props) => {
 										render={({ field }) => (
 											<AsyncSelect
 												useFetch={usePhoneCodes}
+												queryFilters={payload && { id: field.value }}
 												isClearable={false}
+												defaultOptions
+												preSelectOption
 												searchStringLength={1}
 												labelComponent={(data) => <PhoneCode data={data} />}
 												className={cn({
@@ -239,7 +242,7 @@ const UsersForm = (props: Props) => {
 										control={control}
 										defaultValue={null}
 										rules={{
-											validate: () => (!!watchPhone ? "Field is required" : true),
+											validate: (val) => (watchPhone.toString().length > 0 && !val ? "Field is required" : true),
 										}}
 									/>
 								</FormControl>

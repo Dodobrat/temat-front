@@ -1,11 +1,14 @@
 import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
-import { useMemo } from "react";
+
 import { useShippingPlanById } from "../../../../actions/fetchHooks";
-import { IconClose } from "../../../../components/ui/icons";
+
 import ShippingPlansProvider from "../../../../context/ShippingPlansContext";
+
+import ShippingPlansFormWizard from "./ShippingPlansFormWizard";
+import { IconClose } from "../../../../components/ui/icons";
+
 import { confirmOnExit } from "../../../../helpers/helpers";
 import { errorToast } from "../../../../helpers/toastEmitter";
-import ShippingPlansFormWizard from "./ShippingPlansFormWizard";
 
 interface Props {
 	onClose: () => void;
@@ -28,12 +31,7 @@ const ShippingPlansForm = (props: Props) => {
 		specialKey: { planId: payload?.id, filters: ["products"] },
 	});
 
-	const fetchedPlan = useMemo(() => {
-		if (data) {
-			return data?.data;
-		}
-		return null;
-	}, [data]);
+	const fetchedPlan = data?.data ?? null;
 
 	return (
 		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
