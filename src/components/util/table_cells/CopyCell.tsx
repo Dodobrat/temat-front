@@ -1,8 +1,9 @@
-import { Badge, Table } from "@dodobrat/react-ui-kit";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Tooltip, Badge, Table } from "@dodobrat/react-ui-kit";
+
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
+
 import { IconClipboardCheck, IconClipboard } from "../../ui/icons";
-import { useEffect } from "react";
 
 interface Props {
 	cell: any;
@@ -32,9 +33,11 @@ const CopyCell = (props: Props) => {
 
 	return (
 		<Table.Cell {...rest}>
-			<Badge sizing='lg' pigment='primary' onClick={handleOnCellClick}>
-				{isCopied ? <IconClipboardCheck /> : <IconClipboard />} {cell.value}
-			</Badge>
+			<Tooltip sizing='xs' content={<strong>{`copy to clipboard`.toUpperCase()}</strong>}>
+				<Badge sizing='lg' pigment='primary' onClick={handleOnCellClick}>
+					{isCopied ? <IconClipboardCheck /> : <IconClipboard />} {cell.value}
+				</Badge>
+			</Tooltip>
 		</Table.Cell>
 	);
 };
