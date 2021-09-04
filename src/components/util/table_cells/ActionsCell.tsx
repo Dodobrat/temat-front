@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Flex, Table, ZoomPortal } from "@dodobrat/react-ui-kit";
 import { IconEdit, IconEye, IconTrash, IconUserManage } from "../../ui/icons";
 import ActionConfirmation from "../ActionConfirmation";
+import { Tooltip } from "@dodobrat/react-ui-kit";
 
 interface Props {
 	cell: any;
@@ -55,21 +56,23 @@ const ActionsCell = (props: Props) => {
 				<Flex wrap='nowrap' align='center' justify='flex-end'>
 					{actions.map((action, idx) => (
 						<Flex.Col col='auto' key={`${action.type}_${idx}`}>
-							<Button
-								equalDimensions
-								pigment={selectActionPigment(action.type)}
-								{...action?.props?.(cell.row.original)}
-								onClick={
-									action?.withConfirmation
-										? () =>
-												setConfirmation({
-													state: true,
-													payload: () => action?.action?.(cell.row.original),
-												})
-										: () => action?.action?.(cell.row.original)
-								}>
-								{selectActionIcon(action.type)}
-							</Button>
+							<Tooltip sizing='xs' content={<strong>{action.type.toUpperCase()}</strong>}>
+								<Button
+									equalDimensions
+									pigment={selectActionPigment(action.type)}
+									{...action?.props?.(cell.row.original)}
+									onClick={
+										action?.withConfirmation
+											? () =>
+													setConfirmation({
+														state: true,
+														payload: () => action?.action?.(cell.row.original),
+													})
+											: () => action?.action?.(cell.row.original)
+									}>
+									{selectActionIcon(action.type)}
+								</Button>
+							</Tooltip>
 						</Flex.Col>
 					))}
 				</Flex>

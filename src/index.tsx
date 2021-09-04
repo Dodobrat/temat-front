@@ -24,6 +24,7 @@ const queryClient = new QueryClient({
 
 const appConfig: GlobalOptions = {
 	containerSize: "fhd",
+	tooltipShowOnFocus: false,
 };
 
 ReactDOM.render(
