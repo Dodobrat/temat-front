@@ -1,6 +1,6 @@
 import { Form } from "@dodobrat/react-ui-kit";
 import { Portal, Card, Text, Button, Flex, FormControl, Input } from "@dodobrat/react-ui-kit";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { IconClose } from "../../../components/ui/icons";
 import { useCompanyAdd, useCompanyUpdate } from "../../../actions/mutateHooks";
 import { useQueryClient } from "react-query";
@@ -8,6 +8,10 @@ import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { confirmOnExit } from "../../../helpers/helpers";
+import AsyncSelect from "../../../components/forms/AsyncSelect";
+import { usePhoneCodes } from "../../../actions/fetchHooks";
+import { PhoneCode } from "../../common/Orders/order_steps/OrderStepShipping";
+import { imageValidator } from "../../../helpers/formValidations";
 
 interface Props {
 	onClose: () => void;
@@ -21,7 +25,8 @@ const CompaniesForm = (props: Props) => {
 	const queryClient = useQueryClient();
 
 	const {
-		register,
+		control,
+		watch,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -30,6 +35,8 @@ const CompaniesForm = (props: Props) => {
 			image: "",
 		},
 	});
+
+	const watchPhone = watch("phone");
 
 	const { mutate: addCompany, isLoading: isLoadingAdd } = useCompanyAdd({
 		queryConfig: {
@@ -56,20 +63,17 @@ const CompaniesForm = (props: Props) => {
 	const onSubmit = (data: any) => {
 		const formData = new FormData();
 
-		formData.append("name", data.name);
-		formData.append("phone", data.phone);
-		formData.append("email", data.email);
-		formData.append("bulstat", data.bulstat);
-		if (data.image?.[0]) {
-			formData.append("image", data.image[0]);
+		for (const entry of Object.entries(data)) {
+			if (!!entry[1]) {
+				if (entry[1] instanceof FileList) {
+					formData.append(entry[0], entry[1][0]);
+				} else if (typeof entry[1] === "object") {
+					formData.append(entry[0], entry[1]["value"]);
+				} else if (typeof entry[1] === "string") {
+					formData.append(entry[0], entry[1]);
+				}
+			}
 		}
-		formData.append("streetNumber", data.streetNumber);
-		formData.append("streetName", data.streetName);
-		formData.append("country", data.country);
-		formData.append("city", data.city);
-		formData.append("zipCode", data.zipCode);
-		formData.append("molFirstName", data.molFirstName);
-		formData.append("molLastName", data.molLastName);
 
 		if (payload) {
 			const formFinalData = { id: payload?.id, formData };
@@ -77,29 +81,6 @@ const CompaniesForm = (props: Props) => {
 		}
 		return addCompany(formData);
 	};
-
-	const { ref: innerRefName, ...restName } = register("name", {
-		required: `${t("validation.fieldRequired")}`,
-		minLength: { value: 3, message: `${t("validation.min3Chars")}` },
-		maxLength: { value: 99, message: `${t("validation.max99Chars")}` },
-	});
-	const { ref: innerRefBulstat, ...restBulstat } = register("bulstat", {
-		required: `${t("validation.fieldRequired")}`,
-	});
-	const { ref: innerRefPhone, ...restPhone } = register("phone");
-	const { ref: innerRefEmail, ...restEmail } = register("email");
-	const { ref: innerRefImage, ...restImage } = register("image");
-	const { ref: innerRefStreetNumber, ...restStreetNumber } = register("streetNumber");
-	const { ref: innerRefStreetName, ...restStreetName } = register("streetName");
-	const { ref: innerRefCountry, ...restCountry } = register("country");
-	const { ref: innerRefCity, ...restCity } = register("city");
-	const { ref: innerRefZipCode, ...restZipCode } = register("zipCode");
-	const { ref: innerRefMolFirstName, ...restMolFirstName } = register("molFirstName", {
-		required: `${t("validation.fieldRequired")}`,
-	});
-	const { ref: innerRefMolLastName, ...restMolLastName } = register("molLastName", {
-		required: `${t("validation.fieldRequired")}`,
-	});
 
 	return (
 		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
@@ -123,12 +104,32 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.name,
 									})}
 									hintMsg={errors?.name?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.name")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.name ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='name'
-										placeholder={t("companies.name")}
-										{...restName}
-										innerRef={innerRefName}
-										pigment={errors?.name ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: {
+												value: 2,
+												message: "Min 2 characters",
+											},
+											maxLength: {
+												value: 50,
+												message: "Max 50 characters",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -140,12 +141,28 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.bulstat,
 									})}
 									hintMsg={errors?.bulstat?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.bulstat")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.bulstat ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='bulstat'
-										placeholder={t("companies.bulstat")}
-										{...restBulstat}
-										innerRef={innerRefBulstat}
-										pigment={errors?.bulstat ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											maxLength: {
+												value: 9,
+												message: "Max 9 characters",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -157,12 +174,32 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.molFirstName,
 									})}
 									hintMsg={errors?.molFirstName?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.molFirstName")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.molFirstName ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='molFirstName'
-										placeholder={t("companies.molFirstName")}
-										{...restMolFirstName}
-										innerRef={innerRefMolFirstName}
-										pigment={errors?.molFirstName ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: {
+												value: 2,
+												message: "Min 2 characters",
+											},
+											maxLength: {
+												value: 50,
+												message: "Max 50 characters",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -174,30 +211,100 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.molLastName,
 									})}
 									hintMsg={errors?.molLastName?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.molLastName")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.molLastName ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='molLastName'
-										placeholder={t("companies.molLastName")}
-										{...restMolLastName}
-										innerRef={innerRefMolLastName}
-										pigment={errors?.molLastName ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											minLength: {
+												value: 2,
+												message: "Min 2 characters",
+											},
+											maxLength: {
+												value: 50,
+												message: "Max 50 characters",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
+							<Flex.Col col={{ base: "5", md: "4" }}>
 								<FormControl
-									label={t("companies.phone")}
+									label={t("users.phoneCode")}
+									htmlFor='phoneCodeId'
+									className={cn({
+										"text--danger": errors?.phoneCodeId,
+									})}
+									hintMsg={errors?.phoneCodeId?.message}>
+									<Controller
+										render={({ field }) => (
+											<AsyncSelect
+												useFetch={usePhoneCodes}
+												queryFilters={payload && { id: field.value }}
+												isClearable={false}
+												defaultOptions
+												preSelectOption
+												searchStringLength={1}
+												labelComponent={(data) => <PhoneCode data={data} />}
+												className={cn({
+													"temat__select__container--danger": errors?.phoneCodeId,
+												})}
+												{...field}
+											/>
+										)}
+										name='phoneCodeId'
+										control={control}
+										defaultValue={null}
+										rules={{
+											validate: (val) => (watchPhone.toString().length > 0 && !val ? "Field is required" : true),
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "7", xs: "8" }}>
+								<FormControl
+									label={t("users.phone")}
 									htmlFor='phone'
 									className={cn({
 										"text--danger": errors?.phone,
 									})}
 									hintMsg={errors?.phone?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													type='tel'
+													placeholder={t("users.phone")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.phone ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='phone'
-										type='tel'
-										placeholder={t("companies.phone")}
-										{...restPhone}
-										innerRef={innerRefPhone}
-										pigment={errors?.phone ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											pattern: {
+												value: /^[0-9]{9}$/,
+												message: "Invalid characters supplied",
+											},
+											minLength: { value: 9, message: "Min 9 characters" },
+											maxLength: { value: 9, message: "Max 9 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -209,17 +316,33 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.email,
 									})}
 									hintMsg={errors?.email?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													type='email'
+													placeholder={t("companies.email")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.email ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='email'
-										type='email'
-										placeholder={t("companies.email")}
-										{...restEmail}
-										innerRef={innerRefEmail}
-										pigment={errors?.email ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											required: "Field is required",
+											pattern: {
+												value: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
+												message: "Invalid Email",
+											},
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col='12'>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
 									label={t("companies.image")}
 									htmlFor='image'
@@ -228,7 +351,7 @@ const CompaniesForm = (props: Props) => {
 									})}
 									hintMsg={
 										<>
-											{payload ? (
+											{payload?.image ? (
 												<>
 													<a
 														href={payload?.image}
@@ -245,13 +368,28 @@ const CompaniesForm = (props: Props) => {
 											{errors?.image?.message ?? ""}
 										</>
 									}>
-									<Input
-										type='file'
+									<Controller
+										render={({ field }) => {
+											const { ref, onChange, value, ...fieldRest } = field;
+											return (
+												<Input
+													type='file'
+													accept='image/*'
+													placeholder={t("companies.image")}
+													{...fieldRest}
+													onChange={(e) => onChange(e.target.files)}
+													value={value?.[0]?.filename}
+													innerRef={ref}
+													pigment={errors?.image ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='image'
-										placeholder={t("companies.image")}
-										{...restImage}
-										innerRef={innerRefImage}
-										pigment={errors?.image ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											validate: (files) => imageValidator({ file: files?.[0] }),
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -263,12 +401,25 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.country,
 									})}
 									hintMsg={errors?.country?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.country")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.country ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='country'
-										placeholder={t("companies.country")}
-										{...restCountry}
-										innerRef={innerRefCountry}
-										pigment={errors?.country ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -280,12 +431,25 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.city,
 									})}
 									hintMsg={errors?.city?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.city")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.city ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='city'
-										placeholder={t("companies.city")}
-										{...restCity}
-										innerRef={innerRefCity}
-										pigment={errors?.city ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 60, message: "Max 60 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -297,12 +461,25 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.zipCode,
 									})}
 									hintMsg={errors?.zipCode?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.zipCode")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.zipCode ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='zipCode'
-										placeholder={t("companies.zipCode")}
-										{...restZipCode}
-										innerRef={innerRefZipCode}
-										pigment={errors?.zipCode ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 3, message: "Min 3 characters" },
+											maxLength: { value: 10, message: "Max 10 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -314,12 +491,25 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.streetName,
 									})}
 									hintMsg={errors?.streetName?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.streetName")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.streetName ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='streetName'
-										placeholder={t("companies.streetName")}
-										{...restStreetName}
-										innerRef={innerRefStreetName}
-										pigment={errors?.streetName ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 2, message: "Min 2 characters" },
+											maxLength: { value: 50, message: "Max 50 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -331,12 +521,25 @@ const CompaniesForm = (props: Props) => {
 										"text--danger": errors?.streetNumber,
 									})}
 									hintMsg={errors?.streetNumber?.message}>
-									<Input
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("companies.streetNumber")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.streetNumber ? "danger" : "primary"}
+												/>
+											);
+										}}
 										name='streetNumber'
-										placeholder={t("companies.streetNumber")}
-										{...restStreetNumber}
-										innerRef={innerRefStreetNumber}
-										pigment={errors?.streetNumber ? "danger" : "primary"}
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: { value: 1, message: "Min 1 characters" },
+											maxLength: { value: 10, message: "Max 10 characters" },
+										}}
 									/>
 								</FormControl>
 							</Flex.Col>
@@ -345,7 +548,7 @@ const CompaniesForm = (props: Props) => {
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button type='submit' form='companies-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
-						{payload ? t("common.update") : t("common.submit")}{" "}
+						{payload ? t("common.update") : t("common.submit")}
 					</Button>
 				</Card.Footer>
 			</Card>

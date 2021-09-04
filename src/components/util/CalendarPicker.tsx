@@ -1,34 +1,18 @@
+import { forwardRef } from "react";
 import { InputComponent } from "@dodobrat/react-ui-kit";
 import DatePicker, { registerLocale } from "react-datepicker";
+
 import enGb from "date-fns/locale/en-GB";
+
+import { excludeUnavailableDates, isNotSunday } from "../../helpers/dateHelpers";
 
 interface Props {
 	[key: string]: any;
 }
 
-const CalendarPicker = (props: Props) => {
-	const { ...rest } = props;
-
+const CalendarPicker = forwardRef((props: Props, ref: React.ForwardedRef<unknown>) => {
+	const { inputProps, ...rest } = props;
 	registerLocale("en-gb", enGb);
-
-	const isNotSunday = (date) => {
-		const day = new Date(date).getDay();
-		return day !== 0;
-	};
-
-	const excludeUnavailableDates = () => {
-		const excludedDates = [];
-
-		const currDate = new Date();
-		const isCurrSaturday = currDate.getDay() === 6;
-		const currHour = currDate.getHours();
-
-		if (isCurrSaturday && currHour > 12) {
-			excludedDates.push(currDate);
-		}
-
-		return excludedDates;
-	};
 
 	return (
 		<DatePicker
@@ -42,10 +26,11 @@ const CalendarPicker = (props: Props) => {
 			shouldCloseOnSelect
 			excludeDates={excludeUnavailableDates()}
 			filterDate={isNotSunday}
-			customInput={<InputComponent />}
+			customInput={<InputComponent {...inputProps} />}
+			ref={ref}
 			{...rest}
 		/>
 	);
-};
+});
 
 export default CalendarPicker;

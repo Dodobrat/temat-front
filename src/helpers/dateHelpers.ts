@@ -29,3 +29,41 @@ export const parseToISODate: (dateString: string | Date) => string = (dateString
 	}
 	return "";
 };
+
+export const isNotSunday = (date) => {
+	const day = new Date(date).getDay();
+	return day !== 0;
+};
+
+export const excludeUnavailableDates = () => {
+	const excludedDates = [];
+
+	const currDate = new Date();
+	const isCurrSaturday = currDate.getDay() === 6;
+	const currHour = currDate.getHours();
+
+	if (isCurrSaturday && currHour > 12) {
+		excludedDates.push(currDate);
+	}
+
+	return excludedDates;
+};
+
+export const getClosestValidDate = () => {
+	const today = new Date();
+	let nextAvailableDate = today;
+
+	if (excludeUnavailableDates().length > 0) {
+		let currentTime = Date.now();
+		currentTime += 1000 * 60 * 60 * 24;
+
+		if (isNotSunday(currentTime)) {
+			nextAvailableDate = new Date(currentTime);
+		} else {
+			currentTime += 1000 * 60 * 60 * 24;
+			nextAvailableDate = new Date(currentTime);
+		}
+	}
+
+	return nextAvailableDate;
+};
