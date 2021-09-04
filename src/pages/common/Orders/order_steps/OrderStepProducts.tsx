@@ -1,118 +1,118 @@
+import { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { FormControl } from "@dodobrat/react-ui-kit";
+import { Controller } from "react-hook-form";
+import { FormControl, ListGroup, Flex, Button, Input } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
-import { useState } from "react";
-import { useOrdersContext } from "../../../../context/OrdersContext";
+
 import { useProducts } from "../../../../actions/fetchHooks";
-import { ListGroup } from "@dodobrat/react-ui-kit";
-import { Flex } from "@dodobrat/react-ui-kit";
+
+import {
+	// IconAdd,
+	// IconMinus,
+	IconTrash,
+} from "../../../../components/ui/icons";
+import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import Image from "../../../../components/ui/Image";
-import { Button } from "@dodobrat/react-ui-kit";
-import { IconAdd, IconMinus, IconTrash } from "../../../../components/ui/icons";
-import { Input } from "@dodobrat/react-ui-kit";
 interface Props {
+	initialData?: any;
+	formProps?: any;
 	useContext?: any;
 	companyId?: any;
 }
 
-const OrderStepProducts = ({ useContext = useOrdersContext, companyId }: Props) => {
+const OrderStepProducts = ({ companyId, initialData, formProps: { control, errors, watch, setValue, clearErrors } }: Props) => {
 	const { t } = useTranslation();
 
-	const {
-		dataValue: { data, setData },
-	} = useContext();
+	const watchProducts = watch("products", initialData);
 
-	const [selectError, setSelectError] = useState(null);
+	const handleOnChange = useCallback(
+		(options) => {
+			const optionsWithQuantity = options.map((item) => (!!item?.quantity ? item : { ...item, quantity: 1 }));
 
-	const handleOnChangeProducts = (option: any) => {
-		const optionsWithQuantity = option.map((item) => (!!item?.quantity ? item : { ...item, quantity: 1 }));
-
-		setData((prev: any) => ({
-			...prev,
-			products: [...optionsWithQuantity],
-		}));
-		if (selectError && option) {
-			setSelectError(null);
-		}
-	};
-
-	const removeProductFromList = (product) => {
-		const newProductList = data.products.filter((item) => {
-			const IteratedUniqueId = item?.data?.id ?? item?.productId;
-			const ProductUniqueId = product?.data?.id ?? product?.productId;
-
-			return IteratedUniqueId !== ProductUniqueId;
-		});
-
-		setData((prev: any) => ({
-			...prev,
-			products: [...newProductList],
-		}));
-	};
-
-	const increaseProductQty = (product) => {
-		const newProductList = data.products.map((item) => {
-			const IteratedUniqueId = item?.data?.id ?? item?.productId;
-			const ProductUniqueId = product?.data?.id ?? product?.productId;
-			const ItemQty = item?.quantity || item?.required || product?.expected;
-
-			if (IteratedUniqueId === ProductUniqueId) {
-				return { ...item, quantity: Math.min(ItemQty + 1, 99) };
+			if (options.length > 0) {
+				clearErrors("products");
 			}
-			return item;
-		});
+			setValue("products", [...optionsWithQuantity]);
+		},
+		[setValue, clearErrors]
+	);
 
-		setData((prev: any) => ({
-			...prev,
-			products: [...newProductList],
-		}));
-	};
+	const removeProductFromList = useCallback(
+		(product) => {
+			const newProductList = watchProducts.filter((item) => {
+				const IteratedUniqueId = item?.data?.id ?? item?.productId;
+				const ProductUniqueId = product?.data?.id ?? product?.productId;
 
-	const decreaseProductQty = (product) => {
-		const newProductList = data.products.map((item) => {
-			const IteratedUniqueId = item?.data?.id ?? item?.productId;
-			const ProductUniqueId = product?.data?.id ?? product?.productId;
-			const ItemQty = item?.quantity || item?.required || product?.expected;
+				return IteratedUniqueId !== ProductUniqueId;
+			});
 
-			if (IteratedUniqueId === ProductUniqueId) {
-				return { ...item, quantity: Math.max(ItemQty - 1, 1) };
-			}
-			return item;
-		});
+			setValue("products", [...newProductList]);
+		},
+		[setValue, watchProducts]
+	);
 
-		setData((prev: any) => ({
-			...prev,
-			products: [...newProductList],
-		}));
-	};
+	// const increaseProductQty = useCallback(
+	// 	(product) => {
+	// 		const newProductList = watchProducts.map((item) => {
+	// 			const IteratedUniqueId = item?.data?.id ?? item?.productId;
+	// 			const ProductUniqueId = product?.data?.id ?? product?.productId;
+	// 			const ItemQty = item?.quantity || item?.required || product?.expected;
 
-	const specificProductQty = (target, product) => {
-		let tmp = Math.min(target.value, 99);
+	// 			if (IteratedUniqueId === ProductUniqueId) {
+	// 				return { ...item, quantity: Math.min(ItemQty + 1, 99) };
+	// 			}
+	// 			return item;
+	// 		});
 
-		const newProductList = data.products.map((item) => {
-			const IteratedUniqueId = item?.data?.id ?? item?.productId;
-			const ProductUniqueId = product?.data?.id ?? product?.productId;
+	// 		setValue("products", [...newProductList]);
+	// 	},
+	// 	[setValue, watchProducts]
+	// );
 
-			if (IteratedUniqueId === ProductUniqueId) {
-				return { ...item, quantity: Math.max(tmp, 1) };
-			}
-			return item;
-		});
+	// const decreaseProductQty = useCallback(
+	// 	(product) => {
+	// 		const newProductList = watchProducts.map((item) => {
+	// 			const IteratedUniqueId = item?.data?.id ?? item?.productId;
+	// 			const ProductUniqueId = product?.data?.id ?? product?.productId;
+	// 			const ItemQty = item?.quantity || item?.required || product?.expected;
 
-		setData((prev: any) => ({
-			...prev,
-			products: [...newProductList],
-		}));
-	};
+	// 			if (IteratedUniqueId === ProductUniqueId) {
+	// 				return { ...item, quantity: Math.max(ItemQty - 1, 1) };
+	// 			}
+	// 			return item;
+	// 		});
 
-	const innerSetCompanyId = data?.payment?.companyId?.value ?? data?.payment?.companyId;
+	// 		setValue("products", [...newProductList]);
+	// 	},
+	// 	[setValue, watchProducts]
+	// );
+
+	const specificProductQty = useCallback(
+		(target, product) => {
+			let tmp = Math.min(target.value, 99);
+
+			const newProductList = watchProducts.map((item) => {
+				const IteratedUniqueId = item?.data?.id ?? item?.productId;
+				const ProductUniqueId = product?.data?.id ?? product?.productId;
+
+				if (IteratedUniqueId === ProductUniqueId) {
+					return { ...item, quantity: Math.max(tmp, 1) };
+				}
+				return item;
+			});
+
+			setValue("products", [...newProductList]);
+		},
+		[setValue, watchProducts]
+	);
+
+	const innerSetCompanyId = watchProducts?.payment?.companyId?.value ?? watchProducts?.payment?.companyId;
 
 	return (
 		<>
-			{data.products?.length > 0 && (
+			{watchProducts?.length > 0 && (
 				<ListGroup elevation='none' className='my--2 outline'>
-					{data.products.map((product) => {
+					{watchProducts.map((product) => {
 						const productEntry = {
 							key: product?.productId ?? product?.data?.id,
 							image: product?.image ?? product?.data?.image,
@@ -130,15 +130,16 @@ const OrderStepProducts = ({ useContext = useOrdersContext, companyId }: Props) 
 									<Flex.Col>{productEntry.name}</Flex.Col>
 									<Flex.Col col={{ base: "12", sm: "auto" }}>
 										<Flex wrap='nowrap' align='center' spacingX={null} spacingY={null}>
-											<Flex.Col
-												col='auto'
-												as={Button}
-												equalDimensions
-												pigment={null}
-												pigmentColor='danger'
-												onClick={() => decreaseProductQty(product)}>
-												<IconMinus />
-											</Flex.Col>
+											{/* <Flex.Col col='auto'>
+												<Button
+													equalDimensions
+													pigment={null}
+													pigmentColor='danger'
+													type='button'
+													onClick={() => decreaseProductQty(product)}>
+													<IconMinus />
+												</Button>
+											</Flex.Col> */}
 											<Flex.Col col='auto' className='px--1'>
 												<Input
 													type='number'
@@ -148,17 +149,22 @@ const OrderStepProducts = ({ useContext = useOrdersContext, companyId }: Props) 
 													onChange={({ target }) => specificProductQty(target, product)}
 												/>
 											</Flex.Col>
-											<Flex.Col
-												col='auto'
-												as={Button}
-												equalDimensions
-												pigment={null}
-												pigmentColor='primary'
-												onClick={() => increaseProductQty(product)}>
-												<IconAdd />
-											</Flex.Col>
+											{/* <Flex.Col col='auto'>
+												<Button
+													equalDimensions
+													pigment={null}
+													pigmentColor='primary'
+													type='button'
+													onClick={() => increaseProductQty(product)}>
+													<IconAdd />
+												</Button>
+											</Flex.Col> */}
 											<Flex.Col col='auto' className='pl--1 ml--base--auto ml--sm--0'>
-												<Button equalDimensions pigment='danger' onClick={() => removeProductFromList(product)}>
+												<Button
+													equalDimensions
+													pigment='danger'
+													type='button'
+													onClick={() => removeProductFromList(product)}>
 													<IconTrash />
 												</Button>
 											</Flex.Col>
@@ -174,28 +180,39 @@ const OrderStepProducts = ({ useContext = useOrdersContext, companyId }: Props) 
 				label={t("orders.pickProduct")}
 				htmlFor='pickProduct'
 				className={cn({
-					"text--danger": selectError,
+					"text--danger": errors?.products,
 				})}
-				hintMsg={selectError?.message}>
-				<AsyncSelect
-					useFetch={useProducts}
-					querySpecs={{
-						filters: {
-							companyId: companyId ?? innerSetCompanyId,
-						},
+				hintMsg={errors?.products?.message}>
+				<Controller
+					render={({ field }) => {
+						field.onChange = handleOnChange;
+
+						return (
+							<AsyncSelect
+								useFetch={useProducts}
+								queryFilters={{
+									companyId: companyId ?? innerSetCompanyId,
+								}}
+								isMulti
+								isClearable={false}
+								className={cn("temat__select__phantom__values", {
+									"temat__select__container--danger": errors?.products,
+								})}
+								placeholder='Pick Product'
+								{...field}
+							/>
+						);
 					}}
-					isMulti
-					isClearable={false}
-					value={data.products}
-					onChange={handleOnChangeProducts}
-					className={cn("temat__select__phantom__values", {
-						"temat__select__container--danger": selectError,
-					})}
-					placeholder='Pick Product'
+					name='products'
+					control={control}
+					defaultValue={[]}
+					rules={{
+						validate: (val) => (Array.isArray(val) && val.length === 0 ? "Field is required" : true),
+					}}
 				/>
 			</FormControl>
 		</>
 	);
 };
 
-export default OrderStepProducts;
+export default memo(OrderStepProducts);

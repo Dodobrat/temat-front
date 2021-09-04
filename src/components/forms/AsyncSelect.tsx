@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import cn from "classnames";
 import {
 	AsyncPaginate,
@@ -43,13 +43,11 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 	const [clearCacheCounter, setClearCacheCounter] = useState(0);
 	const [selectValue, setSelectValue] = useState(value);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const _onChange = useCallback((val) => onChange?.(val), []);
+	const _onChange = useCallback((val) => onChange?.(val), [onChange]);
 
 	useEffect(() => {
 		setSelectValue(value);
-		_onChange(value);
-	}, [value, _onChange]);
+	}, [value]);
 
 	const clearCache = () => setClearCacheCounter((prev) => prev + 1);
 
@@ -156,4 +154,4 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 	);
 });
 
-export default AsyncSelect;
+export default memo(AsyncSelect);

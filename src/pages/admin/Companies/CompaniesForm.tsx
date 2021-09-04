@@ -158,6 +158,10 @@ const CompaniesForm = (props: Props) => {
 										defaultValue=''
 										rules={{
 											required: "Field is required",
+											maxLength: {
+												value: 9,
+												message: "Max 9 characters",
+											},
 										}}
 									/>
 								</FormControl>
@@ -187,6 +191,14 @@ const CompaniesForm = (props: Props) => {
 										defaultValue=''
 										rules={{
 											required: "Field is required",
+											minLength: {
+												value: 2,
+												message: "Min 2 characters",
+											},
+											maxLength: {
+												value: 50,
+												message: "Max 50 characters",
+											},
 										}}
 									/>
 								</FormControl>
@@ -216,6 +228,14 @@ const CompaniesForm = (props: Props) => {
 										defaultValue=''
 										rules={{
 											required: "Field is required",
+											minLength: {
+												value: 2,
+												message: "Min 2 characters",
+											},
+											maxLength: {
+												value: 50,
+												message: "Max 50 characters",
+											},
 										}}
 									/>
 								</FormControl>
@@ -428,7 +448,7 @@ const CompaniesForm = (props: Props) => {
 										defaultValue=''
 										rules={{
 											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 50, message: "Max 50 characters" },
+											maxLength: { value: 60, message: "Max 60 characters" },
 										}}
 									/>
 								</FormControl>

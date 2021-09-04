@@ -45,7 +45,7 @@ const ShippingPlansForm = (props: Props) => {
 					<Text className='mb--0'>{payload ? "Edit" : "Add"} Shipping Plan</Text>
 				</Card.Header>
 				<ShippingPlansProvider>
-					<ShippingPlansFormWizard onClose={onClose} payload={fetchedPlan} />
+					<ShippingPlansFormWizard onClose={onClose} payload={fetchedPlan} withPrefetch={!payload} />
 				</ShippingPlansProvider>
 			</Card>
 		</Portal>

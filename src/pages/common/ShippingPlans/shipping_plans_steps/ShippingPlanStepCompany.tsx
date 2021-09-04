@@ -9,7 +9,7 @@ import cn from "classnames";
 import { PortalWrapper } from "@dodobrat/react-ui-kit";
 import { Button } from "@dodobrat/react-ui-kit";
 
-const ShippingPlanStepCompany = ({ canProceed }) => {
+const ShippingPlanStepCompany = ({ withPrefetch }) => {
 	const formFooter = document.getElementById("shipping-plan-form-footer");
 
 	const { t } = useTranslation();
@@ -20,7 +20,6 @@ const ShippingPlanStepCompany = ({ canProceed }) => {
 
 	const {
 		control,
-		watch,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -29,14 +28,11 @@ const ShippingPlanStepCompany = ({ canProceed }) => {
 		},
 	});
 
-	const watchCompanyId = watch("companyId");
-
 	const onSubmit = (data: any) => {
 		setData((prev) => ({
 			...prev,
 			companyId: data.companyId,
 		}));
-		canProceed(true);
 	};
 
 	return (
@@ -53,8 +49,8 @@ const ShippingPlanStepCompany = ({ canProceed }) => {
 						<AsyncSelect
 							useFetch={useCompanies}
 							isClearable={false}
-							defaultOptions
-							preSelectOption
+							defaultOptions={withPrefetch}
+							preSelectOption={withPrefetch}
 							className={cn({
 								"temat__select__container--danger": errors?.companyId,
 							})}
@@ -64,17 +60,16 @@ const ShippingPlanStepCompany = ({ canProceed }) => {
 					name='companyId'
 					control={control}
 					defaultValue={null}
+					shouldUnregister
 					rules={{
 						required: "Field is required",
 					}}
 				/>
 			</FormControl>
 			<PortalWrapper element={formFooter ?? null}>
-				{watchCompanyId && (
-					<Button type='submit' form='shipping-plan-form'>
-						{t("common.next")}
-					</Button>
-				)}
+				<Button type='submit' form='shipping-plan-form'>
+					{t("common.next")}
+				</Button>
 			</PortalWrapper>
 		</Form>
 	);
