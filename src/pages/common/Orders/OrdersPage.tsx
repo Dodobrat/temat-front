@@ -67,11 +67,11 @@ const OrdersPage = () => {
 
 	const [searchString, setSearchString] = useState("");
 	const [searchStringError, setSearchStringError] = useState(false);
-	const [showOrdersForm, setShowOrdersForm] = useState({ state: false, payload: null });
+	const [showOrdersForm, setShowOrdersForm] = useState({ state: false });
 	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
 	const [showFilters, setShowFilters] = useState(false);
 
-	const closeOrdersForm = () => setShowOrdersForm((prev) => ({ ...prev, state: false }));
+	const closeOrdersForm = () => setShowOrdersForm(() => ({ state: false }));
 	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
 	const closeFilters = () => setShowFilters(false);
 
@@ -112,7 +112,7 @@ const OrdersPage = () => {
 					</Flex.Col>
 					{userCan(["orderCreate", "orderCreateTheir"]) && (
 						<Flex.Col col='auto'>
-							<Button onClick={() => setShowOrdersForm({ state: true, payload: null })} iconStart={<IconAdd />}>
+							<Button onClick={() => setShowOrdersForm({ state: true })} iconStart={<IconAdd />}>
 								Add New
 							</Button>
 						</Flex.Col>
@@ -150,7 +150,7 @@ const OrdersPage = () => {
 			</PageContent>
 			<Suspense fallback={<div />}>
 				<ZoomPortal in={showOrdersForm.state}>
-					<OrdersForm onClose={closeOrdersForm} payload={showOrdersForm.payload} />
+					<OrdersForm onClose={closeOrdersForm} />
 				</ZoomPortal>
 				<ZoomPortal in={showOrdersUpdateForm.state}>
 					<OrdersUpdateForm onClose={closeOrdersUpdateForm} payload={showOrdersUpdateForm.payload} />

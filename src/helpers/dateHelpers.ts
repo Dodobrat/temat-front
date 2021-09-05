@@ -52,12 +52,16 @@ export const excludeUnavailableDates = () => {
 export const getClosestValidDate = () => {
 	const today = new Date();
 	let nextAvailableDate = today;
+	let currentTime = Date.now();
+
+	if (!isNotSunday(currentTime)) {
+		currentTime += 1000 * 60 * 60 * 24;
+		nextAvailableDate = new Date(currentTime);
+	}
 
 	if (excludeUnavailableDates().length > 0) {
-		let currentTime = Date.now();
-		currentTime += 1000 * 60 * 60 * 24;
-
 		if (isNotSunday(currentTime)) {
+			nextAvailableDate = new Date(currentTime);
 			nextAvailableDate = new Date(currentTime);
 		} else {
 			currentTime += 1000 * 60 * 60 * 24;

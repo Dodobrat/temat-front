@@ -12,7 +12,7 @@ import { parsedFetchedData, parseFilesToFormData, parseProductsToFormData, parse
 import OrderStepProducts from "../order_steps/OrderStepProducts";
 import OrderStepShipping from "../order_steps/OrderStepShipping";
 import OrderStepPayment from "../order_steps/OrderStepPayment";
-import OrderStepFiles from "../order_steps/OrderStepFiles";
+import OrderStepFiles from "../order_steps/OrderStepExtras";
 import { useWindowResize } from "@dodobrat/react-ui-kit";
 
 interface Props {

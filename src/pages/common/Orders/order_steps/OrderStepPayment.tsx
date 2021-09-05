@@ -1,11 +1,12 @@
-import { Flex, FormControl } from "@dodobrat/react-ui-kit";
-import { useOrdersContext } from "../../../../context/OrdersContext";
-import cn from "classnames";
 import { useTranslation } from "react-i18next";
+import { Controller } from "react-hook-form";
 import WindowedSelect from "react-windowed-select";
-import { Input } from "@dodobrat/react-ui-kit";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import { Flex, FormControl } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
 import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
+
+import AsyncSelect from "../../../../components/forms/AsyncSelect";
 
 const selectProps = {
 	className: "temat__select__container",
@@ -25,91 +26,135 @@ export const payAfterOptions = [
 	{ value: "test", label: "Delivery and Test" },
 ];
 
-const OrderStepPayment = ({ useContext = useOrdersContext }) => {
+interface Props {
+	initialData?: any;
+	formProps?: any;
+	useContext?: any;
+}
+
+const OrderStepPayment = ({ formProps: { control, errors } }: Props) => {
 	const { t } = useTranslation();
-
-	const {
-		dataValue: { data, setData },
-	} = useContext();
-
-	const handleValueUpdate = (key, val) => {
-		setData((prev) => ({
-			...prev,
-			payment: {
-				...prev.payment,
-				[key]: val,
-			},
-		}));
-	};
 
 	return (
 		<Flex>
-			<Flex.Col col='12'>
-				<FormControl label={t("orders.paymentMethod")} htmlFor='paymentMethodId' className={cn("")} hintMsg={""}>
-					<AsyncSelect
-						inputId='payment-method'
-						useFetch={usePaymentMethods}
-						value={data?.payment?.paymentMethodId}
-						onChange={(option) => {
-							handleValueUpdate("paymentMethodId", option);
-							if (option?.value === 1) {
-								setData((prev) => ({
-									...prev,
-									payment: {
-										...prev?.payment,
-										totalAmount: "",
-										currencyId: null,
-									},
-								}));
-							}
+			<Flex.Col col={{ base: "12", lg: "6" }}>
+				<FormControl
+					label={t("orders.paymentMethod")}
+					htmlFor='paymentMethodId'
+					className={cn({
+						"text--danger": errors?.paymentMethodId,
+					})}
+					hintMsg={errors?.paymentMethodId?.message}>
+					<Controller
+						render={({ field }) => (
+							<AsyncSelect
+								inputId='payment-method'
+								useFetch={usePaymentMethods}
+								defaultOptions
+								preSelectOption
+								isClearable={false}
+								className={cn({
+									"temat__select__container--danger": errors?.phoneCodeId,
+								})}
+								{...field}
+							/>
+						)}
+						name='paymentMethodId'
+						control={control}
+						defaultValue={null}
+						rules={{
+							required: "Field is required",
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
-			{data?.payment?.paymentMethodId?.value === 1 && (
-				<>
-					<Flex.Col col={{ base: "7", lg: "6" }}>
-						<FormControl label={t("orders.amount")} htmlFor='totalAmount' className={cn("")} hintMsg={""}>
-							<Input
-								type='number'
-								name='totalAmount'
-								value={data?.payment?.totalAmount ?? ""}
-								onChange={({ target }) => handleValueUpdate("totalAmount", target.value)}
-							/>
-						</FormControl>
-					</Flex.Col>
-					<Flex.Col col={{ base: "5", lg: "6" }}>
-						<FormControl label={t("orders.currency")} htmlFor='currencyId' className={cn("")} hintMsg={""}>
-							<AsyncSelect
-								useFetch={useCurrency}
-								inputId='currency'
-								labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
-								value={data?.payment?.currencyId}
-								onChange={(option) => handleValueUpdate("currencyId", option)}
-							/>
-						</FormControl>
-					</Flex.Col>
-				</>
-			)}
 			<Flex.Col col={{ base: "12", lg: "6" }}>
-				<FormControl label={t("orders.paidBy")} htmlFor='shippingPaidBy' className={cn("")} hintMsg={""}>
-					<WindowedSelect
-						{...selectProps}
-						options={paidByOptions}
-						inputId='paid-by'
-						value={data?.payment?.shippingPaidBy}
-						onChange={(option) => handleValueUpdate("shippingPaidBy", option)}
+				<FormControl
+					label={t("orders.currency")}
+					htmlFor='currencyId'
+					className={cn({
+						"text--danger": errors?.currencyId,
+					})}
+					hintMsg={errors?.currencyId?.message}>
+					<Controller
+						render={({ field }) => (
+							<AsyncSelect
+								inputId='currency'
+								useFetch={useCurrency}
+								defaultOptions
+								preSelectOption
+								labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
+								isClearable={false}
+								className={cn({
+									"temat__select__container--danger": errors?.phoneCodeId,
+								})}
+								{...field}
+							/>
+						)}
+						name='currencyId'
+						control={control}
+						defaultValue={null}
+						rules={{
+							required: "Field is required",
+						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
-				<FormControl label={t("orders.payAfter")} htmlFor='payAfter' className={cn("")} hintMsg={""}>
-					<WindowedSelect
-						{...selectProps}
-						inputId='pay-after'
-						options={payAfterOptions}
-						value={data?.payment?.payAfter}
-						onChange={(option) => handleValueUpdate("payAfter", option)}
+				<FormControl
+					label={t("orders.paymentMethod")}
+					htmlFor='shippingPaidBy'
+					className={cn({
+						"text--danger": errors?.shippingPaidBy,
+					})}
+					hintMsg={errors?.shippingPaidBy?.message}>
+					<Controller
+						render={({ field }) => (
+							<WindowedSelect
+								{...selectProps}
+								options={paidByOptions}
+								inputId='paid-by'
+								className={cn(selectProps.className, {
+									"temat__select__container--danger": errors?.payAfter,
+								})}
+								{...field}
+							/>
+						)}
+						name='shippingPaidBy'
+						control={control}
+						defaultValue={paidByOptions[0]}
+						rules={{
+							required: "Field is required",
+						}}
+					/>
+				</FormControl>
+			</Flex.Col>
+			<Flex.Col col={{ base: "12", lg: "6" }}>
+				<FormControl
+					label={t("orders.payAfter")}
+					htmlFor='payAfter'
+					className={cn({
+						"text--danger": errors?.payAfter,
+					})}
+					hintMsg={errors?.payAfter?.message}>
+					<Controller
+						render={({ field }) => (
+							<WindowedSelect
+								{...selectProps}
+								options={payAfterOptions}
+								inputId='pay-after'
+								className={cn(selectProps.className, {
+									"temat__select__container--danger": errors?.payAfter,
+								})}
+								{...field}
+							/>
+						)}
+						name='payAfter'
+						control={control}
+						defaultValue={payAfterOptions[0]}
+						rules={{
+							required: "Field is required",
+						}}
 					/>
 				</FormControl>
 			</Flex.Col>
