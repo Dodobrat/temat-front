@@ -1,7 +1,7 @@
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, FormControl } from "@dodobrat/react-ui-kit";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
-import { useOrdersContext } from "../../../../context/OrdersContext";
 import cn from "classnames";
 import {
 	useDeliveryCities,
@@ -9,143 +9,10 @@ import {
 	useDeliveryMethods,
 	useDeliveryOffices,
 	useDeliveryStreets,
-	usePhoneCodes,
 } from "../../../../actions/fetchHooks";
-import { useEffect, useState } from "react";
 import { Input } from "@dodobrat/react-ui-kit";
-import { Heading } from "@dodobrat/react-ui-kit";
-import { useMemo } from "react";
-import { Checkbox } from "@dodobrat/react-ui-kit";
 import CalendarPicker from "../../../../components/util/CalendarPicker";
-
-const receiverFields: any = [
-	{
-		type: "email",
-		field: "email",
-		col: "12",
-	},
-	{ field: "receiverName", col: "12" },
-	{
-		field: "receiverPhoneCodeId",
-		col: { base: "5", md: "4" },
-		useFetch: usePhoneCodes,
-		searchStringLength: 1,
-		labelComponent: (data) => <PhoneCode data={data} />,
-	},
-	{ field: "receiverPhone", col: { base: "7", md: "8" } },
-	{ field: "receiverAgentName", col: "12" },
-];
-
-const ReceiverInputs = ({ fields = receiverFields, handleValueUpdate, useContext }) => {
-	const { t } = useTranslation();
-
-	const {
-		dataValue: { data },
-	} = useContext();
-
-	return (
-		<Flex.Col col='12'>
-			<Flex disableNegativeSpace className='outline flavor--default p--1'>
-				<Flex.Col col='12'>
-					<Heading as='p' className='mb--0'>
-						Receiver Details
-					</Heading>
-				</Flex.Col>
-				{fields.map((item: any) => {
-					const {
-						field,
-						formControlLabel,
-						col,
-						useFetch,
-						labelComponent,
-						querySpecs,
-						querySpecialKey,
-						dataValue,
-						inputProps,
-						searchStringLength,
-						inputType: Component = Input,
-					} = item;
-
-					return (
-						<Flex.Col col={col ?? { base: "12", sm: "6" }} key={field}>
-							<FormControl withLabel={formControlLabel} label={t(`orders.${field}`)} htmlFor={field}>
-								{useFetch ? (
-									<AsyncSelect
-										querySpecs={querySpecs}
-										querySpecialKey={querySpecialKey}
-										labelComponent={labelComponent}
-										searchStringLength={searchStringLength}
-										useFetch={useFetch}
-										value={data.shipping[field]}
-										onChange={(option) => handleValueUpdate(field, option)}
-										cacheUniqs={[querySpecialKey]}
-									/>
-								) : (
-									<Component
-										type={field.type ?? "text"}
-										value={data.shipping[field] ?? ""}
-										checked={data.shipping[field] ?? ""}
-										onChange={({ target }) => handleValueUpdate(field, target[dataValue ?? "value"])}
-										placeholder={field}
-										{...inputProps}
-									/>
-								)}
-							</FormControl>
-						</Flex.Col>
-					);
-				})}
-			</Flex>
-		</Flex.Col>
-	);
-};
-
-const DeliveryAddress = ({ deliveryFields, handleValueUpdate, useContext }) => {
-	const { t } = useTranslation();
-
-	const {
-		dataValue: { data },
-	} = useContext();
-
-	return (
-		<Flex.Col col='12'>
-			<Flex disableNegativeSpace className='outline flavor--default p--1'>
-				<Flex.Col col='12'>
-					<Heading as='p' className='mb--0'>
-						Delivery Address
-					</Heading>
-				</Flex.Col>
-				{deliveryFields.map((item) => {
-					const { field, col, useFetch, querySpecs, querySpecialKey, defaultSearchString } = item;
-
-					return (
-						<Flex.Col col={col} key={field}>
-							<FormControl label={t(`orders.${field}`)} htmlFor={field} className={cn("")} hintMsg={""}>
-								{useFetch ? (
-									<AsyncSelect
-										querySpecs={querySpecs}
-										querySpecialKey={querySpecialKey}
-										useFetch={useFetch}
-										value={data.shipping[field]}
-										onChange={(option) => handleValueUpdate(field, option)}
-										cacheUniqs={[querySpecialKey]}
-										defaultSearchString={defaultSearchString}
-										clearCacheOnMenuOpen
-									/>
-								) : (
-									<Input
-										value={data.shipping[field] ?? ""}
-										onChange={({ target }) => handleValueUpdate(field, target.value)}
-										placeholder={field}
-									/>
-								)}
-							</FormControl>
-						</Flex.Col>
-					);
-				})}
-			</Flex>
-		</Flex.Col>
-	);
-};
+import { Controller } from "react-hook-form";
 
 export const PhoneCode = ({ data }) => (
 	<span style={{ display: "flex", alignItems: "center" }}>
@@ -154,179 +21,311 @@ export const PhoneCode = ({ data }) => (
 	</span>
 );
 
-const OrderStepShipping = ({ useContext = useOrdersContext }) => {
+const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, getValues, setValue, reset } }: any) => {
 	const { t } = useTranslation();
 
-	const {
-		dataValue: { data, setData },
-	} = useContext();
+	const [clearInputsCounter, setClearInputsCounter] = useState(0);
 
-	const [courierName, setCourierName] = useState(null);
-	const [deliveryType, setDeliveryType] = useState(null);
+	const watchDelivery = watch("shippingMethodId", initialData?.shippingMethodId);
+	const watchCountry = watch("country");
+	const watchCity = watch("city");
 
-	const handleValueUpdate = (key, val) => {
-		setData((prev) => ({
-			...prev,
-			shipping: {
-				...prev.shipping,
-				[key]: val,
-			},
-		}));
-	};
+	const handleDeliveryTypeOnChange = useCallback(
+		(option) => {
+			setValue("shippingMethodId", option);
+			setClearInputsCounter((prev) => prev + 1);
+		},
+		[setValue]
+	);
 
-	const resetAddressValues = (key, val) => {
-		setData((prev) => ({
-			...prev,
-			shipping: {
-				...prev.shipping,
-				[key]: val,
+	useEffect(() => {
+		if (clearInputsCounter > 0) {
+			reset({
+				...getValues(),
 				officeId: null,
 				country: null,
 				city: null,
 				streetName: null,
 				zipCode: "",
 				streetNumber: "",
-				email: prev.shipping?.email ?? "",
-				receiverName: prev.shipping?.receiverName ?? "",
-				receiverPhoneCodeId: prev.shipping?.receiverPhoneCodeId ?? null,
-				receiverPhone: prev.shipping?.receiverPhone ?? "",
-				receiverAgentName: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentName : null,
-				receiverAgentPhoneCodeId:
-					val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentPhoneCodeId : null,
-				receiverAgentPhone: val?.label?.split(" ")[0].toLowerCase() === "econt" ? prev.shipping?.receiverAgentPhone : null,
-			},
-		}));
-	};
-
-	useEffect(() => {
-		const deliveryOption = data.shipping?.shippingMethodId ?? null;
-		if (deliveryOption) {
-			setCourierName(deliveryOption?.label?.split(" ")[0].toLowerCase());
-			setDeliveryType(deliveryOption?.label?.split(" ")[1].toLowerCase());
+			});
 		}
-	}, [data.shipping]);
-
-	const deliveryFields = useMemo(() => {
-		return [
-			{
-				col: "12",
-				field: "country",
-				useFetch: useDeliveryCountries,
-				querySpecs: {
-					courier: courierName,
-				},
-				querySpecialKey: [courierName, deliveryType],
-				defaultSearchString: "bulgaria",
-			},
-			{
-				col: { base: "12", sm: "8" },
-				field: "city",
-				useFetch: useDeliveryCities,
-				querySpecs: {
-					courier: courierName,
-					countryId: data.shipping?.country?.value,
-				},
-				querySpecialKey: [courierName, deliveryType, data.shipping?.country],
-			},
-			{ col: { base: "12", sm: "4" }, field: "zipCode" },
-			{
-				col: { base: "12", sm: "8" },
-				field: "streetName",
-				useFetch: useDeliveryStreets,
-				querySpecs: {
-					courier: courierName,
-					sortBy: [{ id: "name", desc: true }],
-					cityId: data.shipping?.city?.value,
-				},
-				querySpecialKey: [courierName, deliveryType, data.shipping?.city],
-			},
-			{ col: { base: "12", sm: "4" }, field: "streetNumber" },
-		];
-	}, [courierName, deliveryType, data]);
+	}, [clearInputsCounter, reset, getValues]);
 
 	return (
 		<Flex>
 			<Flex.Col col='12'>
-				<FormControl label={t("plans.shipDate")}>
-					<CalendarPicker selected={data?.shipping?.shipDate} onChange={(date) => handleValueUpdate("shipDate", date)} />
+				<FormControl
+					label={t("plans.shipDate")}
+					className={cn({
+						"text--danger": errors?.shipDate,
+					})}
+					hintMsg={errors?.shipDate?.message}>
+					<Controller
+						render={({ field: { value, ...rest } }) => (
+							<CalendarPicker
+								selected={value}
+								{...rest}
+								inputProps={{
+									pigment: errors?.shipDate ? "danger" : "primary",
+								}}
+							/>
+						)}
+						name='shipDate'
+						control={control}
+						defaultValue={null}
+						rules={{
+							required: "Field is required",
+						}}
+					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
-				<FormControl label={t("orders.delivery")} htmlFor='shippingMethodId' className={cn("")} hintMsg={""}>
-					<AsyncSelect
-						useFetch={useDeliveryMethods}
-						querySpecs={{
-							sortBy: [{ asc: true, id: "name" }],
+				<FormControl
+					label={t("orders.delivery")}
+					htmlFor='shippingMethodId'
+					className={cn({
+						"text--danger": errors?.shippingMethodId,
+					})}
+					hintMsg={errors?.shippingMethodId?.message}>
+					<Controller
+						render={({ field }) => {
+							field.onChange = handleDeliveryTypeOnChange;
+							return (
+								<AsyncSelect
+									useFetch={useDeliveryMethods}
+									querySpecs={{
+										sortBy: [{ asc: true, id: "name" }],
+									}}
+									isClearable={false}
+									defaultOptions
+									placeholder='Select Delivery Type'
+									className={cn({
+										"temat__select__container--danger": errors?.shippingMethodId,
+									})}
+									{...field}
+								/>
+							);
 						}}
-						value={data.shipping?.shippingMethodId}
-						onChange={(option) => resetAddressValues("shippingMethodId", option)}
-						placeholder='Select Delivery Type'
+						name='shippingMethodId'
+						control={control}
+						defaultValue={null}
+						rules={{
+							required: "Field is required",
+						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 
-			{deliveryType === "office" && (
+			{watchDelivery?.data?.deliveryType === "office" && (
 				<Flex.Col col='12'>
-					<FormControl label={`${t("orders.office")}*`} htmlFor='officeId' className={cn("")} hintMsg={""}>
-						<AsyncSelect
-							useFetch={useDeliveryOffices}
-							querySpecs={{ courier: courierName }}
-							querySpecialKey={[courierName, deliveryType]}
-							value={data.shipping?.officeId}
-							onChange={(option) => handleValueUpdate("officeId", option)}
-							placeholder='Select Office'
-							cacheUniqs={[deliveryType, courierName]}
+					<FormControl
+						label={t("orders.office")}
+						htmlFor='officeId'
+						className={cn({
+							"text--danger": errors?.officeId,
+						})}
+						hintMsg={errors?.officeId?.message}>
+						<Controller
+							render={({ field }) => (
+								<AsyncSelect
+									useFetch={useDeliveryOffices}
+									querySpecs={{ courier: watchDelivery?.data?.courierName }}
+									querySpecialKey={[watchDelivery?.data?.courierName]}
+									isClearable={false}
+									defaultOptions
+									placeholder='Select Office'
+									className={cn({
+										"temat__select__container--danger": errors?.officeId,
+									})}
+									cacheUniqs={[watchDelivery?.data?.courierName]}
+									{...field}
+								/>
+							)}
+							name='officeId'
+							control={control}
+							defaultValue={null}
+							rules={{
+								required: "Field is required",
+							}}
 						/>
 					</FormControl>
 				</Flex.Col>
 			)}
 
-			{deliveryType === "address" && (
-				<DeliveryAddress deliveryFields={deliveryFields} handleValueUpdate={handleValueUpdate} useContext={useContext} />
+			{watchDelivery?.data?.deliveryType === "address" && (
+				<>
+					<Flex.Col col='12'>
+						<FormControl
+							label={t("orders.country")}
+							htmlFor='country'
+							className={cn({
+								"text--danger": errors?.country,
+							})}
+							hintMsg={errors?.country?.message}>
+							<Controller
+								render={({ field }) => (
+									<AsyncSelect
+										{...field}
+										useFetch={useDeliveryCountries}
+										querySpecs={{ courier: watchDelivery?.data?.courierName }}
+										querySpecialKey={[watchDelivery?.data?.courierName]}
+										isClearable={false}
+										placeholder='Select Country'
+										defaultSearchString='bulgaria'
+										defaultOptions
+										preSelectOption
+										className={cn({
+											"temat__select__container--danger": errors?.country,
+										})}
+										cacheUniqs={[watchDelivery?.data?.courierName]}
+									/>
+								)}
+								name='country'
+								control={control}
+								defaultValue={null}
+								rules={{
+									required: "Field is required",
+								}}
+							/>
+						</FormControl>
+					</Flex.Col>
+					<Flex.Col col={{ base: "12", sm: "8" }}>
+						<FormControl
+							label={t("orders.city")}
+							htmlFor='city'
+							className={cn({
+								"text--danger": errors?.city,
+							})}
+							hintMsg={errors?.city?.message}>
+							<Controller
+								render={({ field }) => (
+									<AsyncSelect
+										useFetch={useDeliveryCities}
+										querySpecs={{
+											courier: watchDelivery?.data?.courierName,
+											countryId: watchCountry?.value,
+										}}
+										querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
+										isClearable={false}
+										placeholder='Select City'
+										defaultOptions={!!watchCountry}
+										className={cn({
+											"temat__select__container--danger": errors?.city,
+										})}
+										cacheUniqs={[watchDelivery?.data?.courierName, watchCountry?.value]}
+										{...field}
+									/>
+								)}
+								name='city'
+								control={control}
+								defaultValue={null}
+								rules={{
+									required: "Field is required",
+								}}
+							/>
+						</FormControl>
+					</Flex.Col>
+					<Flex.Col col={{ base: "12", xs: "4" }}>
+						<FormControl
+							label={t("orders.zipCode")}
+							htmlFor='zipCode'
+							className={cn({
+								"text--danger": errors?.zipCode,
+							})}
+							hintMsg={errors?.zipCode?.message}>
+							<Controller
+								render={({ field }) => {
+									const { ref, ...fieldRest } = field;
+									return (
+										<Input
+											placeholder={t("orders.zipCode")}
+											{...fieldRest}
+											innerRef={ref}
+											pigment={errors?.zipCode ? "danger" : "primary"}
+										/>
+									);
+								}}
+								name='zipCode'
+								control={control}
+								defaultValue=''
+								rules={{
+									minLength: { value: 3, message: "Min 3 characters" },
+									maxLength: { value: 10, message: "Max 10 characters" },
+								}}
+							/>
+						</FormControl>
+					</Flex.Col>
+					<Flex.Col col={{ base: "12", sm: "8" }}>
+						<FormControl
+							label={t("orders.streetName")}
+							htmlFor='streetName'
+							className={cn({
+								"text--danger": errors?.streetName,
+							})}
+							hintMsg={errors?.streetName?.message}>
+							<Controller
+								render={({ field }) => (
+									<AsyncSelect
+										useFetch={useDeliveryStreets}
+										querySpecs={{
+											courier: watchDelivery?.data?.courierName,
+											sortBy: [{ id: "name", desc: true }],
+											cityId: watchCity?.value,
+										}}
+										querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
+										isClearable={false}
+										placeholder='Select Street'
+										defaultOptions={!!watchCity}
+										className={cn({
+											"temat__select__container--danger": errors?.streetName,
+										})}
+										cacheUniqs={[watchDelivery?.data?.courierName, watchCity?.value]}
+										{...field}
+									/>
+								)}
+								name='streetName'
+								control={control}
+								defaultValue={null}
+								rules={{
+									required: "Field is required",
+								}}
+							/>
+						</FormControl>
+					</Flex.Col>
+					<Flex.Col col={{ base: "12", xs: "4" }}>
+						<FormControl
+							label={t("orders.streetNumber")}
+							htmlFor='streetNumber'
+							className={cn({
+								"text--danger": errors?.streetNumber,
+							})}
+							hintMsg={errors?.streetNumber?.message}>
+							<Controller
+								render={({ field }) => {
+									const { ref, ...fieldRest } = field;
+									return (
+										<Input
+											placeholder={t("orders.streetNumber")}
+											{...fieldRest}
+											innerRef={ref}
+											pigment={errors?.streetNumber ? "danger" : "primary"}
+										/>
+									);
+								}}
+								name='streetNumber'
+								control={control}
+								defaultValue=''
+								rules={{
+									required: "Field is Required",
+									minLength: { value: 1, message: "Min 1 characters" },
+									maxLength: { value: 10, message: "Max 10 characters" },
+								}}
+							/>
+						</FormControl>
+					</Flex.Col>
+				</>
 			)}
-
-			{courierName === "econt" && (
-				<ReceiverInputs
-					fields={[
-						...receiverFields,
-						{
-							field: "receiverAgentPhoneCodeId",
-							col: { base: "5", md: "4" },
-							useFetch: usePhoneCodes,
-							searchStringLength: 1,
-							labelComponent: (data) => <PhoneCode data={data} />,
-						},
-						{ field: "receiverAgentPhone", col: { base: "7", md: "8" } },
-						{
-							field: "receiverIsCompany",
-							formControlLabel: false,
-							col: "12",
-							inputType: Checkbox,
-							dataValue: "checked",
-							inputProps: {
-								seamless: true,
-								children: t("orders.receiverIsCompany"),
-							},
-						},
-					]}
-					handleValueUpdate={handleValueUpdate}
-					useContext={useContext}
-				/>
-			)}
-			{courierName === "speedy" && <ReceiverInputs fields={[
-						...receiverFields,
-						{
-							field: "receiverIsCompany",
-							formControlLabel: false,
-							col: "12",
-							inputType: Checkbox,
-							dataValue: "checked",
-							inputProps: {
-								seamless: true,
-								children: t("orders.receiverIsCompany"),
-							},
-						},
-					]} handleValueUpdate={handleValueUpdate} useContext={useContext} />}
 		</Flex>
 	);
 };

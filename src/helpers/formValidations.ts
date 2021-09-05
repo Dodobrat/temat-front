@@ -1,12 +1,26 @@
-export const imageValidator: ({ file, sizeInMb }: { file: File; sizeInMb?: number | string }) => string | true = ({
+type imageValidatorType = {
+	file: File;
+	multi?: boolean;
+	sizeInMb?: number | string;
+};
+
+export const imageValidator: ({ file, multi, sizeInMb }: imageValidatorType) => string | true = ({
 	file,
+	multi = false,
 	sizeInMb = process.env.REACT_APP_MAX_FILE_SIZE_UPLOAD,
 }) => {
 	const size = 1024 * 1024 * Number(sizeInMb);
 
 	if (!file || !file.size) return true;
 
-	return file.size <= size ? true : `File should be smaller than ${size} MB`;
+	if (file.size <= size) {
+		return true;
+	}
+	if (multi) {
+		return `One of the files is bigger than ${sizeInMb} MB`;
+	} else {
+		return `File should be smaller than ${sizeInMb} MB`;
+	}
 };
 
 // Parse null values from table row to empty string

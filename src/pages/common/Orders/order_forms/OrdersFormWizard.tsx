@@ -1,37 +1,29 @@
 import { useEffect } from "react";
-import { useOrdersContext } from "../../../../context/OrdersContext";
-import { ProgressBar, Flex, Button } from "@dodobrat/react-ui-kit";
-import OrderStepProducts from "../order_steps/OrderStepProducts";
-import OrderStepShipping from "../order_steps/OrderStepShipping";
-import OrderStepPayment from "../order_steps/OrderStepPayment";
-import OrderStepSummary from "../order_steps/OrderStepSummary";
-import { Card } from "@dodobrat/react-ui-kit";
-import { useTranslation } from "react-i18next";
-import OrderStepFiles from "../order_steps/OrderStepFiles";
-import { useOrderAdd } from "../../../../actions/mutateHooks";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
-import { useQueryClient } from "react-query";
+import { Heading, CollapseFade, Card, ProgressBar, Flex, Button } from "@dodobrat/react-ui-kit";
+
 import { useAuthContext } from "../../../../context/AuthContext";
+import { useOrdersContext } from "../../../../context/OrdersContext";
+
 import OrderStepCompany from "../order_steps/OrderStepCompany";
-import { CollapseFade } from "@dodobrat/react-ui-kit";
-import { parseOrderAddData } from "../orderAddHelpers";
+import OrderFormStepProducts from "../order_form_steps/OrderFormStepProducts";
+import OrderFormStepPayment from "../order_form_steps/OrderFormStepPayment";
+import OrderFormStepExtras from "../order_form_steps/OrderFormStepExtras";
+import OrderFormStepSummary from "../order_form_steps/OrderFormStepSummary";
+import OrderFormStepShipping from "../order_form_steps/OrderFormStepShipping";
+import OrderFormStepReceiver from "../order_form_steps/OrderFormStepReceiver";
 
 interface Props {
-	maxSteps?: number;
+	steps?: any;
 	onClose: any;
+	withPrefetch: boolean;
 }
 
 const OrdersFormWizard = (props: Props) => {
-	const { maxSteps = 1, onClose } = props;
-
-	const queryClient = useQueryClient();
-	const { t } = useTranslation();
-
-	const steps = Array.from(Array(maxSteps).keys());
+	const { steps, onClose, withPrefetch } = props;
 
 	const {
 		stepValue: { currStep, setCurrStep },
-		dataValue: { data, setData },
+		dataValue: { setData },
 	} = useOrdersContext();
 
 	const {
@@ -52,76 +44,45 @@ const OrdersFormWizard = (props: Props) => {
 		}
 	}, [setData, setCurrStep, user?.companyId, userCan]);
 
-	const { mutate: addOrder, isLoading: isLoadingAdd } = useOrderAdd({
-		queryConfig: {
-			onSuccess: (res: any) => {
-				successToast(res);
-				queryClient.invalidateQueries("orders");
-				onClose();
-			},
-			onError: (err: any) => errorToast(err),
-		},
-	});
-
-	const placeOrder = () => {
-		addOrder(parseOrderAddData(data));
-	};
-
 	return (
 		<>
 			<Card.Body>
 				<CollapseFade in={currStep !== 0}>
 					<div>
+						<Heading as='p' centered>
+							{steps.find((step) => step.step === currStep)?.label}
+						</Heading>
 						<div className='temat__form__wizard__progress'>
 							<Flex wrap='nowrap' justify='space-between' disableNegativeSpace>
 								{steps.map((step) => (
 									<Flex.Col
-										key={step}
+										key={step.step}
 										as={Button}
 										equalDimensions
 										className='p--0'
 										flavor='rounded'
 										col='auto'
 										tabIndex={-1}
-										active={currStep < step + 1}
-										pigment={currStep >= step + 1 ? "primary" : "default"}
-										onClick={() => setCurrStep(step + 1)}>
-										{step + 1}
+										active={currStep < step.step}
+										pigment={currStep >= step.step ? "primary" : "default"}
+										onClick={() => setCurrStep(step.step)}>
+										{step.step}
 									</Flex.Col>
 								))}
 							</Flex>
-							<ProgressBar value={currStep} max={maxSteps} min={1} className='pt--0' />
+							<ProgressBar value={currStep} max={steps[steps.length - 1].step} min={1} className='pt--0' />
 						</div>
 					</div>
 				</CollapseFade>
-				{currStep === 0 && userCan("orderCreate") && <OrderStepCompany />}
-				{currStep === 1 && <OrderStepProducts />}
-				{currStep === 2 && <OrderStepShipping />}
-				{currStep === 3 && <OrderStepPayment />}
-				{currStep === 4 && <OrderStepFiles />}
-				{currStep === 5 && <OrderStepSummary />}
+				{currStep === 0 && userCan("orderCreate") && <OrderStepCompany withPrefetch={withPrefetch} />}
+				{currStep === 1 && <OrderFormStepPayment />}
+				{currStep === 2 && <OrderFormStepShipping />}
+				{currStep === 3 && <OrderFormStepReceiver />}
+				{currStep === 4 && <OrderFormStepProducts />}
+				{currStep === 5 && <OrderFormStepExtras />}
+				{currStep === 6 && <OrderFormStepSummary onClose={onClose} />}
 			</Card.Body>
-			{data?.payment?.companyId && (
-				<Card.Footer>
-					<Flex wrap='nowrap' justify='space-between' className='w-100' style={{ flex: 1 }}>
-						<Flex.Col col='auto'>
-							{currStep > 1 && (
-								<Button pigment={null} pigmentColor='none' onClick={() => setCurrStep((prev: number) => prev - 1)}>
-									{t("common.back")}
-								</Button>
-							)}
-						</Flex.Col>
-						<Flex.Col col='auto'>
-							<Button
-								pigment='primary'
-								isLoading={isLoadingAdd}
-								onClick={() => (currStep < maxSteps ? setCurrStep((prev: number) => prev + 1) : placeOrder())}>
-								{currStep < maxSteps ? t("common.next") : t("common.submit")}
-							</Button>
-						</Flex.Col>
-					</Flex>
-				</Card.Footer>
-			)}
+			<Card.Footer id='orders-form-footer' />
 		</>
 	);
 };

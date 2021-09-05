@@ -1,20 +1,37 @@
-import { Card, Text, Button } from "@dodobrat/react-ui-kit";
-import { IconClose } from "../../../../components/ui/icons";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import OrdersFormWizard from "./OrdersFormWizard";
+import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
+
 import OrdersProvider from "../../../../context/OrdersContext";
-import { Portal } from "@dodobrat/react-ui-kit";
+import { useAuthContext } from "../../../../context/AuthContext";
+
+import OrdersFormWizard from "./OrdersFormWizard";
+import { IconClose } from "../../../../components/ui/icons";
+
 import { confirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
-	payload?: any;
 }
 
 const OrdersForm = (props: Props) => {
-	const { onClose, payload, ...rest } = props;
+	const { onClose, ...rest } = props;
 
 	const { t } = useTranslation();
+
+	const { userCan } = useAuthContext();
+
+	const orderFormSteps = useMemo(
+		() => [
+			{ step: 1, label: "Payment" },
+			{ step: 2, label: "Shipping" },
+			{ step: 3, label: "Receiver" },
+			{ step: 4, label: "Products" },
+			{ step: 5, label: "Extras" },
+			{ step: 6, label: "Summary" },
+		],
+		[]
+	);
 
 	return (
 		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest} withFocusLock>
@@ -28,7 +45,7 @@ const OrdersForm = (props: Props) => {
 					<Text className='mb--0'>{t("orders.addOrder")}</Text>
 				</Card.Header>
 				<OrdersProvider>
-					<OrdersFormWizard maxSteps={5} onClose={onClose} />
+					<OrdersFormWizard steps={orderFormSteps} onClose={onClose} withPrefetch={userCan("orderCreate")} />
 				</OrdersProvider>
 			</Card>
 		</Portal>

@@ -17,24 +17,29 @@ interface Props {
 	initialData?: any;
 	formProps?: any;
 	useContext?: any;
+	payment?: any;
 	companyId?: any;
 }
 
-const OrderStepProducts = ({ companyId, initialData, formProps: { control, errors, watch, setValue, clearErrors } }: Props) => {
+const OrderStepProducts = ({ payment, companyId, initialData, formProps: { control, errors, watch, setValue, clearErrors } }: Props) => {
 	const { t } = useTranslation();
 
 	const watchProducts = watch("products", initialData);
 
 	const handleOnChange = useCallback(
 		(options) => {
-			const optionsWithQuantity = options.map((item) => (!!item?.quantity ? item : { ...item, quantity: 1 }));
+			const optionsWithQuantity = options.map((item) =>
+				!!item?.quantity
+					? item
+					: { ...item, quantity: 1, price: Number(item?.data?.price).toFixed(2), currency: payment?.currencyId?.data?.symbol }
+			);
 
 			if (options.length > 0) {
 				clearErrors("products");
 			}
 			setValue("products", [...optionsWithQuantity]);
 		},
-		[setValue, clearErrors]
+		[setValue, clearErrors, payment]
 	);
 
 	const removeProductFromList = useCallback(
@@ -51,42 +56,6 @@ const OrderStepProducts = ({ companyId, initialData, formProps: { control, error
 		[setValue, watchProducts]
 	);
 
-	// const increaseProductQty = useCallback(
-	// 	(product) => {
-	// 		const newProductList = watchProducts.map((item) => {
-	// 			const IteratedUniqueId = item?.data?.id ?? item?.productId;
-	// 			const ProductUniqueId = product?.data?.id ?? product?.productId;
-	// 			const ItemQty = item?.quantity || item?.required || product?.expected;
-
-	// 			if (IteratedUniqueId === ProductUniqueId) {
-	// 				return { ...item, quantity: Math.min(ItemQty + 1, 99) };
-	// 			}
-	// 			return item;
-	// 		});
-
-	// 		setValue("products", [...newProductList]);
-	// 	},
-	// 	[setValue, watchProducts]
-	// );
-
-	// const decreaseProductQty = useCallback(
-	// 	(product) => {
-	// 		const newProductList = watchProducts.map((item) => {
-	// 			const IteratedUniqueId = item?.data?.id ?? item?.productId;
-	// 			const ProductUniqueId = product?.data?.id ?? product?.productId;
-	// 			const ItemQty = item?.quantity || item?.required || product?.expected;
-
-	// 			if (IteratedUniqueId === ProductUniqueId) {
-	// 				return { ...item, quantity: Math.max(ItemQty - 1, 1) };
-	// 			}
-	// 			return item;
-	// 		});
-
-	// 		setValue("products", [...newProductList]);
-	// 	},
-	// 	[setValue, watchProducts]
-	// );
-
 	const specificProductQty = useCallback(
 		(target, product) => {
 			let tmp = Math.min(target.value, 99);
@@ -97,6 +66,23 @@ const OrderStepProducts = ({ companyId, initialData, formProps: { control, error
 
 				if (IteratedUniqueId === ProductUniqueId) {
 					return { ...item, quantity: Math.max(tmp, 1) };
+				}
+				return item;
+			});
+
+			setValue("products", [...newProductList]);
+		},
+		[setValue, watchProducts]
+	);
+
+	const specificProductPrice = useCallback(
+		(target, product) => {
+			const newProductList = watchProducts.map((item) => {
+				const IteratedUniqueId = item?.data?.id ?? item?.productId;
+				const ProductUniqueId = product?.data?.id ?? product?.productId;
+
+				if (IteratedUniqueId === ProductUniqueId) {
+					return { ...item, price: target.value };
 				}
 				return item;
 			});
@@ -119,6 +105,8 @@ const OrderStepProducts = ({ companyId, initialData, formProps: { control, error
 							imageAlt: product?.data?.description ?? product?.description,
 							name: product?.name ?? product?.label,
 							qty: product?.quantity || product?.required || product?.expected,
+							price: product?.price ?? product?.data?.price,
+							currency: product?.currency ?? "лв",
 						};
 
 						return (
@@ -130,16 +118,16 @@ const OrderStepProducts = ({ companyId, initialData, formProps: { control, error
 									<Flex.Col>{productEntry.name}</Flex.Col>
 									<Flex.Col col={{ base: "12", sm: "auto" }}>
 										<Flex wrap='nowrap' align='center' spacingX={null} spacingY={null}>
-											{/* <Flex.Col col='auto'>
-												<Button
-													equalDimensions
-													pigment={null}
-													pigmentColor='danger'
-													type='button'
-													onClick={() => decreaseProductQty(product)}>
-													<IconMinus />
-												</Button>
-											</Flex.Col> */}
+											<Flex.Col col='auto' className='pr--1'>
+												<Input
+													type='number'
+													step='0.01'
+													suffix={productEntry?.currency}
+													style={{ width: "4rem" }}
+													value={productEntry?.price}
+													onChange={({ target }) => specificProductPrice(target, product)}
+												/>
+											</Flex.Col>
 											<Flex.Col col='auto' className='px--1'>
 												<Input
 													type='number'
@@ -149,16 +137,6 @@ const OrderStepProducts = ({ companyId, initialData, formProps: { control, error
 													onChange={({ target }) => specificProductQty(target, product)}
 												/>
 											</Flex.Col>
-											{/* <Flex.Col col='auto'>
-												<Button
-													equalDimensions
-													pigment={null}
-													pigmentColor='primary'
-													type='button'
-													onClick={() => increaseProductQty(product)}>
-													<IconAdd />
-												</Button>
-											</Flex.Col> */}
 											<Flex.Col col='auto' className='pl--1 ml--base--auto ml--sm--0'>
 												<Button
 													equalDimensions

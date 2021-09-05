@@ -65,9 +65,10 @@ export const parsedFetchedData = (order) => {
 export const parseProductsToFormData = (data) => {
 	const formData = new FormData();
 
-	data.products.forEach((product: { value: string; quantity: string }, idx: number) => {
+	data.products.forEach((product: { value: string; quantity: string; price: string | number }, idx: number) => {
 		formData.append(`products[${idx}][id]`, product.value);
 		formData.append(`products[${idx}][qty]`, product.quantity);
+		formData.append(`products[${idx}][price]`, product.price.toString());
 	});
 
 	return formData;

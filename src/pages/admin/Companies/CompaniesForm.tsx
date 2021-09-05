@@ -252,7 +252,7 @@ const CompaniesForm = (props: Props) => {
 										render={({ field }) => (
 											<AsyncSelect
 												useFetch={usePhoneCodes}
-												queryFilters={payload && { id: field.value }}
+												defaultSearchString={payload?.phoneCode ?? "359"}
 												isClearable={false}
 												defaultOptions
 												preSelectOption
