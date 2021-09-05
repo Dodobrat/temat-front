@@ -1,12 +1,15 @@
-import { Card, Text, Button } from "@dodobrat/react-ui-kit";
-import { IconClose } from "../../../../components/ui/icons";
-import { useTranslation } from "react-i18next";
-import { Portal } from "@dodobrat/react-ui-kit";
-import OrdersUpdateProvider from "../../../../context/OrdersUpdateContext";
-import { useOrderById } from "../../../../actions/fetchHooks";
-import { errorToast } from "../../../../helpers/toastEmitter";
-import OrdersUpdateFormWizard from "./OrdersUpdateFormWizard";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
+
+import OrdersUpdateProvider from "../../../../context/OrdersUpdateContext";
+
+import { useOrderById } from "../../../../actions/fetchHooks";
+
+import OrdersUpdateFormWizard from "./OrdersUpdateFormWizard";
+import { IconClose } from "../../../../components/ui/icons";
+
+import { errorToast } from "../../../../helpers/toastEmitter";
 import { confirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
@@ -51,7 +54,7 @@ const OrdersUpdateForm = (props: Props) => {
 					<Text className='mb--0'>{t("orders.updateOrder")}</Text>
 				</Card.Header>
 				<OrdersUpdateProvider>
-					<OrdersUpdateFormWizard onClose={onClose} payload={fetchedOrder} />
+					<OrdersUpdateFormWizard payload={fetchedOrder} />
 				</OrdersUpdateProvider>
 			</Card>
 		</Portal>

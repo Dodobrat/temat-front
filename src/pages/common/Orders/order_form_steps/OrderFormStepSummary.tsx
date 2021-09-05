@@ -9,9 +9,9 @@ import { useOrderAdd } from "../../../../actions/mutateHooks";
 
 import OrderStepSummary from "../order_steps/OrderStepSummary";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
-import { parseOrderAddData } from "../orderAddHelpers";
+import { parseOrderAddData } from "../orderHelpers";
 
-const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }) => {
+const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }: any) => {
 	const formFooter = document.getElementById("orders-form-footer");
 
 	const { t } = useTranslation();

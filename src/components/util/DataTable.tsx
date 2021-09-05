@@ -118,44 +118,48 @@ const DataTable = ({
 					switch (cell.column.type) {
 						case "DateTime":
 						case "Date": {
-							return <DateCell cell={cell} {...cell.getCellProps()} />;
+							return <DateCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "CopyToClipboard": {
-							return cell.value && <CopyCell cell={cell} {...cell.getCellProps()} />;
+							return cell.value && <CopyCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "OrderStatus": {
-							return <OrderStatusCell cell={cell} {...cell.getCellProps()} />;
+							return <OrderStatusCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "ShippingPlanStatus": {
-							return <ShippingPlanStatusCell cell={cell} {...cell.getCellProps()} />;
+							return <ShippingPlanStatusCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "ProductDetails": {
-							return <ProductDetailsCell cell={cell} {...cell.getCellProps()} />;
+							return <ProductDetailsCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "PermissionRoles": {
-							return <PermissionRolesCell cell={cell} {...cell.getCellProps()} />;
+							return <PermissionRolesCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "WithImage": {
-							return <WithImageCell cell={cell} {...cell.getCellProps()} />;
+							return <WithImageCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "Switch": {
-							return <SwitchCell cell={cell} {...cell.getCellProps()} />;
+							return <SwitchCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "Address": {
-							return <AddressCell cell={cell} {...cell.getCellProps()} />;
+							return <AddressCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "CompanyMol": {
-							return <CompanyMolCell cell={cell} {...cell.getCellProps()} />;
+							return <CompanyMolCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "Contact": {
-							return <ContactsCell cell={cell} {...cell.getCellProps()} />;
+							return <ContactsCell cell={cell} style={{ ...cell.column?.style }} {...cell.getCellProps()} />;
 						}
 						case "Actions": {
-							return actions.length > 0 && <ActionsCell cell={cell} actions={actions} {...cell.getCellProps()} />;
+							return (
+								actions.length > 0 && (
+									<ActionsCell cell={cell} style={{ ...cell.column?.style }} actions={actions} {...cell.getCellProps()} />
+								)
+							);
 						}
 						default: {
 							return (
-								<Table.Cell {...cell.getCellProps()}>
+								<Table.Cell style={{ ...cell.column?.style }} {...cell.getCellProps()}>
 									<span className={cn({ "text--opaque": !cell.value })}>{cell.value ?? "N/A"}</span>
 								</Table.Cell>
 							);

@@ -1,5 +1,13 @@
 import { useEffect, Suspense, lazy, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useIsFetching } from "react-query";
+import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import { AdminLayout, BackTop, Container } from "@dodobrat/react-ui-kit";
+
+import { useAuthContext } from "../../context/AuthContext";
+
+import { useLoadUser } from "../../actions/fetchHooks";
+
 import {
 	IconDashboard,
 	IconUsers,
@@ -10,17 +18,12 @@ import {
 	IconBriefcase,
 	IconArchive,
 	IconReceipt,
+	IconSettings,
 } from "../../components/ui/icons";
-import { useLoadUser } from "../../actions/fetchHooks";
-import { useAuthContext } from "../../context/AuthContext";
-import { useIsFetching } from "react-query";
-import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import SidebarContent from "./SidebarContent";
 import TopbarContent from "./TopbarContent";
 import FooterContent from "./FooterContent";
 import { PagesOptionsType } from "../../types/global.types";
-import { useTranslation } from "react-i18next";
-import { IconSettings } from "@dodobrat/react-ui-kit";
 
 //ADMIN PAGES
 const UsersPage = lazy(() => import("../../pages/admin/Users/UsersPage"));

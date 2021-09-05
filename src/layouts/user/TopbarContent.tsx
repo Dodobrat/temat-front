@@ -1,9 +1,8 @@
-import React from "react";
-import { useAdminLayout } from "@dodobrat/react-ui-kit";
-import { AdminLayout, Button, Text, Flex, Container, Skeleton } from "@dodobrat/react-ui-kit";
-import { IconHamburger } from "../../components/ui/icons";
-import { IconLogout } from "../../components/ui/icons";
+import { useAdminLayout, AdminLayout, Button, Text, Flex, Container, Skeleton } from "@dodobrat/react-ui-kit";
+
 import { useAuthContext } from "../../context/AuthContext";
+
+import { IconHamburger, IconLogout } from "../../components/ui/icons";
 
 const TopbarContent = () => {
 	const {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Flex, Table, ZoomPortal } from "@dodobrat/react-ui-kit";
 import { IconEdit, IconEye, IconTrash, IconUserManage } from "../../ui/icons";
 import ActionConfirmation from "../ActionConfirmation";
