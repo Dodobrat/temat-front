@@ -27,7 +27,6 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Payment", data);
 		setData((prev) => ({
 			...prev,
 			payment: {

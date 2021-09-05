@@ -43,8 +43,8 @@ export const parseOrderAddData = (data) => {
 		formData.append(`products[${idx}][price]`, product.price);
 	});
 
-	data.extras?.files?.forEach((file: string | Blob | File | any) => {
-		formData.append("files", file);
+	data.extras?.files?.forEach((file: Blob | File) => {
+		formData.append("files", new Blob([JSON.stringify(file)]));
 	});
 
 	if (!!data?.extras?.customerNote) {
