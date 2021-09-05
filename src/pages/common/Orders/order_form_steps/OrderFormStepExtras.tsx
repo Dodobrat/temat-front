@@ -8,7 +8,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderFilesUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepExtras from "../order_steps/OrderStepExtras";
-import { successToast } from "../../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parseExtrasToFormData } from "../orderHelpers";
 
 const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false }) => {
@@ -38,7 +38,7 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 		},
 	});
 
-	const { mutate: updateFiles, isLoading: isLoadingFilesUpdate } = useOrderFilesUpdate({
+	const { mutateAsync: updateFiles, isLoading: isLoadingFilesUpdate } = useOrderFilesUpdate({
 		specs: {
 			orderId: data?.orderId,
 		},
@@ -47,19 +47,27 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 				successToast(res);
 				queryClient.invalidateQueries("orderById");
 			},
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const onSubmit = (data: any) => {
-		setData((prev) => ({
-			...prev,
-			extras: data,
-		}));
 		if (isUpdating) {
+			if (data?.files?.filter((file) => file instanceof File).length === 0) return;
+			console.log("submit Main", data);
 			const formData = new FormData();
 			parseExtrasToFormData(data, formData);
-			updateFiles(formData);
+			updateFiles(formData).then(() => {
+				setData((prev) => ({
+					...prev,
+					extras: data,
+				}));
+			});
 		} else {
+			setData((prev) => ({
+				...prev,
+				extras: data,
+			}));
 			setCurrStep(6);
 		}
 	};
@@ -68,6 +76,7 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 		<Form id='orders-form' onSubmit={handleSubmit(onSubmit)}>
 			<OrderStepExtras
 				orderId={data?.orderId}
+				dataFiles={data?.extras?.files}
 				formProps={{ control, errors, setValue, getValues, setError, clearErrors, watch }}
 				isUpdating={isUpdating}
 			/>

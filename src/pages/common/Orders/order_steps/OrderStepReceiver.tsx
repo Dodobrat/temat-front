@@ -174,6 +174,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							return (
 								<Checkbox
 									{...fieldRest}
+									checked={field.value}
 									onChange={(e) => onChange(e.target.checked)}
 									innerRef={ref}
 									pigment={errors?.receiverIsCompany ? "danger" : "primary"}>

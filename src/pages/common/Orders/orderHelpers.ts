@@ -105,12 +105,18 @@ export const parsedFetchedData = (order) => {
 		label: order?.payment?.shippingMethodName,
 		data: { courierName: order?.address?.courierName, deliveryType: order?.address?.deliveryType },
 	};
-	parsedOrderData.shipping.city = { value: order?.address?.cityId, label: order?.address?.city };
-	parsedOrderData.shipping.country = { value: order?.address?.countryId, label: order?.address?.country };
-	parsedOrderData.shipping.streetName = { value: order?.address?.streetId, label: order?.address?.streetName };
+	parsedOrderData.shipping.city = order?.address?.cityId ? { value: order?.address?.cityId, label: order?.address?.city } : null;
+	parsedOrderData.shipping.country = order?.address?.countryId
+		? { value: order?.address?.countryId, label: order?.address?.country }
+		: null;
+	parsedOrderData.shipping.streetName = order?.address?.streetId
+		? { value: order?.address?.streetId, label: order?.address?.streetName }
+		: null;
 	parsedOrderData.shipping.streetNumber = order?.address?.streetNumber;
 	parsedOrderData.shipping.zipCode = order?.address?.zipCode;
-	parsedOrderData.shipping.officeId = { value: order?.address?.officeId, label: order?.address?.officeName };
+	parsedOrderData.shipping.officeId = order?.address?.officeId
+		? { value: order?.address?.officeId, label: order?.address?.officeName }
+		: null;
 
 	//Receiver
 	parsedOrderData.receiver.email = order?.client?.email;

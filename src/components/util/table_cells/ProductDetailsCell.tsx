@@ -1,4 +1,3 @@
-import React from "react";
 import { Flex, Table } from "@dodobrat/react-ui-kit";
 import { IconHeight, IconLength, IconWeight } from "../../ui/icons";
 import cn from "classnames";

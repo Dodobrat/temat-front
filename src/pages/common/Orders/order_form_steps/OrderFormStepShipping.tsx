@@ -9,7 +9,7 @@ import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepShipping from "../order_steps/OrderStepShipping";
 import { getClosestValidDate } from "../../../../helpers/dateHelpers";
-import { successToast } from "../../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parseShippingDataToFormData } from "../orderHelpers";
 
 const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = false }) => {
@@ -38,7 +38,7 @@ const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = fal
 		},
 	});
 
-	const { mutate: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
+	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
 		specs: {
 			orderId: data?.orderId,
 		},
@@ -48,19 +48,25 @@ const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = fal
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const onSubmit = (data: any) => {
-		setData((prev) => ({
-			...prev,
-			shipping: data,
-		}));
 		if (isUpdating) {
 			const formData = new FormData();
 			parseShippingDataToFormData(data, formData);
-			updateDetails(formData);
+			updateDetails(formData).then(() => {
+				setData((prev) => ({
+					...prev,
+					shipping: data,
+				}));
+			});
 		} else {
+			setData((prev) => ({
+				...prev,
+				shipping: data,
+			}));
 			setCurrStep(3);
 		}
 	};

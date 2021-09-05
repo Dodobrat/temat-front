@@ -1,27 +1,26 @@
-import { ListGroup } from "@dodobrat/react-ui-kit";
-import { Button } from "@dodobrat/react-ui-kit";
-import { Badge } from "@dodobrat/react-ui-kit";
-import { CollapseFade } from "@dodobrat/react-ui-kit";
-import { Portal } from "@dodobrat/react-ui-kit";
-import { Heading, Card, Flex, Text } from "@dodobrat/react-ui-kit";
 import { useEffect, useState } from "react";
-// import cn from "classnames";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
+import { Heading, Card, Flex, Text, Portal, CollapseFade, Badge, Button, ListGroup } from "@dodobrat/react-ui-kit";
+// import cn from "classnames";
+
 import { useOrderById, useOrderFileDownloadById, useOrderLabelDownloadById } from "../../../actions/fetchHooks";
 import { useOrderFinish } from "../../../actions/mutateHooks";
+
+import { useAuthContext } from "../../../context/AuthContext";
+
 import { IconClose, LogoPdf } from "../../../components/ui/icons";
 import Image from "../../../components/ui/Image";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import { pickPigment } from "../../../components/util/table_cells/OrderStatusCell";
-import { useAuthContext } from "../../../context/AuthContext";
+import OrdersViewHistory from "./OrdersViewHistory";
+
 import { parseDate } from "../../../helpers/dateHelpers";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import OrdersViewHistory from "./OrdersViewHistory";
 
 const addressInfo = (order: { address: any }) => {
 	const address = order?.address;

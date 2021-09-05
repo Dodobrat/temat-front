@@ -209,7 +209,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
 										isClearable={false}
 										placeholder='Select City'
-										defaultOptions={!!watchCountry}
+										defaultOptions={!!watchCountry?.value}
 										className={cn({
 											"temat__select__container--danger": errors?.city,
 										})}
@@ -276,7 +276,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
 										isClearable={false}
 										placeholder='Select Street'
-										defaultOptions={!!watchCity}
+										defaultOptions={!!watchCity?.value}
 										className={cn({
 											"temat__select__container--danger": errors?.streetName,
 										})}

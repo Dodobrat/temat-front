@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Flex, Heading, SwitchGroup, useConfig } from "@dodobrat/react-ui-kit";
 import { IconMoon, IconSun } from "../../components/ui/icons";
 import { useAuthContext } from "../../context/AuthContext";

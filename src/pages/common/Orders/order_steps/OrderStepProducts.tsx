@@ -6,11 +6,7 @@ import cn from "classnames";
 
 import { useProducts } from "../../../../actions/fetchHooks";
 
-import {
-	// IconAdd,
-	// IconMinus,
-	IconTrash,
-} from "../../../../components/ui/icons";
+import { IconTrash } from "../../../../components/ui/icons";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import Image from "../../../../components/ui/Image";
 interface Props {

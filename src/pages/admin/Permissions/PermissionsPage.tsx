@@ -10,7 +10,7 @@ import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 import { useAuthContext } from "../../../context/AuthContext";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
-import { IconAdd, IconFilter, IconErrorCircle } from "../../../components/ui/icons";
+import { IconAdd, IconFilter, IconErrorCircle, IconSearch } from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
@@ -145,10 +145,13 @@ const UsersPage = () => {
 								value={searchString}
 								onChange={handleOnSearchChange}
 								pigment={searchStringError ? "danger" : "primary"}
+								preffix={<IconSearch className='dui__icon' />}
 								suffix={
 									searchStringError && (
 										<Tooltip content={"Minimum 2 characters"}>
-											<IconErrorCircle className='text--danger' />
+											<div>
+												<IconErrorCircle className='text--danger dui__icon' />
+											</div>
 										</Tooltip>
 									)
 								}

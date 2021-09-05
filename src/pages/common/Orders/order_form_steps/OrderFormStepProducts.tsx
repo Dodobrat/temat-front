@@ -8,7 +8,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderProductUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepProducts from "../order_steps/OrderStepProducts";
-import { successToast } from "../../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parseProductsToFormData } from "../orderHelpers";
 
 const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = false }) => {
@@ -35,7 +35,7 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = fal
 		},
 	});
 
-	const { mutate: updateProducts, isLoading: isLoadingProductsUpdate } = useOrderProductUpdate({
+	const { mutateAsync: updateProducts, isLoading: isLoadingProductsUpdate } = useOrderProductUpdate({
 		specs: {
 			orderId: data?.orderId,
 		},
@@ -45,19 +45,25 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = fal
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const onSubmit = (data: any) => {
-		setData((prev) => ({
-			...prev,
-			products: data?.products,
-		}));
 		if (isUpdating) {
 			const formData = new FormData();
-			parseProductsToFormData(data, formData);
-			updateProducts(formData);
+			parseProductsToFormData(data.products, formData);
+			updateProducts(formData).then(() => {
+				setData((prev) => ({
+					...prev,
+					products: data?.products,
+				}));
+			});
 		} else {
+			setData((prev) => ({
+				...prev,
+				products: data?.products,
+			}));
 			setCurrStep(5);
 		}
 	};

@@ -1,9 +1,10 @@
-import { useAdminLayout } from "@dodobrat/react-ui-kit";
-import { AdminLayout, Button, Text, Skeleton } from "@dodobrat/react-ui-kit";
-import { IconUserCircle, IconMenu, IconHamburger } from "../../components/ui/icons";
 import { forwardRef } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useAdminLayout, AdminLayout, Button, Text, Skeleton } from "@dodobrat/react-ui-kit";
+
 import { useAuthContext } from "../../context/AuthContext";
+
+import { IconUserCircle, IconMenu, IconHamburger } from "../../components/ui/icons";
 import { PagesOptionsType } from "../../types/global.types";
 
 interface Props {

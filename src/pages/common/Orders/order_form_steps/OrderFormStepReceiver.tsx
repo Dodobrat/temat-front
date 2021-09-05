@@ -6,7 +6,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 
 import OrderStepReceiver from "../order_steps/OrderStepReceiver";
 import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
-import { successToast } from "../../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { useQueryClient } from "react-query";
 import { parseShippingDataToFormData } from "../orderHelpers";
 
@@ -32,7 +32,7 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = fal
 		},
 	});
 
-	const { mutate: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
+	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
 		specs: {
 			orderId: data?.orderId,
 		},
@@ -42,6 +42,7 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = fal
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -49,15 +50,20 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = fal
 		if (data?.receiverAgentPhone === "") {
 			data.receiverAgentPhoneCodeId = null;
 		}
-		setData((prev) => ({
-			...prev,
-			receiver: data,
-		}));
 		if (isUpdating) {
 			const formData = new FormData();
 			parseShippingDataToFormData(data, formData);
-			updateDetails(formData);
+			updateDetails(formData).then(() => {
+				setData((prev) => ({
+					...prev,
+					receiver: data,
+				}));
+			});
 		} else {
+			setData((prev) => ({
+				...prev,
+				receiver: data,
+			}));
 			setCurrStep(4);
 		}
 	};

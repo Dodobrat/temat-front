@@ -8,7 +8,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepPayment from "../order_steps/OrderStepPayment";
-import { successToast } from "../../../../helpers/toastEmitter";
+import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parsePaymentToFormData } from "../orderHelpers";
 
 const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = false }) => {
@@ -32,7 +32,7 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 		},
 	});
 
-	const { mutate: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
+	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
 		specs: {
 			orderId: data?.orderId,
 		},
@@ -42,23 +42,31 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
+			onError: (err: any) => errorToast(err),
 		},
 	});
 
 	const onSubmit = (data: any) => {
-		setData((prev) => ({
-			...prev,
-			payment: {
-				...prev.payment,
-				...data,
-			},
-		}));
-
 		if (isUpdating) {
 			const formData = new FormData();
 			parsePaymentToFormData(data, formData);
-			updateDetails(formData);
+			updateDetails(formData).then(() => {
+				setData((prev) => ({
+					...prev,
+					payment: {
+						...prev.payment,
+						...data,
+					},
+				}));
+			});
 		} else {
+			setData((prev) => ({
+				...prev,
+				payment: {
+					...prev.payment,
+					...data,
+				},
+			}));
 			setCurrStep(2);
 		}
 	};

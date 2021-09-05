@@ -11,16 +11,21 @@ import { IconTrash, LogoPdf } from "../../../../components/ui/icons";
 import { Controller } from "react-hook-form";
 import { imageValidator } from "../../../../helpers/formValidations";
 import { TextArea } from "@dodobrat/react-ui-kit";
+import { useEffect } from "react";
 
-const OrderStepFiles = ({
+const OrderStepExtras = ({
 	orderId,
 	isUpdating,
-	initialData,
+	dataFiles,
 	formProps: { control, errors, watch, setValue, getValues, setError, clearErrors },
-}: {
-	[key: string]: any;
-}) => {
-	const watchFiles = watch("files", initialData?.files);
+}: any) => {
+	const watchFiles = watch("files");
+
+	useEffect(() => {
+		if (dataFiles) {
+			setValue("files", dataFiles);
+		}
+	}, [dataFiles, setValue]);
 
 	const { t } = useTranslation();
 	const queryClient = useQueryClient();
@@ -64,9 +69,18 @@ const OrderStepFiles = ({
 										<Button
 											equalDimensions
 											pigment='danger'
-											onClick={() =>
-												isUpdating ? deleteFile({ orderId, fileKey: file?.key }) : removeFileFromList(file)
-											}>
+											type='button'
+											onClick={() => {
+												const isFile = file instanceof File;
+												if (isUpdating) {
+													if (isFile) {
+														return removeFileFromList(file);
+													} else {
+														return deleteFile({ orderId, fileKey: file?.key });
+													}
+												}
+												return removeFileFromList(file);
+											}}>
 											<IconTrash />
 										</Button>
 									</Flex.Col>
@@ -162,4 +176,4 @@ const OrderStepFiles = ({
 	);
 };
 
-export default OrderStepFiles;
+export default OrderStepExtras;
