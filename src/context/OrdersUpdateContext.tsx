@@ -12,13 +12,14 @@ const OrdersUpdateProvider: React.FC<OrdersUpdateProviderProps> = ({ children, i
 	const [data, setData] = useState(
 		initialData ?? {
 			orderId: null,
-			products: [],
-			shipping: {},
 			payment: {},
-			files: [],
+			shipping: {},
+			receiver: {},
+			products: [],
+			extras: {},
 		}
 	);
-	const [activeTab, setActiveTab] = useState(0);
+	const [currStep, setCurrStep] = useState(0);
 
 	useEffect(() => {
 		if (initialData) {
@@ -27,13 +28,13 @@ const OrdersUpdateProvider: React.FC<OrdersUpdateProviderProps> = ({ children, i
 	}, [initialData]);
 
 	const dataValue = useMemo(() => ({ data, setData }), [data, setData]);
-	const tabValue = useMemo(() => ({ activeTab, setActiveTab }), [activeTab, setActiveTab]);
+	const stepValue = useMemo(() => ({ currStep, setCurrStep }), [currStep, setCurrStep]);
 
 	return (
 		<OrdersUpdateContext.Provider
 			value={{
 				dataValue,
-				tabValue,
+				stepValue,
 			}}>
 			{children}
 		</OrdersUpdateContext.Provider>

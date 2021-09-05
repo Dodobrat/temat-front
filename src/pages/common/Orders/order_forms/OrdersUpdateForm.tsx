@@ -51,7 +51,7 @@ const OrdersUpdateForm = (props: Props) => {
 					<Text className='mb--0'>{t("orders.updateOrder")}</Text>
 				</Card.Header>
 				<OrdersUpdateProvider>
-					<OrdersUpdateFormWizard onClose={onClose} payload={fetchedOrder} />
+					<OrdersUpdateFormWizard payload={fetchedOrder} />
 				</OrdersUpdateProvider>
 			</Card>
 		</Portal>

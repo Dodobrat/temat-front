@@ -14,7 +14,7 @@ import { TextArea } from "@dodobrat/react-ui-kit";
 
 const OrderStepFiles = ({
 	orderId,
-	updateForm = false,
+	isUpdating,
 	initialData,
 	formProps: { control, errors, watch, setValue, getValues, setError, clearErrors },
 }: {
@@ -65,7 +65,7 @@ const OrderStepFiles = ({
 											equalDimensions
 											pigment='danger'
 											onClick={() =>
-												updateForm ? deleteFile({ orderId, fileKey: file?.key }) : removeFileFromList(file)
+												isUpdating ? deleteFile({ orderId, fileKey: file?.key }) : removeFileFromList(file)
 											}>
 											<IconTrash />
 										</Button>

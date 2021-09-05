@@ -9,7 +9,7 @@ import { usePhoneCodes } from "../../../../actions/fetchHooks";
 import { PhoneCode } from "./OrderStepShipping";
 import { Checkbox } from "@dodobrat/react-ui-kit";
 
-const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors, watch, getValues, reset } }: any) => {
+const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors, watch } }) => {
 	const { t } = useTranslation();
 
 	const courierName = shipping?.shippingMethodId?.data?.courierName;
@@ -63,21 +63,24 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 					})}
 					hintMsg={errors?.receiverPhoneCodeId?.message}>
 					<Controller
-						render={({ field }) => (
-							<AsyncSelect
-								useFetch={usePhoneCodes}
-								defaultSearchString={"359"}
-								isClearable={false}
-								defaultOptions
-								preSelectOption
-								searchStringLength={1}
-								labelComponent={(data) => <PhoneCode data={data} />}
-								className={cn({
-									"temat__select__container--danger": errors?.receiverPhoneCodeId,
-								})}
-								{...field}
-							/>
-						)}
+						render={({ field }) => {
+							const searchString = field.value?.value ? "" : field?.value ?? "359";
+							return (
+								<AsyncSelect
+									useFetch={usePhoneCodes}
+									defaultSearchString={searchString}
+									isClearable={false}
+									defaultOptions
+									preSelectOption
+									searchStringLength={1}
+									labelComponent={(data) => <PhoneCode data={data} />}
+									className={cn({
+										"temat__select__container--danger": errors?.receiverPhoneCodeId,
+									})}
+									{...field}
+								/>
+							);
+						}}
 						name='receiverPhoneCodeId'
 						control={control}
 						defaultValue={null}
@@ -233,21 +236,24 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							})}
 							hintMsg={errors?.receiverAgentPhoneCodeId?.message}>
 							<Controller
-								render={({ field }) => (
-									<AsyncSelect
-										useFetch={usePhoneCodes}
-										defaultSearchString={"359"}
-										isClearable={false}
-										defaultOptions
-										preSelectOption
-										searchStringLength={1}
-										labelComponent={(data) => <PhoneCode data={data} />}
-										className={cn({
-											"temat__select__container--danger": errors?.receiverAgentPhoneCodeId,
-										})}
-										{...field}
-									/>
-								)}
+								render={({ field }) => {
+									const searchString = field.value?.value ? "" : field?.value ?? "359";
+									return (
+										<AsyncSelect
+											useFetch={usePhoneCodes}
+											defaultSearchString={searchString}
+											isClearable={false}
+											defaultOptions
+											preSelectOption
+											searchStringLength={1}
+											labelComponent={(data) => <PhoneCode data={data} />}
+											className={cn({
+												"temat__select__container--danger": errors?.receiverAgentPhoneCodeId,
+											})}
+											{...field}
+										/>
+									);
+								}}
 								name='receiverAgentPhoneCodeId'
 								control={control}
 								defaultValue={null}
