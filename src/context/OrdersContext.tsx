@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 const OrdersContext = createContext(null);
 
@@ -26,6 +26,13 @@ const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData, 
 			extras: {},
 		}
 	);
+	const [hasReachedEnd, setHasReachedEnd] = useState(false);
+
+	useEffect(() => {
+		if (currStep >= 6) {
+			setHasReachedEnd(true);
+		}
+	}, [currStep]);
 
 	useEffect(() => {
 		if (initialData) {
@@ -39,16 +46,31 @@ const OrdersProvider: React.FC<OrdersProviderProps> = ({ children, initialData, 
 		}
 	}, [initialStep]);
 
+	const endValue = useMemo(() => ({ hasReachedEnd, setHasReachedEnd }), [hasReachedEnd, setHasReachedEnd]);
 	const stepValue = useMemo(() => ({ currStep, setCurrStep }), [currStep, setCurrStep]);
 	const panelsValue = useMemo(() => ({ toggledSummaryPanels, setToggledSummaryPanels }), [toggledSummaryPanels, setToggledSummaryPanels]);
 	const dataValue = useMemo(() => ({ data, setData }), [data, setData]);
 
+	const closeAllPanelsExcept = useCallback(
+		(key) => {
+			const editedSummaryPanels: any = Object.keys(panelsValue.toggledSummaryPanels).reduce((prev, curr) => {
+				return { ...prev, [curr]: curr !== key };
+			}, {});
+			setTimeout(() => {
+				setToggledSummaryPanels(editedSummaryPanels);
+			}, 1);
+		},
+		[panelsValue.toggledSummaryPanels]
+	);
+
 	return (
 		<OrdersContext.Provider
 			value={{
+				endValue,
 				stepValue,
 				panelsValue,
 				dataValue,
+				closeAllPanelsExcept,
 			}}>
 			{children}
 		</OrdersContext.Provider>

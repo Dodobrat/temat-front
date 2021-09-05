@@ -22,6 +22,7 @@ const OrdersFormWizard = (props: Props) => {
 	const { steps, onClose, withPrefetch } = props;
 
 	const {
+		endValue: { hasReachedEnd },
 		stepValue: { currStep, setCurrStep },
 		dataValue: { setData },
 	} = useOrdersContext();
@@ -65,7 +66,7 @@ const OrdersFormWizard = (props: Props) => {
 										tabIndex={-1}
 										active={currStep < step.step}
 										pigment={currStep >= step.step ? "primary" : "default"}
-										onClick={() => setCurrStep(step.step)}>
+										onClick={() => hasReachedEnd && setCurrStep(step.step)}>
 										{step.step}
 									</Flex.Col>
 								))}

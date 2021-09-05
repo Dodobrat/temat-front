@@ -143,12 +143,10 @@ const ExtraDetails = ({ details, ...rest }) => {
 					</Flex>
 				</ListGroup.Item>
 			))}
-			{!!details?.customerNote && (
-				<ListGroup.Item>
-					<Text>Customer Note:</Text>
-					<Text className='mb--0'>{details?.customerNote}</Text>
-				</ListGroup.Item>
-			)}
+			<ListGroup.Item>
+				<Text>Customer Note:</Text>
+				{!!details?.customerNote ? <Text className='mb--0'>{details?.customerNote}</Text> : <EmptyEntry />}
+			</ListGroup.Item>
 		</ListGroup>
 	);
 };
@@ -160,6 +158,7 @@ const OrderStepSummary = () => {
 		stepValue: { setCurrStep },
 		panelsValue: { toggledSummaryPanels, setToggledSummaryPanels },
 		dataValue: { data },
+		closeAllPanelsExcept,
 	} = useOrdersContext();
 
 	return (
@@ -182,7 +181,10 @@ const OrderStepSummary = () => {
 								equalDimensions
 								pigment='warning'
 								sizing='sm'
-								onClick={() => setCurrStep(idx + 1)}>
+								onClick={() => {
+									setCurrStep(idx + 1);
+									closeAllPanelsExcept(item[0]);
+								}}>
 								<IconEdit />
 							</Flex.Col>
 						</Flex>
