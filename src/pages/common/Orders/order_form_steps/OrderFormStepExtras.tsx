@@ -33,7 +33,6 @@ const OrderFormStepFiles = ({ useContext = useOrdersContext }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Extras", data);
 		setData((prev) => ({
 			...prev,
 			extras: data,

@@ -30,7 +30,6 @@ const OrderStepCompany = ({ useContext = useOrdersContext, withPrefetch }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Company", data);
 		setData((prev) => ({
 			...prev,
 			payment: {

@@ -30,7 +30,6 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Receiver", data);
 		if (data?.receiverAgentPhone === "") {
 			data.receiverAgentPhoneCodeId = null;
 		}

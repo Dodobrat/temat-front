@@ -30,7 +30,6 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Products", data);
 		setData((prev) => ({
 			...prev,
 			products: data?.products,

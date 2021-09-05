@@ -33,7 +33,6 @@ const OrderFormStepShipping = ({ useContext = useOrdersContext }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Shipping", data);
 		setData((prev) => ({
 			...prev,
 			shipping: data,

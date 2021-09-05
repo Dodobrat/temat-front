@@ -40,8 +40,6 @@ const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log("submit Summary", data);
-
 		addOrder(parseOrderAddData(data));
 	};
 
