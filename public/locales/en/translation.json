@@ -52,7 +52,7 @@
 		"notFound": "Not Found",
 		"info": "Info",
 		"details": "Details",
-		"credentials": "Creadentials",
+		"credentials": "Credentials",
 		"comingSoon": "Coming Soon",
 		"underDevelopment": "Under Development"
 	},
@@ -103,7 +103,7 @@
 		"shippingPaidBy": "Shipping Paid By",
 		"payAfter": "Pay After",
 		"sku": "SKU",
-		"minQty": "minQty",
+		"minQty": "min. Qty",
 		"height": "Height",
 		"heightCm": "Height in cm",
 		"width": "Width",
