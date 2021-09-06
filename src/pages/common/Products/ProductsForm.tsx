@@ -65,8 +65,6 @@ const ProductsForm = (props: Props) => {
 	const watchCompany = watch("companyId");
 	const watchIsCombo = watch("isCombo");
 
-	console.log(watch());
-
 	useEffect(() => {
 		if (watchCompany) {
 			setValue("products", []);
