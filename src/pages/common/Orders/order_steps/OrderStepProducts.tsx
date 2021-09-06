@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
 import { FormControl, ListGroup, Flex, Button, Input } from "@dodobrat/react-ui-kit";
@@ -11,13 +11,20 @@ import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import Image from "../../../../components/ui/Image";
 interface Props {
 	initialData?: any;
-	formProps?: any;
+	formProps: any;
 	useContext?: any;
 	payment?: any;
 	companyId?: any;
+	selectProps?: any;
 }
 
-const OrderStepProducts = ({ payment, companyId, initialData, formProps: { control, errors, watch, setValue, clearErrors } }: Props) => {
+const OrderStepProducts = ({
+	selectProps,
+	payment,
+	companyId,
+	initialData,
+	formProps: { control, errors, watch, setValue, clearErrors },
+}: Props) => {
 	const { t } = useTranslation();
 
 	const watchProducts = watch("products", initialData);
@@ -88,7 +95,7 @@ const OrderStepProducts = ({ payment, companyId, initialData, formProps: { contr
 		[setValue, watchProducts]
 	);
 
-	const innerSetCompanyId = watchProducts?.payment?.companyId?.value ?? watchProducts?.payment?.companyId;
+	const innerSetCompanyId = companyId || watchProducts?.payment?.companyId?.value || watchProducts?.payment?.companyId;
 
 	return (
 		<>
@@ -163,9 +170,10 @@ const OrderStepProducts = ({ payment, companyId, initialData, formProps: { contr
 
 						return (
 							<AsyncSelect
+								inputId='products-select-id'
 								useFetch={useProducts}
 								queryFilters={{
-									companyId: companyId ?? innerSetCompanyId,
+									companyId: innerSetCompanyId,
 								}}
 								isMulti
 								isClearable={false}
@@ -173,6 +181,7 @@ const OrderStepProducts = ({ payment, companyId, initialData, formProps: { contr
 									"temat__select__container--danger": errors?.products,
 								})}
 								placeholder='Pick Product'
+								{...selectProps}
 								{...field}
 							/>
 						);
@@ -189,4 +198,4 @@ const OrderStepProducts = ({ payment, companyId, initialData, formProps: { contr
 	);
 };
 
-export default memo(OrderStepProducts);
+export default OrderStepProducts;

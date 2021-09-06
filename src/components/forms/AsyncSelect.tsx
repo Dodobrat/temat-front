@@ -77,6 +77,7 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 		return setQueryParams((prev) => ({
 			filters: {
 				...prev.filters,
+				...queryFilters,
 				page,
 				searchString: searchString === "" ? defaultSearchString : searchString,
 			},

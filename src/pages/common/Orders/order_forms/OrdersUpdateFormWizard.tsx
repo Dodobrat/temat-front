@@ -35,7 +35,7 @@ const OrdersUpdateFormWizard = (props: Props) => {
 	return (
 		<>
 			<Tabs
-				className='overflow--visible max-h--unset'
+				className='max-h--unset'
 				contentClassName='w--100'
 				elevation='none'
 				activeTab={currStep}

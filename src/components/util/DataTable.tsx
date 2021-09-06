@@ -226,6 +226,7 @@ const DataTable = ({
 								className='temat__select__container temat__table__sizes__select'
 								classNamePrefix='temat__select'
 								menuPlacement='auto'
+								inputId='table-per-page-id'
 								isSearchable={false}
 								options={[10, 20, 30, 40, 50, 100].map((pageSize) => ({ value: pageSize, label: `Show ${pageSize}` }))}
 								value={{ value: pageSize, label: `Show ${pageSize}` }}

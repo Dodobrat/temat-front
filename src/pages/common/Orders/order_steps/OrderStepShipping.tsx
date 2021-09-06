@@ -29,6 +29,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 	const watchDelivery = watch("shippingMethodId", initialData?.shippingMethodId);
 	const watchCountry = watch("country");
 	const watchCity = watch("city");
+	const watchStreet = watch("streetName");
 
 	const handleDeliveryTypeOnChange = useCallback(
 		(option) => {
@@ -209,7 +210,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
 										isClearable={false}
 										placeholder='Select City'
-										defaultOptions={!!watchCountry?.value}
+										defaultOptions={!!watchCountry?.value && !watchCity?.value}
 										className={cn({
 											"temat__select__container--danger": errors?.city,
 										})}
@@ -276,7 +277,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
 										isClearable={false}
 										placeholder='Select Street'
-										defaultOptions={!!watchCity?.value}
+										defaultOptions={!!watchCountry?.value && !!watchCity?.value && !watchStreet?.value}
 										className={cn({
 											"temat__select__container--danger": errors?.streetName,
 										})}

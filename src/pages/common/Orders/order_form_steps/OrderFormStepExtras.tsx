@@ -54,7 +54,6 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 	const onSubmit = (data: any) => {
 		if (isUpdating) {
 			if (data?.files?.filter((file) => file instanceof File).length === 0) return;
-			console.log("submit Main", data);
 			const formData = new FormData();
 			parseExtrasToFormData(data, formData);
 			updateFiles(formData).then(() => {

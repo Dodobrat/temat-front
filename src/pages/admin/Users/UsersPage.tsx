@@ -20,7 +20,8 @@ import DataTable from "../../../components/util/DataTable";
 
 import { parseDefaultValues } from "../../../helpers/formValidations";
 
-const UsersForm = lazy(() => import("./UsersForm"));
+const UsersForm = lazy(() => import("./user_forms/UsersForm"));
+const UsersUpdateForm = lazy(() => import("./user_forms/UsersUpdateForm"));
 const UsersDrawer = lazy(() => import("./UsersDrawer"));
 
 const UsersPage = () => {
@@ -77,7 +78,7 @@ const UsersPage = () => {
 			{
 				permission: ["userUpdatePersonal", "userUpdateLogin"],
 				type: "edit",
-				action: (entry: any) => setShowUsersForm({ state: true, payload: parseDefaultValues(entry) }),
+				action: (entry: any) => setShowUsersUpdateForm({ state: true, payload: parseDefaultValues(entry) }),
 			},
 			{
 				permission: "userDelete",
@@ -90,10 +91,12 @@ const UsersPage = () => {
 
 	const [searchString, setSearchString] = useState("");
 	const [searchStringError, setSearchStringError] = useState(false);
-	const [showUsersForm, setShowUsersForm] = useState({ state: false, payload: null });
+	const [showUsersForm, setShowUsersForm] = useState({ state: false });
+	const [showUsersUpdateForm, setShowUsersUpdateForm] = useState({ state: false, payload: null });
 	const [showFilters, setShowFilters] = useState(false);
 
-	const closeUsersForm = () => setShowUsersForm((prev) => ({ ...prev, state: false }));
+	const closeUsersForm = () => setShowUsersForm({ state: false });
+	const closeUsersUpdateForm = () => setShowUsersUpdateForm((prev) => ({ ...prev, state: false }));
 	const closeFilters = () => setShowFilters(false);
 
 	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
@@ -133,7 +136,7 @@ const UsersPage = () => {
 					</Flex.Col>
 					{userCan("userCreate") && (
 						<Flex.Col col='auto'>
-							<Button onClick={() => setShowUsersForm({ state: true, payload: null })} iconStart={<IconAdd />}>
+							<Button onClick={() => setShowUsersForm({ state: true })} iconStart={<IconAdd />}>
 								Add New
 							</Button>
 						</Flex.Col>
@@ -173,8 +176,11 @@ const UsersPage = () => {
 				<DataTable {...tableProps} />
 			</PageContent>
 			<Suspense fallback={<div />}>
+				<ZoomPortal in={showUsersUpdateForm.state}>
+					<UsersUpdateForm onClose={closeUsersUpdateForm} payload={showUsersUpdateForm.payload} />
+				</ZoomPortal>
 				<ZoomPortal in={showUsersForm.state}>
-					<UsersForm onClose={closeUsersForm} payload={showUsersForm.payload} />
+					<UsersForm onClose={closeUsersForm} />
 				</ZoomPortal>
 				<SlideIn position='right' in={showFilters}>
 					<UsersDrawer onClose={closeFilters} />

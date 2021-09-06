@@ -16,7 +16,7 @@ const halfDay = 1000 * 60 * 60 * 12;
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export const useLoadUser: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+export const useLoadUser: FetchQueryType = ({ queryConfig, specialKey }) => {
 	return useQuery(
 		["logged_user", specialKey],
 		async () => {
@@ -125,6 +125,24 @@ export const useCompanies: FetchQueryType = ({ specs, queryConfig, specialKey })
 		["companies", specialKey],
 		async () => {
 			const { data } = await axios.get(`${apiUrl}/companies?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+//WAREHOUSES
+export const useWarehouses: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["warehouses", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/warehouses?${parseParams(specs)}`);
 			return data;
 		},
 		{

@@ -9,13 +9,15 @@ import { useProductDelete, useProductUpdate } from "../../../actions/mutateHooks
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
 import { IconAdd, IconFilter, IconErrorCircle, IconSearch } from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
+
+import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { parseDefaultValues } from "../../../helpers/formValidations";
 
 const ProductsForm = lazy(() => import("./ProductsForm"));
 const ProductsDrawer = lazy(() => import("./ProductsDrawer"));
@@ -74,7 +76,7 @@ const ProductsPage = () => {
 			{
 				permission: ["productUpdate", "productUpdateTheir"],
 				type: "edit",
-				action: (entry: any) => setShowProductForm({ state: true, payload: entry }),
+				action: (entry: any) => setShowProductForm({ state: true, payload: parseDefaultValues(entry) }),
 			},
 			{
 				permission: ["productDelete", "productDeleteTheir"],
