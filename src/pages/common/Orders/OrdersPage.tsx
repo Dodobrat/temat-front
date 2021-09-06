@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
@@ -24,6 +25,7 @@ const OrdersDrawer = lazy(() => import("./OrdersDrawer"));
 const OrdersPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
 
@@ -101,19 +103,19 @@ const OrdersPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Orders</title>
+				<title>Temat | {t("common.order", { count: 0 })}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Orders
+							{t("common.order", { count: 0 })}
 						</Heading>
 					</Flex.Col>
 					{userCan(["orderCreate", "orderCreateTheir"]) && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowOrdersForm({ state: true })} iconStart={<IconAdd />}>
-								Add New
+								{t("action.add")}
 							</Button>
 						</Flex.Col>
 					)}
@@ -126,14 +128,14 @@ const OrdersPage = () => {
 							<Input
 								type='search'
 								className='temat__table__search'
-								placeholder='Search by name...'
+								placeholder={t("common.searchBy", { keyword: t("field.name") })}
 								value={searchString}
 								onChange={handleOnSearchChange}
 								pigment={searchStringError ? "danger" : "primary"}
 								preffix={<IconSearch className='dui__icon' />}
 								suffix={
 									searchStringError && (
-										<Tooltip content={"Minimum 2 characters"}>
+										<Tooltip content={t("validation.minLength", { value: 2 })}>
 											<div>
 												<IconErrorCircle className='text--danger dui__icon' />
 											</div>
@@ -144,7 +146,7 @@ const OrdersPage = () => {
 						</Flex.Col>
 						<Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>
-								Filters
+								{t("common.filter", { count: 0 })}
 							</Button>
 						</Flex.Col>
 					</Flex>

@@ -54,7 +54,7 @@ const paymentInfo = (order: { payment: any }) => {
 
 	const shippingMethod = payment?.shippingMethodName;
 	const paidBy = payment?.shippingPaidBy;
-	const orderAmount = `${payment?.totalAmount} ${payment?.symbol}`;
+	const orderAmount = `${payment?.totalAmount ?? ""} ${payment?.symbol}`;
 
 	return { shippingMethod, paidBy, orderAmount };
 };
@@ -192,18 +192,20 @@ const OrdersViewPage = () => {
 	const noAddressData = !addressInfo(order).main && !addressInfo(order).secondary && !addressInfo(order).office;
 	const noClientData = !clientInfo(order).receiver && !clientInfo(order).agent && !clientInfo(order).contact;
 
-	const NoResults = () => <strong className='text--opaque'>N/A</strong>;
+	const NoResults = () => <strong className='text--opaque'>{t("common.na")}</strong>;
 
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Order #{orderId}</title>
+				<title>
+					Temat | {t("common.order")} #{orderId}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Order #{orderId}
+							{t("common.order")} #{orderId}
 						</Heading>
 					</Flex.Col>
 					<Flex.Col col='auto'>
@@ -212,7 +214,7 @@ const OrdersViewPage = () => {
 					{userCan("deliveryLabelCreate") && (
 						<Flex.Col col='auto'>
 							<Button pigment='info' onClick={geOrderLabel}>
-								Get Label
+								{t("order.getLabel")}
 							</Button>
 						</Flex.Col>
 					)}
@@ -222,7 +224,7 @@ const OrdersViewPage = () => {
 								pigment='success'
 								onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
 								isLoading={isLoadingFinish}>
-								{order?.details?.status !== "Shipped" ? "Finish Order" : "Finished"}
+								{order?.details?.status !== "Shipped" ? t("order.finishOrder") : t("order.finished")}
 							</Button>
 						</Flex.Col>
 					)}
@@ -235,7 +237,7 @@ const OrdersViewPage = () => {
 							{/* <Flex.Col className='w--100'>
 								<Card>
 									<Card.Body>
-										<Heading as='p'>{t("orders.progress")}</Heading>
+										<Heading as='p'>Progress</Heading>
 										Progress
 									</Card.Body>
 								</Card>
@@ -243,7 +245,7 @@ const OrdersViewPage = () => {
 							<Flex.Col className='w--100'>
 								<Card>
 									<Card.Body>
-										<Heading as='p'>{t("orders.products")}</Heading>
+										<Heading as='p'>{t("common.product", { count: 0 })}</Heading>
 										{order?.products.length > 0 ? (
 											<ListGroup elevation='none' className='outline'>
 												{order?.products?.map((product) => (
@@ -270,12 +272,12 @@ const OrdersViewPage = () => {
 																<Flex wrap='nowrap' align='center'>
 																	<Flex.Col col='auto'>
 																		<Badge sizing='lg' pigment='warning'>
-																			{t("orders.sku")}: {product?.sku}
+																			{t("field.sku")}: {product?.sku}
 																		</Badge>
 																	</Flex.Col>
 																	<Flex.Col col='auto'>
 																		<Badge sizing='lg' pigment='warning'>
-																			{t("orders.qty")}: {product?.required}
+																			{t("common.qty")}: {product?.required}
 																		</Badge>
 																	</Flex.Col>
 																</Flex>
@@ -285,7 +287,7 @@ const OrdersViewPage = () => {
 												))}
 											</ListGroup>
 										) : (
-											<span className='text--opaque'>N/A</span>
+											<NoResults />
 										)}
 									</Card.Body>
 								</Card>
@@ -295,64 +297,64 @@ const OrdersViewPage = () => {
 									<Card.Body>
 										<Flex align='stretch' spacingX='md' spacingY='md'>
 											<Flex.Col col={{ base: "12", xl: "6", fhd: "4" }} className='h--100'>
-												<Heading as='p'>{t("orders.address")}</Heading>
+												<Heading as='p'>{t("common.address")}</Heading>
 												{noAddressData && <NoResults />}
 												{detailsInfo(order).shipDate && (
 													<Text className='mb--1'>
-														Ship Date: <strong>{detailsInfo(order).shipDate}</strong>
+														{t("field.shipDate")}: <strong>{detailsInfo(order).shipDate}</strong>
 													</Text>
 												)}
 												{paymentInfo(order).shippingMethod && (
 													<Text className='mb--1'>
-														Ship Method: <strong>{paymentInfo(order).shippingMethod}</strong>
+														{t("field.shippingMethod")}: <strong>{paymentInfo(order).shippingMethod}</strong>
 													</Text>
 												)}
 												{addressInfo(order).main && (
 													<Text className='mb--1'>
-														Address: <strong>{addressInfo(order).main}</strong>
+														{t("common.address")}: <strong>{addressInfo(order).main}</strong>
 													</Text>
 												)}
 												{addressInfo(order).secondary && (
 													<Text className='mb--0'>
-														Street: <strong>{addressInfo(order).secondary}</strong>
+														{t("common.street")}: <strong>{addressInfo(order).secondary}</strong>
 													</Text>
 												)}
 												{addressInfo(order).office && (
 													<Text className='mb--0'>
-														Office: <strong>{addressInfo(order).office}</strong>
+														{t("field.office")}: <strong>{addressInfo(order).office}</strong>
 													</Text>
 												)}
 											</Flex.Col>
 											<Flex.Col col={{ base: "12", xl: "6", fhd: "4" }}>
-												<Heading as='p'>{t("orders.client")}</Heading>
+												<Heading as='p'>{t("common.client")}</Heading>
 												{noClientData && <NoResults />}
 												{clientInfo(order).receiver && (
 													<Text className='mb--1'>
-														Receiver: <strong>{clientInfo(order).receiver}</strong>
+														{t("common.receiver")}: <strong>{clientInfo(order).receiver}</strong>
 													</Text>
 												)}
 												{clientInfo(order).agent && (
 													<Text className='mb--1'>
-														Agent: <strong>{clientInfo(order).agent}</strong>
+														{t("common.agent")}: <strong>{clientInfo(order).agent}</strong>
 													</Text>
 												)}
 												{clientInfo(order).contact && (
 													<Text className='mb--0'>
-														Contact: <strong>{clientInfo(order).contact}</strong>
+														{t("common.contact")}: <strong>{clientInfo(order).contact}</strong>
 													</Text>
 												)}
 											</Flex.Col>
 											<Flex.Col col={{ base: "12", xl: "12", fhd: "4" }}>
-												<Heading as='p'>{t("orders.payment")}</Heading>
+												<Heading as='p'>{t("step.payment")}</Heading>
 												{noClientData && <NoResults />}
 												{paymentInfo(order).paidBy && (
 													<Text className='mb--1'>
-														Paid By: <strong>{paymentInfo(order).paidBy}</strong>
+														{t("common.paidBy")}: <strong>{paymentInfo(order).paidBy}</strong>
 													</Text>
 												)}
 												{paymentInfo(order).orderAmount && (
 													<Text className='mb--0'>
-														Amount: <strong>{paymentInfo(order).orderAmount}</strong>
+														{t("common.amount")}: <strong>{paymentInfo(order).orderAmount}</strong>
 													</Text>
 												)}
 											</Flex.Col>
@@ -364,7 +366,7 @@ const OrdersViewPage = () => {
 								<Card>
 									<Button as='div' wide pigment='none' leftAlignContent onClick={loadHistory}>
 										<Heading as='p' className='mb--1'>
-											{t(`common.${loadOrderHistory ? "hide" : "show"}`)} {t("orders.history")}
+											{t("order.showHideHistory", { state: loadOrderHistory ? t("common.hide") : t("common.show") })}
 										</Heading>
 									</Button>
 									<CollapseFade in={loadOrderHistory}>
@@ -377,10 +379,10 @@ const OrdersViewPage = () => {
 					<Flex.Col col={{ base: "12", md: "6", xl: "auto" }} className='temat__view__aside'>
 						<Card className='temat__view__aside__card'>
 							<Card.Body>
-								<Heading as='p'>{t("orders.additionalInfo")}</Heading>
+								<Heading as='p'>{t("common.details")}</Heading>
 								{detailsInfo(order).status && (
 									<Flex align='center' disableNegativeSpace className='mb--2 p--2 outline flavor--default'>
-										<Flex.Col>Status</Flex.Col>
+										<Flex.Col>{t("field.status")}</Flex.Col>
 										<Flex.Col col='auto'>
 											<Badge pigment={pickPigment(detailsInfo(order).status)} sizing='lg'>
 												{detailsInfo(order).status}
@@ -389,7 +391,7 @@ const OrdersViewPage = () => {
 									</Flex>
 								)}
 								<ListGroup elevation='none' className='outline mb--2'>
-									<ListGroup.Header>Files</ListGroup.Header>
+									<ListGroup.Header>{t("field.file", { count: detailsInfo(order).files?.length })}</ListGroup.Header>
 									{detailsInfo(order).files?.length > 0 ? (
 										detailsInfo(order)?.files?.map((file: any) => (
 											<ListGroup.Item key={file?.key} onClick={() => setClickedFileKey(file?.key)}>
@@ -409,14 +411,14 @@ const OrdersViewPage = () => {
 								</ListGroup>
 								{user?.roleName === "ADMIN" && detailsInfo(order).company.name && (
 									<ListGroup elevation='none' className='outline mb--2'>
-										<ListGroup.Header>Company Name</ListGroup.Header>
+										<ListGroup.Header>{t("field.company")}</ListGroup.Header>
 										<ListGroup.Item as={Link} to={`/app/companies/${detailsInfo(order).company.id}`}>
 											{detailsInfo(order).company.name}
 										</ListGroup.Item>
 									</ListGroup>
 								)}
 								<ListGroup elevation='none' className='outline'>
-									<ListGroup.Header>Note</ListGroup.Header>
+									<ListGroup.Header>{t("field.note")}</ListGroup.Header>
 									<ListGroup.Item>{detailsInfo(order).note ?? <NoResults />}</ListGroup.Item>
 								</ListGroup>
 							</Card.Body>
@@ -432,7 +434,7 @@ const OrdersViewPage = () => {
 								<IconClose />
 							</Button>
 						}>
-						<Text className='mb--0'>Download File</Text>
+						<Text className='mb--0'>{t("action.download", { entry: t("field.file") })}</Text>
 					</Card.Header>
 					<Card.Body>{downloadPopUp.payload}</Card.Body>
 				</Card>

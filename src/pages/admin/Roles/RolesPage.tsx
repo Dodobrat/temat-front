@@ -1,4 +1,5 @@
 import { useState, Suspense, lazy } from "react";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { useQueryClient } from "react-query";
 import { Heading, Flex, Button, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
@@ -20,6 +21,7 @@ const RolesForm = lazy(() => import("./RolesForm"));
 const RolesViewDrawer = lazy(() => import("./RolesViewDrawer"));
 
 const RolesPage = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
 
@@ -64,19 +66,19 @@ const RolesPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Roles</title>
+				<title>Temat | {t("common.role", { count: 0 })}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Roles
+							{t("common.role", { count: 0 })}
 						</Heading>
 					</Flex.Col>
 					{userCan("userRoleAdd") && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowRolesForm({ state: true, payload: null })} iconStart={<IconAdd />}>
-								Add New
+								{t("action.add")}
 							</Button>
 						</Flex.Col>
 					)}

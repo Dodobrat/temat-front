@@ -3,6 +3,7 @@ import { Button, Flex, Table, ZoomPortal } from "@dodobrat/react-ui-kit";
 import { IconEdit, IconEye, IconTrash, IconUserManage } from "../../ui/icons";
 import ActionConfirmation from "../ActionConfirmation";
 import { Tooltip } from "@dodobrat/react-ui-kit";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	cell: any;
@@ -46,7 +47,9 @@ const selectActionIcon = (type: string) => {
 const ActionsCell = (props: Props) => {
 	const { cell, actions, ...rest } = props;
 
-	const [confirmation, setConfirmation] = useState({ state: false, payload: null });
+	const { t } = useTranslation();
+
+	const [confirmation, setConfirmation] = useState({ state: false, actionType: "delete", payload: null });
 
 	const closeConfirmation = () => setConfirmation((prev) => ({ ...prev, state: false }));
 
@@ -56,7 +59,7 @@ const ActionsCell = (props: Props) => {
 				<Flex wrap='nowrap' align='center' justify='flex-end'>
 					{actions.map((action, idx) => (
 						<Flex.Col col='auto' key={`${action.type}_${idx}`}>
-							<Tooltip sizing='xs' content={<strong>{action.type.toUpperCase()}</strong>}>
+							<Tooltip sizing='xs' content={<strong>{t(`action.${action.type.toLowerCase()}`).toUpperCase()}</strong>}>
 								<Button
 									equalDimensions
 									pigment={selectActionPigment(action.type)}
@@ -66,6 +69,7 @@ const ActionsCell = (props: Props) => {
 											? () =>
 													setConfirmation({
 														state: true,
+														actionType: action.type.toLowerCase(),
 														payload: () => action?.action?.(cell.row.original),
 													})
 											: () => action?.action?.(cell.row.original)
@@ -78,7 +82,7 @@ const ActionsCell = (props: Props) => {
 				</Flex>
 			</Table.Cell>
 			<ZoomPortal in={confirmation.state}>
-				<ActionConfirmation onClose={closeConfirmation} payload={confirmation.payload} />
+				<ActionConfirmation onClose={closeConfirmation} payload={confirmation.payload} actionType={confirmation.actionType} />
 			</ZoomPortal>
 		</>
 	);

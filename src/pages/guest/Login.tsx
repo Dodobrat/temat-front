@@ -10,8 +10,11 @@ import { useAuthContext } from "../../context/AuthContext";
 import { IconEye, IconEyeCrossed, IconLock, IconUser } from "../../components/ui/icons";
 
 import { errorToast } from "../../helpers/toastEmitter";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+	const { t } = useTranslation();
+
 	const {
 		tokenValue: { setToken },
 	} = useAuthContext();
@@ -41,17 +44,17 @@ const Login = () => {
 	return (
 		<Flex>
 			<Helmet>
-				<title>Temat | Login</title>
+				<title>Temat | {t("common.login")}</title>
 			</Helmet>
 			<Flex.Col col={{ base: "12", xs: "10", sm: "8", md: "6" }}>
 				<Card elevation='medium' className='p--base--0 p--sm--4'>
 					<Card.Body>
 						<Form onSubmit={handleSubmit(onSubmit)}>
-							<Heading>Login</Heading>
+							<Heading>{t("common.login")}</Heading>
 							<Flex>
 								<Flex.Col col='12'>
 									<FormControl
-										label='Username'
+										label={t("field.username")}
 										htmlFor='username'
 										className={cn({
 											"text--danger": errors?.username,
@@ -62,7 +65,7 @@ const Login = () => {
 												const { ref, ...fieldRest } = field;
 												return (
 													<Input
-														placeholder='Username'
+														placeholder={t("field.username")}
 														preffix={<IconUser className='dui__icon' />}
 														{...fieldRest}
 														innerRef={ref}
@@ -74,18 +77,18 @@ const Login = () => {
 											control={control}
 											defaultValue=''
 											rules={{
-												required: "Field is required",
-												pattern: {
-													value: /^[a-zA-Z0-9]+$/,
-													message: "Invalid Username characters",
-												},
+												required: t("validation.required"),
 												minLength: {
 													value: 2,
-													message: "Min 2 characters",
+													message: t("validation.minLength", { value: 2 }),
 												},
 												maxLength: {
 													value: 50,
-													message: "Max 50 characters",
+													message: t("validation.maxLength", { value: 50 }),
+												},
+												pattern: {
+													value: /^[a-zA-Z0-9]+$/,
+													message: t("validation.pattern"),
 												},
 											}}
 										/>
@@ -93,7 +96,7 @@ const Login = () => {
 								</Flex.Col>
 								<Flex.Col col='12'>
 									<FormControl
-										label='Password'
+										label={t("field.password")}
 										htmlFor='password'
 										className={cn({
 											"text--danger": errors?.password,
@@ -105,7 +108,7 @@ const Login = () => {
 												return (
 													<Input
 														type='password'
-														placeholder='Password'
+														placeholder={t("field.password")}
 														preffix={<IconLock className='dui__icon' />}
 														passwordRevealComponent={(isVisible) =>
 															isVisible ? (
@@ -124,10 +127,10 @@ const Login = () => {
 											control={control}
 											defaultValue=''
 											rules={{
-												required: "Field is required",
+												required: t("validation.required"),
 												pattern: {
 													value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,250}$/,
-													message: "Password format doesn't match requirements",
+													message: t("validation.passRequirements"),
 												},
 											}}
 										/>
@@ -135,7 +138,7 @@ const Login = () => {
 								</Flex.Col>
 								<Flex.Col col='12' className='pt--3'>
 									<Button type='submit' isLoading={isLoading}>
-										Login
+										{t("common.login")}
 									</Button>
 								</Flex.Col>
 							</Flex>

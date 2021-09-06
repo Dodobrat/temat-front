@@ -59,7 +59,7 @@ const UsersForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -67,7 +67,7 @@ const UsersForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{t("users.addUser")}</Text>
+					<Text className='mb--0'>{t("action.add", { entry: t("common.user") })}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Form id='users-form' onSubmit={handleSubmit(onSubmit)}>
@@ -79,7 +79,7 @@ const UsersForm = (props: Props) => {
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button type='submit' form='users-form' className='ml--2' isLoading={isLoadingAdd}>
-						{t("common.submit")}
+						{t("action.add", { entry: t("common.user") })}
 					</Button>
 				</Card.Footer>
 			</Card>

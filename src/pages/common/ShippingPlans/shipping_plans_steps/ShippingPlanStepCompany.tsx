@@ -1,13 +1,11 @@
-import { Form } from "@dodobrat/react-ui-kit";
-import { FormControl } from "@dodobrat/react-ui-kit";
-import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { Controller, useForm } from "react-hook-form";
+import { Button, PortalWrapper, FormControl, Form } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
 import { useCompanies } from "../../../../actions/fetchHooks";
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useShippingPlansContext } from "../../../../context/ShippingPlansContext";
-import cn from "classnames";
-import { PortalWrapper } from "@dodobrat/react-ui-kit";
-import { Button } from "@dodobrat/react-ui-kit";
 
 const ShippingPlanStepCompany = ({ withPrefetch }) => {
 	const formFooter = document.getElementById("shipping-plan-form-footer");
@@ -38,7 +36,7 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 	return (
 		<Form id='shipping-plan-form' onSubmit={handleSubmit(onSubmit)}>
 			<FormControl
-				label={t("orders.companyId")}
+				label={t("field.company")}
 				htmlFor='companyId'
 				className={cn({
 					"text--danger": errors?.companyId,
@@ -62,7 +60,7 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 					defaultValue={null}
 					shouldUnregister
 					rules={{
-						required: "Field is required",
+						required: t("validation.required"),
 					}}
 				/>
 			</FormControl>

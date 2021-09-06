@@ -90,7 +90,7 @@ const OrderStepExtras = ({
 					</ListGroup>
 				)}
 				<FormControl
-					label={t("orders.files")}
+					label={t("field.file", { count: 0 })}
 					htmlFor='files'
 					className={cn({
 						"text--danger": errors?.files,
@@ -110,7 +110,7 @@ const OrderStepExtras = ({
 											if (watchFiles.filter((file) => file.name === uploadedFile.name).length > 0) {
 												return setError("files", {
 													type: "manual",
-													message: "A file with the same name already exists",
+													message: t("validation.sameFile"),
 												});
 											}
 										}
@@ -128,10 +128,10 @@ const OrderStepExtras = ({
 						defaultValue=''
 						rules={{
 							validate: (files) => {
-								if (files.length > 5) return `Max 5 files allowed`;
+								if (files.length > 5) return t("validation.maxFiles", { value: 5 });
 								for (const file of files) {
-									if (typeof imageValidator({ file: file }) === "string") {
-										return imageValidator({ file: file, multi: true });
+									if (typeof imageValidator({ file: file, t }) === "string") {
+										return imageValidator({ file: file, multi: true, t });
 									}
 								}
 							},
@@ -141,7 +141,7 @@ const OrderStepExtras = ({
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label='Delivery Note'
+					label={t("field.note")}
 					htmlFor='customerNote'
 					className={cn({
 						"text--danger": errors?.customerNote,
@@ -152,7 +152,7 @@ const OrderStepExtras = ({
 							const { ref, ...fieldRest } = field;
 							return (
 								<TextArea
-									placeholder='Enter Note'
+									placeholder={t("field.note")}
 									{...fieldRest}
 									innerRef={ref}
 									style={{ minHeight: "unset" }}
@@ -166,8 +166,14 @@ const OrderStepExtras = ({
 						control={control}
 						defaultValue=''
 						rules={{
-							minLength: { value: 2, message: "Min 2 characters" },
-							maxLength: { value: 250, message: "Max 250 characters" },
+							minLength: {
+								value: 2,
+								message: t("validation.minLength", { value: 2 }),
+							},
+							maxLength: {
+								value: 250,
+								message: t("validation.maxLength", { value: 250 }),
+							},
 						}}
 					/>
 				</FormControl>

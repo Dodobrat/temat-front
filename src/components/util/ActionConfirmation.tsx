@@ -5,11 +5,12 @@ import { useTranslation } from "react-i18next";
 interface Props {
 	onClose: () => void;
 	payload?: () => void;
+	actionType?: string;
 	[key: string]: any;
 }
 
 const ActionConfirmation = (props: Props) => {
-	const { onClose, payload, ...rest } = props;
+	const { onClose, payload, actionType, ...rest } = props;
 
 	const { t } = useTranslation();
 
@@ -31,15 +32,15 @@ const ActionConfirmation = (props: Props) => {
 				</Card.Header>
 				<Card.Body>
 					<Heading as='p' className='mb--2'>
-						{t("common.confirmAction")}
+						{t("confirmation.action", { action: t(`action.${actionType}`).toUpperCase() })}
 					</Heading>
-					<Text className='mb--0 text--danger'>{t("common.actionIrrevirsible")}</Text>
+					<Text className='mb--0 text--danger'>{t("confirmation.warning")}</Text>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button className='ml--2' pigment='danger' onClick={onClose}>
+					<Button className='ml--2' pigment='default' onClick={onClose}>
 						{t("common.no")}
 					</Button>
-					<Button className='ml--2' pigment='success' onClick={handleConfirm}>
+					<Button className='ml--2' pigment='danger' onClick={handleConfirm}>
 						{t("common.yes")}
 					</Button>
 				</Card.Footer>

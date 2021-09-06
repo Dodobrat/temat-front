@@ -134,7 +134,7 @@ const OrderStepProducts = ({
 											<Flex.Col col='auto' className='px--1'>
 												<Input
 													type='number'
-													preffix='Qty.'
+													preffix={t("common.qty")}
 													style={{ width: "4rem" }}
 													value={productEntry?.qty}
 													onChange={({ target }) => specificProductQty(target, product)}
@@ -158,7 +158,7 @@ const OrderStepProducts = ({
 				</ListGroup>
 			)}
 			<FormControl
-				label={t("orders.pickProduct")}
+				label={t("field.product", { count: 0 })}
 				htmlFor='pickProduct'
 				className={cn({
 					"text--danger": errors?.products,
@@ -180,7 +180,7 @@ const OrderStepProducts = ({
 								className={cn("temat__select__phantom__values", {
 									"temat__select__container--danger": errors?.products,
 								})}
-								placeholder='Pick Product'
+								placeholder={t("field.select", { field: t("field.product", { count: 0 }) })}
 								{...selectProps}
 								{...field}
 							/>
@@ -190,7 +190,7 @@ const OrderStepProducts = ({
 					control={control}
 					defaultValue={[]}
 					rules={{
-						validate: (val) => (Array.isArray(val) && val.length === 0 ? "Field is required" : true),
+						validate: (val) => (Array.isArray(val) && val.length === 0 ? t("validation.required") : true),
 					}}
 				/>
 			</FormControl>

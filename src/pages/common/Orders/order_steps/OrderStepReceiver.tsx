@@ -1,13 +1,12 @@
-import { FormControl } from "@dodobrat/react-ui-kit";
-import { Flex } from "@dodobrat/react-ui-kit";
 import { useTranslation } from "react-i18next";
-import cn from "classnames";
 import { Controller } from "react-hook-form";
-import { Input } from "@dodobrat/react-ui-kit";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import { Input, Flex, Checkbox, FormControl } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
 import { usePhoneCodes } from "../../../../actions/fetchHooks";
-import { PhoneCode } from "./OrderStepShipping";
-import { Checkbox } from "@dodobrat/react-ui-kit";
+
+import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import PhoneCode from "../../../../components/util/PhoneCode";
 
 const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors, watch } }) => {
 	const { t } = useTranslation();
@@ -19,7 +18,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 		<Flex>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("orders.receiverName")}
+					label={t("field.name")}
 					htmlFor='receiverName'
 					className={cn({
 						"text--danger": errors?.receiverName,
@@ -30,7 +29,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							const { ref, ...fieldRest } = field;
 							return (
 								<Input
-									placeholder={t("orders.receiverName")}
+									placeholder={t("field.name")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.receiverName ? "danger" : "primary"}
@@ -41,14 +40,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 						control={control}
 						defaultValue=''
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 							minLength: {
 								value: 2,
-								message: "Min 2 characters",
+								message: t("validation.minLength", { value: 2 }),
 							},
 							maxLength: {
 								value: 50,
-								message: "Max 50 characters",
+								message: t("validation.maxLength", { value: 50 }),
 							},
 						}}
 					/>
@@ -56,7 +55,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 			</Flex.Col>
 			<Flex.Col col={{ base: "5", md: "4" }}>
 				<FormControl
-					label={t("orders.phoneCode")}
+					label={t("field.phoneCode")}
 					htmlFor='receiverPhoneCodeId'
 					className={cn({
 						"text--danger": errors?.receiverPhoneCodeId,
@@ -85,14 +84,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 						control={control}
 						defaultValue={null}
 						rules={{
-							required: "Field is Required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "7", xs: "8" }}>
 				<FormControl
-					label={t("orders.phone")}
+					label={t("field.phone")}
 					htmlFor='receiverPhone'
 					className={cn({
 						"text--danger": errors?.receiverPhone,
@@ -104,7 +103,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							return (
 								<Input
 									type='tel'
-									placeholder={t("orders.phone")}
+									placeholder={t("field.phone")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.receiverPhone ? "danger" : "primary"}
@@ -115,20 +114,26 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 						control={control}
 						defaultValue=''
 						rules={{
-							required: "Field is Required",
+							required: t("validation.required"),
 							pattern: {
 								value: /^[0-9]{9}$/,
-								message: "Invalid characters supplied",
+								message: t("validation.pattern"),
 							},
-							minLength: { value: 9, message: "Min 9 characters" },
-							maxLength: { value: 9, message: "Max 9 characters" },
+							minLength: {
+								value: 9,
+								message: t("validation.minLength", { value: 9 }),
+							},
+							maxLength: {
+								value: 9,
+								message: t("validation.maxLength", { value: 9 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("orders.email")}
+					label={t("field.email")}
 					htmlFor='email'
 					className={cn({
 						"text--danger": errors?.email,
@@ -140,7 +145,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							return (
 								<Input
 									type='email'
-									placeholder={t("orders.email")}
+									placeholder={t("field.email")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.email ? "danger" : "primary"}
@@ -151,10 +156,10 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 						control={control}
 						defaultValue=''
 						rules={{
-							// required: "Field is required",
+							// required: t("validation.required"),
 							pattern: {
 								value: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-								message: "Invalid Email",
+								message: t("validation.pattern"),
 							},
 						}}
 					/>
@@ -162,7 +167,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("orders.receiverIsCompany")}
+					withLabel={false}
 					htmlFor='receiverIsCompany'
 					className={cn({
 						"text--danger": errors?.receiverIsCompany,
@@ -178,7 +183,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 									onChange={(e) => onChange(e.target.checked)}
 									innerRef={ref}
 									pigment={errors?.receiverIsCompany ? "danger" : "primary"}>
-									{t("orders.receiverIsCompany")}
+									{t("field.receiverIsCompany")}
 								</Checkbox>
 							);
 						}}
@@ -193,7 +198,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 				<>
 					<Flex.Col col='12'>
 						<FormControl
-							label={t("orders.receiverAgentName")}
+							label={t("field.agentName")}
 							htmlFor='receiverAgentName'
 							className={cn({
 								"text--danger": errors?.receiverAgentName,
@@ -204,7 +209,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 									const { ref, ...fieldRest } = field;
 									return (
 										<Input
-											placeholder={t("orders.receiverAgentName")}
+											placeholder={t("field.agentName")}
 											{...fieldRest}
 											innerRef={ref}
 											pigment={errors?.receiverAgentName ? "danger" : "primary"}
@@ -215,14 +220,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 								control={control}
 								defaultValue=''
 								rules={{
-									required: isCompany && "Field is required",
+									required: isCompany && t("validation.required"),
 									minLength: {
 										value: 2,
-										message: "Min 2 characters",
+										message: t("validation.minLength", { value: 2 }),
 									},
 									maxLength: {
 										value: 50,
-										message: "Max 50 characters",
+										message: t("validation.maxLength", { value: 50 }),
 									},
 								}}
 							/>
@@ -230,7 +235,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 					</Flex.Col>
 					<Flex.Col col={{ base: "5", md: "4" }}>
 						<FormControl
-							label={t("orders.agentPhoneCode")}
+							label={t("field.phoneCode")}
 							htmlFor='receiverAgentPhoneCodeId'
 							className={cn({
 								"text--danger": errors?.receiverAgentPhoneCodeId,
@@ -259,14 +264,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 								control={control}
 								defaultValue={null}
 								rules={{
-									required: isCompany && "Field is Required",
+									required: isCompany && t("validation.required"),
 								}}
 							/>
 						</FormControl>
 					</Flex.Col>
 					<Flex.Col col={{ base: "7", xs: "8" }}>
 						<FormControl
-							label={t("orders.agentPhone")}
+							label={t("field.phone")}
 							htmlFor='receiverAgentPhone'
 							className={cn({
 								"text--danger": errors?.receiverAgentPhone,
@@ -278,7 +283,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 									return (
 										<Input
 											type='tel'
-											placeholder={t("orders.agentPhone")}
+											placeholder={t("field.phone")}
 											{...fieldRest}
 											innerRef={ref}
 											pigment={errors?.receiverAgentPhone ? "danger" : "primary"}
@@ -289,13 +294,19 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 								control={control}
 								defaultValue=''
 								rules={{
-									required: isCompany && "Field is Required",
+									required: isCompany && t("validation.required"),
 									pattern: {
 										value: /^[0-9]{9}$/,
-										message: "Invalid characters supplied",
+										message: t("validation.pattern"),
 									},
-									minLength: { value: 9, message: "Min 9 characters" },
-									maxLength: { value: 9, message: "Max 9 characters" },
+									minLength: {
+										value: 9,
+										message: t("validation.minLength", { value: 9 }),
+									},
+									maxLength: {
+										value: 9,
+										message: t("validation.maxLength", { value: 9 }),
+									},
 								}}
 							/>
 						</FormControl>
@@ -306,7 +317,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 			{courierName === "speedy" && isCompany && (
 				<Flex.Col col='12'>
 					<FormControl
-						label={t("orders.receiverAgentName")}
+						label={t("field.agentName")}
 						htmlFor='receiverAgentName'
 						className={cn({
 							"text--danger": errors?.receiverAgentName,
@@ -317,7 +328,7 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 								const { ref, ...fieldRest } = field;
 								return (
 									<Input
-										placeholder={t("orders.receiverAgentName")}
+										placeholder={t("field.agentName")}
 										{...fieldRest}
 										innerRef={ref}
 										pigment={errors?.receiverAgentName ? "danger" : "primary"}
@@ -328,14 +339,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							control={control}
 							defaultValue=''
 							rules={{
-								required: "Field is required",
+								required: t("validation.required"),
 								minLength: {
 									value: 2,
-									message: "Min 2 characters",
+									message: t("validation.minLength", { value: 2 }),
 								},
 								maxLength: {
 									value: 50,
-									message: "Max 50 characters",
+									message: t("validation.maxLength", { value: 50 }),
 								},
 							}}
 						/>

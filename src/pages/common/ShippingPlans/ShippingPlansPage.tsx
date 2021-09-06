@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
@@ -20,6 +21,7 @@ import DataTable from "../../../components/util/DataTable";
 const ShippingPlansForm = lazy(() => import("./shipping_plans_forms/ShippingPlansForm"));
 
 const ShippingPlansPage = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
 
@@ -65,19 +67,19 @@ const ShippingPlansPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Shipping Plans</title>
+				<title>Temat | {t("common.shippingPlan", { count: 0 })}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Shipping Plans
+							{t("common.shippingPlan", { count: 0 })}
 						</Heading>
 					</Flex.Col>
 					{userCan("planCreate") && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowShippingPlansForm({ state: true, payload: null })} iconStart={<IconAdd />}>
-								Add New
+								{t("action.add")}
 							</Button>
 						</Flex.Col>
 					)}

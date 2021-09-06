@@ -6,20 +6,25 @@ import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import { Flex } from "@dodobrat/react-ui-kit";
+import { useTranslation } from "react-i18next";
 
 const ShippingPlansViewPage = () => {
 	const { id }: any = useParams();
 
+	const { t } = useTranslation();
+
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Shipping Plan #{id}</title>
+				<title>
+					Temat | {t("common.shippingPlan")} #{id}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Shipping Plan #{id}
+							{t("common.shippingPlan")} #{id}
 						</Heading>
 					</Flex.Col>
 				</Flex>

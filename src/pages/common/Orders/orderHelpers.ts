@@ -1,5 +1,4 @@
 import { parseToISODate } from "../../../helpers/dateHelpers";
-import { paidByOptions, payAfterOptions } from "./order_steps/OrderStepPayment";
 
 export const parseShippingDataToFormData = (data, formData) => {
 	Object.entries(data).forEach((entry: any) => {
@@ -95,8 +94,8 @@ export const parsedFetchedData = (order) => {
 		value: order?.payment?.currencyId,
 		label: `${order?.payment?.abbreviation} - ${order?.payment?.symbol}`,
 	};
-	parsedOrderData.payment.shippingPaidBy = paidByOptions.find((item) => item.value === order?.payment?.shippingPaidBy);
-	parsedOrderData.payment.payAfter = payAfterOptions.find((item) => item.value === order?.payment?.payAfter);
+	parsedOrderData.payment.shippingPaidBy = order?.payment?.shippingPaidBy;
+	parsedOrderData.payment.payAfter = order?.payment?.payAfter;
 
 	//Shipping
 	parsedOrderData.shipping.shipDate = new Date(order?.details?.shipDate);

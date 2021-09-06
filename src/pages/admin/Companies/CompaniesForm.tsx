@@ -9,9 +9,9 @@ import { usePhoneCodes } from "../../../actions/fetchHooks";
 
 import AsyncSelect from "../../../components/forms/AsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
+import PhoneCode from "../../../components/util/PhoneCode";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { confirmOnExit } from "../../../helpers/helpers";
-import { PhoneCode } from "../../common/Orders/order_steps/OrderStepShipping";
 import { imageValidator } from "../../../helpers/formValidations";
 
 interface Props {
@@ -84,7 +84,7 @@ const CompaniesForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -92,14 +92,14 @@ const CompaniesForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? t("companies.updateCompany") : t("companies.addCompany")}</Text>
+					<Text className='mb--0'>{t(`action.${payload ? "update" : "add"}`, { entry: t("common.company") })}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Form id='companies-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("companies.name")}
+									label={t("field.name")}
 									htmlFor='name'
 									className={cn({
 										"text--danger": errors?.name,
@@ -110,7 +110,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.name")}
+													placeholder={t("field.name")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.name ? "danger" : "primary"}
@@ -121,14 +121,14 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 											minLength: {
 												value: 2,
-												message: "Min 2 characters",
+												message: t("validation.minLength", { value: 2 }),
 											},
 											maxLength: {
 												value: 50,
-												message: "Max 50 characters",
+												message: t("validation.maxLength", { value: 50 }),
 											},
 										}}
 									/>
@@ -136,7 +136,7 @@ const CompaniesForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("companies.bulstat")}
+									label={t("field.bulstat")}
 									htmlFor='bulstat'
 									className={cn({
 										"text--danger": errors?.bulstat,
@@ -147,7 +147,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.bulstat")}
+													placeholder={t("field.bulstat")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.bulstat ? "danger" : "primary"}
@@ -158,10 +158,10 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 											maxLength: {
 												value: 9,
-												message: "Max 9 characters",
+												message: t("validation.maxLength", { value: 9 }),
 											},
 										}}
 									/>
@@ -169,7 +169,7 @@ const CompaniesForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("companies.molFirstName")}
+									label={t("field.molFirstName")}
 									htmlFor='molFirstName'
 									className={cn({
 										"text--danger": errors?.molFirstName,
@@ -180,7 +180,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.molFirstName")}
+													placeholder={t("field.molFirstName")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.molFirstName ? "danger" : "primary"}
@@ -191,14 +191,14 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 											minLength: {
 												value: 2,
-												message: "Min 2 characters",
+												message: t("validation.minLength", { value: 2 }),
 											},
 											maxLength: {
 												value: 50,
-												message: "Max 50 characters",
+												message: t("validation.maxLength", { value: 50 }),
 											},
 										}}
 									/>
@@ -206,7 +206,7 @@ const CompaniesForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("companies.molLastName")}
+									label={t("field.molLastName")}
 									htmlFor='molLastName'
 									className={cn({
 										"text--danger": errors?.molLastName,
@@ -217,7 +217,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.molLastName")}
+													placeholder={t("field.molLastName")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.molLastName ? "danger" : "primary"}
@@ -228,14 +228,14 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 											minLength: {
 												value: 2,
-												message: "Min 2 characters",
+												message: t("validation.minLength", { value: 2 }),
 											},
 											maxLength: {
 												value: 50,
-												message: "Max 50 characters",
+												message: t("validation.maxLength", { value: 50 }),
 											},
 										}}
 									/>
@@ -243,7 +243,7 @@ const CompaniesForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col={{ base: "5", md: "4" }}>
 								<FormControl
-									label={t("users.phoneCode")}
+									label={t("field.phoneCode")}
 									htmlFor='phoneCodeId'
 									className={cn({
 										"text--danger": errors?.phoneCodeId,
@@ -269,14 +269,14 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue={null}
 										rules={{
-											validate: (val) => (watchPhone.toString().length > 0 && !val ? "Field is required" : true),
+											validate: (val) => (watchPhone.toString().length > 0 && !val ? t("validation.required") : true),
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "7", xs: "8" }}>
 								<FormControl
-									label={t("users.phone")}
+									label={t("field.phone")}
 									htmlFor='phone'
 									className={cn({
 										"text--danger": errors?.phone,
@@ -288,7 +288,7 @@ const CompaniesForm = (props: Props) => {
 											return (
 												<Input
 													type='tel'
-													placeholder={t("users.phone")}
+													placeholder={t("field.phone")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.phone ? "danger" : "primary"}
@@ -301,17 +301,23 @@ const CompaniesForm = (props: Props) => {
 										rules={{
 											pattern: {
 												value: /^[0-9]{9}$/,
-												message: "Invalid characters supplied",
+												message: t("validation.pattern"),
 											},
-											minLength: { value: 9, message: "Min 9 characters" },
-											maxLength: { value: 9, message: "Max 9 characters" },
+											minLength: {
+												value: 9,
+												message: t("validation.minLength", { value: 9 }),
+											},
+											maxLength: {
+												value: 9,
+												message: t("validation.maxLength", { value: 9 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("companies.email")}
+									label={t("field.email")}
 									htmlFor='email'
 									className={cn({
 										"text--danger": errors?.email,
@@ -323,7 +329,7 @@ const CompaniesForm = (props: Props) => {
 											return (
 												<Input
 													type='email'
-													placeholder={t("companies.email")}
+													placeholder={t("field.email")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.email ? "danger" : "primary"}
@@ -334,10 +340,10 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 											pattern: {
 												value: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-												message: "Invalid Email",
+												message: t("validation.pattern"),
 											},
 										}}
 									/>
@@ -345,7 +351,7 @@ const CompaniesForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("companies.image")}
+									label={t("field.image")}
 									htmlFor='image'
 									className={cn({
 										"text--danger": errors?.image,
@@ -376,7 +382,7 @@ const CompaniesForm = (props: Props) => {
 												<Input
 													type='file'
 													accept='image/*'
-													placeholder={t("companies.image")}
+													placeholder={t("field.image")}
 													{...fieldRest}
 													onChange={(e) => onChange(e.target.files)}
 													value={value?.[0]?.filename}
@@ -389,14 +395,18 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											validate: (files) => imageValidator({ file: files?.[0] }),
+											validate: (files) =>
+												imageValidator({
+													file: files?.[0],
+													t,
+												}),
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
-									label={t("companies.country")}
+									label={t("field.country")}
 									htmlFor='country'
 									className={cn({
 										"text--danger": errors?.country,
@@ -407,7 +417,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.country")}
+													placeholder={t("field.country")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.country ? "danger" : "primary"}
@@ -418,15 +428,21 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 50, message: "Max 50 characters" },
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 50,
+												message: t("validation.maxLength", { value: 50 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "8" }}>
 								<FormControl
-									label={t("companies.city")}
+									label={t("field.city")}
 									htmlFor='city'
 									className={cn({
 										"text--danger": errors?.city,
@@ -437,7 +453,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.city")}
+													placeholder={t("field.city")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.city ? "danger" : "primary"}
@@ -448,15 +464,21 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 60, message: "Max 60 characters" },
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 60,
+												message: t("validation.maxLength", { value: 60 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "4" }}>
 								<FormControl
-									label={t("companies.zipCode")}
+									label={t("field.zipCode")}
 									htmlFor='zipCode'
 									className={cn({
 										"text--danger": errors?.zipCode,
@@ -467,7 +489,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.zipCode")}
+													placeholder={t("field.zipCode")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.zipCode ? "danger" : "primary"}
@@ -478,15 +500,21 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											minLength: { value: 3, message: "Min 3 characters" },
-											maxLength: { value: 10, message: "Max 10 characters" },
+											minLength: {
+												value: 3,
+												message: t("validation.minLength", { value: 3 }),
+											},
+											maxLength: {
+												value: 10,
+												message: t("validation.maxLength", { value: 10 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "8" }}>
 								<FormControl
-									label={t("companies.streetName")}
+									label={t("field.streetName")}
 									htmlFor='streetName'
 									className={cn({
 										"text--danger": errors?.streetName,
@@ -497,7 +525,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.streetName")}
+													placeholder={t("field.streetName")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.streetName ? "danger" : "primary"}
@@ -508,15 +536,21 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 50, message: "Max 50 characters" },
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 50,
+												message: t("validation.maxLength", { value: 50 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "4" }}>
 								<FormControl
-									label={t("companies.streetNumber")}
+									label={t("field.streetNumber")}
 									htmlFor='streetNumber'
 									className={cn({
 										"text--danger": errors?.streetNumber,
@@ -527,7 +561,7 @@ const CompaniesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder={t("companies.streetNumber")}
+													placeholder={t("field.streetNumber")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.streetNumber ? "danger" : "primary"}
@@ -538,8 +572,14 @@ const CompaniesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											minLength: { value: 1, message: "Min 1 characters" },
-											maxLength: { value: 10, message: "Max 10 characters" },
+											minLength: {
+												value: 1,
+												message: t("validation.minLength", { value: 1 }),
+											},
+											maxLength: {
+												value: 10,
+												message: t("validation.maxLength", { value: 10 }),
+											},
 										}}
 									/>
 								</FormControl>
@@ -549,7 +589,7 @@ const CompaniesForm = (props: Props) => {
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button type='submit' form='companies-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
-						{payload ? t("common.update") : t("common.submit")}
+						{t(`action.${payload ? "update" : "add"}`, { entry: t("common.company") })}
 					</Button>
 				</Card.Footer>
 			</Card>

@@ -22,7 +22,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 		<>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.username")}
+					label={t("field.username")}
 					htmlFor='username'
 					className={cn({
 						"text--danger": errors?.username,
@@ -34,7 +34,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 							return (
 								<Input
 									name='username'
-									placeholder={t("users.username")}
+									placeholder={t("field.username")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.username ? "danger" : "primary"}
@@ -45,18 +45,18 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 						control={control}
 						defaultValue=''
 						rules={{
-							required: "Field is required",
-							pattern: {
-								value: /^[a-zA-Z0-9]+$/,
-								message: "Invalid Username characters",
-							},
+							required: t("validation.required"),
 							minLength: {
 								value: 2,
-								message: "Min 2 characters",
+								message: t("validation.minLength", { value: 2 }),
 							},
 							maxLength: {
 								value: 50,
-								message: "Max 50 characters",
+								message: t("validation.maxLength", { value: 50 }),
+							},
+							pattern: {
+								value: /^[a-zA-Z0-9]+$/,
+								message: t("validation.pattern"),
 							},
 						}}
 					/>
@@ -64,7 +64,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.role")}
+					label={t("field.role")}
 					htmlFor='roleId'
 					className={cn({
 						"text--danger": errors?.roleId,
@@ -81,7 +81,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 								className={cn({
 									"temat__select__container--danger": errors?.roleId,
 								})}
-								placeholder='Select Role'
+								placeholder={t("field.select", { field: t("field.role") })}
 								{...field}
 							/>
 						)}
@@ -89,14 +89,14 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 						control={control}
 						defaultValue={null}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.password")}
+					label={t("field.password")}
 					htmlFor='password'
 					className={cn({
 						"text--danger": errors?.password,
@@ -108,7 +108,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 							return (
 								<Input
 									type='password'
-									placeholder='Password'
+									placeholder={t("field.password")}
 									passwordRevealComponent={(isVisible) =>
 										isVisible ? <IconEyeCrossed className='dui__icon' /> : <IconEye className='dui__icon' />
 									}
@@ -122,10 +122,10 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 						control={control}
 						defaultValue=''
 						rules={{
-							required: payload ? false : "Field is required",
+							required: payload ? false : t("validation.required"),
 							pattern: {
 								value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,250}$/,
-								message: "Password format doesn't match requirements",
+								message: t("validation.passRequirements"),
 							},
 						}}
 					/>
@@ -133,7 +133,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.confirmPassword")}
+					label={t("field.confirmPassword")}
 					htmlFor='confirmPassword'
 					className={cn({
 						"text--danger": errors?.confirmPassword,
@@ -145,7 +145,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 							return (
 								<Input
 									type='password'
-									placeholder='Password'
+									placeholder={t("field.confirmPassword")}
 									passwordRevealComponent={(isVisible) =>
 										isVisible ? <IconEyeCrossed className='dui__icon' /> : <IconEye className='dui__icon' />
 									}
@@ -159,15 +159,15 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 						control={control}
 						defaultValue=''
 						rules={{
-							validate: (val) => val === watchPass || "Passwords don't match",
-							required: !payload ? "Field is required" : false,
+							validate: (val) => val === watchPass || t("validation.passMatch"),
+							required: !payload ? t("validation.required") : false,
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.company")}
+					label={t("field.company")}
 					htmlFor='companyId'
 					className={cn({
 						"text--danger": errors?.companyId,
@@ -183,7 +183,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 								className={cn({
 									"temat__select__container--danger": errors?.companyId,
 								})}
-								placeholder='Select Company'
+								placeholder={t("field.select", { field: t("field.company") })}
 								{...field}
 							/>
 						)}
@@ -195,7 +195,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.warehouse")}
+					label={t("field.warehouse")}
 					htmlFor='warehouseId'
 					className={cn({
 						"text--danger": errors?.warehouseId,
@@ -211,7 +211,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 								className={cn({
 									"temat__select__container--danger": errors?.warehouseId,
 								})}
-								placeholder='Select Warehouse'
+								placeholder={t("field.select", { field: t("field.warehouse") })}
 								{...field}
 							/>
 						)}

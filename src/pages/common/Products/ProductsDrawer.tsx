@@ -1,4 +1,5 @@
 import { Drawer, Card, Heading } from "@dodobrat/react-ui-kit";
+import ComingSoon from "../../../components/ui/ComingSoon";
 
 interface Props {
 	onClose: () => void;
@@ -12,7 +13,7 @@ const ProductsDrawer = (props: Props) => {
 			<Card elevation='none'>
 				<Card.Body>
 					<Heading as='h6' className='my--0'>
-						Coming Soon!
+						<ComingSoon compact elevation='none' />
 					</Heading>
 				</Card.Body>
 			</Card>

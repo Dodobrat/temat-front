@@ -1,4 +1,5 @@
 import { useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import { Form, Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
@@ -20,6 +21,7 @@ interface Props {
 const PermissionsForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 
 	const {
@@ -74,7 +76,7 @@ const PermissionsForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -82,14 +84,14 @@ const PermissionsForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? "Edit" : "Add"} Permission</Text>
+					<Text className='mb--0'>{t(`action.${payload ? "update" : "add"}`, { entry: t("common.permission") })}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Form id='permissions-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col='12'>
 								<FormControl
-									label='Name'
+									label={t("field.name")}
 									htmlFor='name'
 									className={cn({
 										"text--danger": errors?.name,
@@ -100,7 +102,7 @@ const PermissionsForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder='Name'
+													placeholder={t("field.name")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.name ? "danger" : "primary"}
@@ -111,20 +113,26 @@ const PermissionsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 50,
+												message: t("validation.maxLength", { value: 50 }),
+											},
 											pattern: {
 												value: /^[a-zA-Z]+$/,
-												message: "Invalid Name characters",
+												message: t("validation.pattern"),
 											},
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 50, message: "Max 50 characters" },
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
-									label='Role'
+									label={t("field.role")}
 									htmlFor='roleId'
 									className={cn({
 										"text--danger": errors?.roles,
@@ -135,12 +143,13 @@ const PermissionsForm = (props: Props) => {
 											<AsyncSelect
 												useFetch={useRoles}
 												isMulti
+												defaultOptions
 												isClearable={false}
 												closeMenuOnSelect={false}
 												className={cn({
 													"temat__select__container--danger": errors?.roles,
 												})}
-												placeholder='Select Role'
+												placeholder={t("field.select", { field: t("field.role") })}
 												{...field}
 											/>
 										)}
@@ -148,14 +157,14 @@ const PermissionsForm = (props: Props) => {
 										control={control}
 										defaultValue={[]}
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
-									label='Description'
+									label={t("field.description")}
 									htmlFor='description'
 									className={cn({
 										"text--danger": errors?.description,
@@ -166,7 +175,7 @@ const PermissionsForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<TextArea
-													placeholder='Enter Description'
+													placeholder={t("field.description")}
 													{...fieldRest}
 													innerRef={ref}
 													// maxLength={250}
@@ -179,9 +188,15 @@ const PermissionsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 250, message: "Max 250 characters" },
+											required: t("validation.required"),
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 250,
+												message: t("validation.maxLength", { value: 250 }),
+											},
 										}}
 									/>
 								</FormControl>
@@ -191,7 +206,7 @@ const PermissionsForm = (props: Props) => {
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button type='submit' form='permissions-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
-						{payload ? "Update" : "Submit"}
+						{t(`action.${payload ? "update" : "add"}`, { entry: t("common.permission") })}
 					</Button>
 				</Card.Footer>
 			</Card>

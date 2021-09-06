@@ -98,6 +98,7 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 			<Flex>
 				<Flex.Col col='12'>
 					<OrderStepProducts
+						selectProps={{ defaultOptions: true }}
 						initialData={data.products}
 						companyId={getValues("companyId")?.value ?? getValues("companyId")}
 						formProps={{ control, errors, setValue, watch, clearErrors }}
@@ -105,7 +106,7 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 				</Flex.Col>
 				<Flex.Col col='12'>
 					<FormControl
-						label={t("plans.dateExpected")}
+						label={t("field.dateExpected")}
 						className={cn({
 							"text--danger": errors?.dateExpected,
 						})}
@@ -124,14 +125,14 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 							control={control}
 							defaultValue={null}
 							rules={{
-								required: "Field is required",
+								required: t("validation.required"),
 							}}
 						/>
 					</FormControl>
 				</Flex.Col>
 				<Flex.Col col='12'>
 					<FormControl
-						label={t("plans.extraInfo")}
+						label={t("field.note")}
 						htmlFor='extraInfo'
 						className={cn({
 							"text--danger": errors?.extraInfo,
@@ -142,7 +143,7 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 								const { ref, ...fieldRest } = field;
 								return (
 									<TextArea
-										placeholder='Enter Description'
+										placeholder={t("field.note")}
 										{...fieldRest}
 										innerRef={ref}
 										// maxLength={250}
@@ -155,9 +156,15 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 							control={control}
 							defaultValue=''
 							rules={{
-								required: "Field is required",
-								minLength: { value: 2, message: "Min 2 characters" },
-								maxLength: { value: 250, message: "Max 250 characters" },
+								required: t("validation.required"),
+								minLength: {
+									value: 2,
+									message: t("validation.minLength", { value: 2 }),
+								},
+								maxLength: {
+									value: 250,
+									message: t("validation.maxLength", { value: 250 }),
+								},
 							}}
 						/>
 					</FormControl>
@@ -165,7 +172,7 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 			</Flex>
 			<PortalWrapper element={formFooter ?? null}>
 				<Button type='submit' form='shipping-plan-form' isLoading={isLoadingAdd || isLoadingUpdate}>
-					{t("common.submit")}
+					{t(`action.${payload ? "update" : "add"}`, { entry: t("common.shippingPlan") })}{" "}
 				</Button>
 			</PortalWrapper>
 		</Form>

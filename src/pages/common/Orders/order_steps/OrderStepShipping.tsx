@@ -14,13 +14,6 @@ import { Input } from "@dodobrat/react-ui-kit";
 import CalendarPicker from "../../../../components/util/CalendarPicker";
 import { Controller } from "react-hook-form";
 
-export const PhoneCode = ({ data }) => (
-	<span style={{ display: "flex", alignItems: "center" }}>
-		<img src={data?.flag} alt={data?.country ?? data?.code} style={{ height: "1em", width: "1em", marginRight: "0.5rem" }} />{" "}
-		{data?.code}
-	</span>
-);
-
 const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, getValues, setValue, reset } }: any) => {
 	const { t } = useTranslation();
 
@@ -57,7 +50,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 		<Flex>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("plans.shipDate")}
+					label={t("field.shipDate")}
 					className={cn({
 						"text--danger": errors?.shipDate,
 					})}
@@ -76,14 +69,14 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 						control={control}
 						defaultValue={null}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("orders.delivery")}
+					label={t("field.shippingMethod")}
 					htmlFor='shippingMethodId'
 					className={cn({
 						"text--danger": errors?.shippingMethodId,
@@ -100,7 +93,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									}}
 									isClearable={false}
 									defaultOptions
-									placeholder='Select Delivery Type'
+									placeholder={t("field.select", { field: t("field.shippingMethod") })}
 									className={cn({
 										"temat__select__container--danger": errors?.shippingMethodId,
 									})}
@@ -112,7 +105,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 						control={control}
 						defaultValue={null}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
@@ -121,7 +114,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 			{watchDelivery?.data?.deliveryType === "office" && (
 				<Flex.Col col='12'>
 					<FormControl
-						label={t("orders.office")}
+						label={t("field.office")}
 						htmlFor='officeId'
 						className={cn({
 							"text--danger": errors?.officeId,
@@ -135,7 +128,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									querySpecialKey={[watchDelivery?.data?.courierName]}
 									isClearable={false}
 									defaultOptions
-									placeholder='Select Office'
+									placeholder={t("field.select", { field: t("field.office") })}
 									className={cn({
 										"temat__select__container--danger": errors?.officeId,
 									})}
@@ -147,7 +140,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 							control={control}
 							defaultValue={null}
 							rules={{
-								required: "Field is required",
+								required: t("validation.required"),
 							}}
 						/>
 					</FormControl>
@@ -158,7 +151,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 				<>
 					<Flex.Col col='12'>
 						<FormControl
-							label={t("orders.country")}
+							label={t("field.country")}
 							htmlFor='country'
 							className={cn({
 								"text--danger": errors?.country,
@@ -172,7 +165,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										querySpecs={{ courier: watchDelivery?.data?.courierName }}
 										querySpecialKey={[watchDelivery?.data?.courierName]}
 										isClearable={false}
-										placeholder='Select Country'
+										placeholder={t("field.select", { field: t("field.country") })}
 										defaultSearchString='bulgaria'
 										defaultOptions
 										preSelectOption
@@ -186,14 +179,14 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 								control={control}
 								defaultValue={null}
 								rules={{
-									required: "Field is required",
+									required: t("validation.required"),
 								}}
 							/>
 						</FormControl>
 					</Flex.Col>
 					<Flex.Col col={{ base: "12", sm: "8" }}>
 						<FormControl
-							label={t("orders.city")}
+							label={t("field.city")}
 							htmlFor='city'
 							className={cn({
 								"text--danger": errors?.city,
@@ -209,7 +202,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										}}
 										querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
 										isClearable={false}
-										placeholder='Select City'
+										placeholder={t("field.select", { field: t("field.city") })}
 										defaultOptions={!!watchCountry?.value && !watchCity?.value}
 										className={cn({
 											"temat__select__container--danger": errors?.city,
@@ -222,14 +215,14 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 								control={control}
 								defaultValue={null}
 								rules={{
-									required: "Field is required",
+									required: t("validation.required"),
 								}}
 							/>
 						</FormControl>
 					</Flex.Col>
 					<Flex.Col col={{ base: "12", xs: "4" }}>
 						<FormControl
-							label={t("orders.zipCode")}
+							label={t("field.zipCode")}
 							htmlFor='zipCode'
 							className={cn({
 								"text--danger": errors?.zipCode,
@@ -240,7 +233,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									const { ref, ...fieldRest } = field;
 									return (
 										<Input
-											placeholder={t("orders.zipCode")}
+											placeholder={t("field.zipCode")}
 											{...fieldRest}
 											innerRef={ref}
 											pigment={errors?.zipCode ? "danger" : "primary"}
@@ -251,15 +244,21 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 								control={control}
 								defaultValue=''
 								rules={{
-									minLength: { value: 3, message: "Min 3 characters" },
-									maxLength: { value: 10, message: "Max 10 characters" },
+									minLength: {
+										value: 3,
+										message: t("validation.minLength", { value: 3 }),
+									},
+									maxLength: {
+										value: 10,
+										message: t("validation.maxLength", { value: 10 }),
+									},
 								}}
 							/>
 						</FormControl>
 					</Flex.Col>
 					<Flex.Col col={{ base: "12", sm: "8" }}>
 						<FormControl
-							label={t("orders.streetName")}
+							label={t("field.streetName")}
 							htmlFor='streetName'
 							className={cn({
 								"text--danger": errors?.streetName,
@@ -276,7 +275,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										}}
 										querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
 										isClearable={false}
-										placeholder='Select Street'
+										placeholder={t("field.select", { field: t("field.streetName") })}
 										defaultOptions={!!watchCountry?.value && !!watchCity?.value && !watchStreet?.value}
 										className={cn({
 											"temat__select__container--danger": errors?.streetName,
@@ -289,14 +288,14 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 								control={control}
 								defaultValue={null}
 								rules={{
-									required: "Field is required",
+									required: t("validation.required"),
 								}}
 							/>
 						</FormControl>
 					</Flex.Col>
 					<Flex.Col col={{ base: "12", xs: "4" }}>
 						<FormControl
-							label={t("orders.streetNumber")}
+							label={t("field.streetNumber")}
 							htmlFor='streetNumber'
 							className={cn({
 								"text--danger": errors?.streetNumber,
@@ -307,7 +306,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									const { ref, ...fieldRest } = field;
 									return (
 										<Input
-											placeholder={t("orders.streetNumber")}
+											placeholder={t("field.streetNumber")}
 											{...fieldRest}
 											innerRef={ref}
 											pigment={errors?.streetNumber ? "danger" : "primary"}
@@ -318,9 +317,15 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 								control={control}
 								defaultValue=''
 								rules={{
-									required: "Field is Required",
-									minLength: { value: 1, message: "Min 1 characters" },
-									maxLength: { value: 10, message: "Max 10 characters" },
+									required: t("validation.required"),
+									minLength: {
+										value: 1,
+										message: t("validation.minLength", { value: 1 }),
+									},
+									maxLength: {
+										value: 10,
+										message: t("validation.maxLength", { value: 10 }),
+									},
 								}}
 							/>
 						</FormControl>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Tooltip, Badge, Table } from "@dodobrat/react-ui-kit";
 
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
@@ -12,6 +13,7 @@ interface Props {
 const CopyCell = (props: Props) => {
 	const { cell, ...rest } = props;
 
+	const { t } = useTranslation();
 	const { copy } = useCopyToClipboard();
 
 	const [isCopied, setIsCopied] = useState(false);
@@ -33,7 +35,7 @@ const CopyCell = (props: Props) => {
 
 	return (
 		<Table.Cell {...rest}>
-			<Tooltip sizing='xs' content={<strong>{`copy to clipboard`.toUpperCase()}</strong>}>
+			<Tooltip sizing='xs' content={<strong>{t("common.copyToClipboard").toUpperCase()}</strong>}>
 				<Badge sizing='lg' pigment='primary' onClick={handleOnCellClick}>
 					{isCopied ? <IconClipboardCheck /> : <IconClipboard />} {cell.value}
 				</Badge>

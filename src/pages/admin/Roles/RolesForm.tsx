@@ -1,4 +1,5 @@
 import { useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
 import { Form, Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
 import { Controller, useForm } from "react-hook-form";
 import cn from "classnames";
@@ -18,6 +19,7 @@ interface Props {
 const RolesForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 
 	const {
@@ -65,7 +67,7 @@ const RolesForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -73,14 +75,14 @@ const RolesForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? "Edit" : "Add"} Role</Text>
+					<Text className='mb--0'>{t(`action.${payload ? "update" : "add"}`, { entry: t("common.role") })}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Form id='roles-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col='12'>
 								<FormControl
-									label='Name'
+									label={t("field.name")}
 									htmlFor='name'
 									className={cn({
 										"text--danger": errors?.name,
@@ -91,7 +93,7 @@ const RolesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<Input
-													placeholder='Name'
+													placeholder={t("field.name")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.name ? "danger" : "primary"}
@@ -102,16 +104,22 @@ const RolesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 50, message: "Max 50 characters" },
+											required: t("validation.required"),
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 50,
+												message: t("validation.maxLength", { value: 50 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
-									label='Description'
+									label={t("field.description")}
 									htmlFor='description'
 									className={cn({
 										"text--danger": errors?.description,
@@ -122,7 +130,7 @@ const RolesForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<TextArea
-													placeholder='Enter Description'
+													placeholder={t("field.description")}
 													{...fieldRest}
 													innerRef={ref}
 													// maxLength={250}
@@ -135,9 +143,15 @@ const RolesForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 250, message: "Max 250 characters" },
+											required: t("validation.required"),
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 250,
+												message: t("validation.maxLength", { value: 250 }),
+											},
 										}}
 									/>
 								</FormControl>
@@ -147,7 +161,7 @@ const RolesForm = (props: Props) => {
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button type='submit' form='roles-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
-						{payload ? "Update" : "Submit"}
+						{t(`action.${payload ? "update" : "add"}`, { entry: t("common.role") })}
 					</Button>
 				</Card.Footer>
 			</Card>

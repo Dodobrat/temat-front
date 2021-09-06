@@ -70,7 +70,7 @@ const UserFormStepCredentials = ({ payload }) => {
 				<Flex wrap='nowrap' justify='flex-end' className='w-100' style={{ flex: 1 }}>
 					<Flex.Col col='auto'>
 						<Button type='submit' form='user-form' isLoading={isLoadingCredentialsUpdate}>
-							{t("common.update")}
+							{t("action.update", { entry: t("common.user") })}
 						</Button>
 					</Flex.Col>
 				</Flex>

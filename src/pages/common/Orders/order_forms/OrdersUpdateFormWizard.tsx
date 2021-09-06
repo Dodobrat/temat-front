@@ -40,19 +40,19 @@ const OrdersUpdateFormWizard = (props: Props) => {
 				elevation='none'
 				activeTab={currStep}
 				onTabSelect={(tab: number) => setCurrStep(tab)}>
-				<Tabs.Panel tab={t("orders.payment")}>
+				<Tabs.Panel tab={t("step.payment")}>
 					<OrderFormStepPayment useContext={useOrdersUpdateContext} isUpdating />
 				</Tabs.Panel>
-				<Tabs.Panel tab={t("orders.shipping")}>
+				<Tabs.Panel tab={t("step.shipping")}>
 					<OrderFormStepShipping useContext={useOrdersUpdateContext} isUpdating />
 				</Tabs.Panel>
-				<Tabs.Panel tab={t("orders.receiver")}>
+				<Tabs.Panel tab={t("step.receiver")}>
 					<OrderFormStepReceiver useContext={useOrdersUpdateContext} isUpdating />
 				</Tabs.Panel>
-				<Tabs.Panel tab={t("orders.products")}>
+				<Tabs.Panel tab={t("step.products")}>
 					<OrderFormStepProducts useContext={useOrdersUpdateContext} isUpdating />
 				</Tabs.Panel>
-				<Tabs.Panel tab={t("orders.extras")}>
+				<Tabs.Panel tab={t("step.extras")}>
 					<OrderFormStepExtras useContext={useOrdersUpdateContext} isUpdating />
 				</Tabs.Panel>
 			</Tabs>

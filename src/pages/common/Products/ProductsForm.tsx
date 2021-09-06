@@ -111,7 +111,7 @@ const ProductsForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -119,7 +119,7 @@ const ProductsForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? t("products.updateProduct") : t("products.addProduct")}</Text>
+					<Text className='mb--0'>{t(`action.${payload ? "update" : "add"}`, { entry: t("common.product") })}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Form id='permissions-form' onSubmit={handleSubmit(onSubmit)}>
@@ -137,7 +137,7 @@ const ProductsForm = (props: Props) => {
 							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
-									label={t("products.barcode")}
+									label={t("field.barcode")}
 									htmlFor='barcode'
 									className={cn({
 										"text--danger": errors?.barcode,
@@ -149,7 +149,7 @@ const ProductsForm = (props: Props) => {
 											return (
 												<Input
 													name='barcode'
-													placeholder={t("products.barcode")}
+													placeholder={t("field.barcode")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.barcode ? "danger" : "primary"}
@@ -160,16 +160,22 @@ const ProductsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
-											maxLength: { value: 14, message: `${t("validation.max14Chars")}` },
-											minLength: { value: 13, message: `${t("validation.min13Chars")}` },
+											required: t("validation.required"),
+											minLength: {
+												value: 14,
+												message: t("validation.minLength", { value: 14 }),
+											},
+											maxLength: {
+												value: 13,
+												message: t("validation.maxLength", { value: 13 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("products.sku")}
+									label={t("field.sku")}
 									htmlFor='sku'
 									className={cn({
 										"text--danger": errors?.sku,
@@ -181,7 +187,7 @@ const ProductsForm = (props: Props) => {
 											return (
 												<Input
 													name='sku'
-													placeholder={t("products.sku")}
+													placeholder={t("field.sku")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.sku ? "danger" : "primary"}
@@ -192,14 +198,17 @@ const ProductsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											maxLength: { value: 99, message: `${t("validation.max99Chars")}` },
+											maxLength: {
+												value: 99,
+												message: t("validation.maxLength", { value: 99 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("products.minQty")}
+									label={t("field.minQty")}
 									htmlFor='minQty'
 									className={cn({
 										"text--danger": errors?.minQty,
@@ -212,7 +221,7 @@ const ProductsForm = (props: Props) => {
 												<Input
 													name='minQty'
 													type='number'
-													placeholder={t("products.minQty")}
+													placeholder={t("field.minQty")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.minQty ? "danger" : "primary"}
@@ -223,15 +232,18 @@ const ProductsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
-											maxLength: { value: 9, message: `${t("validation.max9Chars")}` },
+											required: t("validation.required"),
+											maxLength: {
+												value: 9,
+												message: t("validation.maxLength", { value: 9 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("products.company")}
+									label={t("field.company")}
 									htmlFor='companyId'
 									className={cn({
 										"text--danger": errors?.companyId,
@@ -254,14 +266,14 @@ const ProductsForm = (props: Props) => {
 										control={control}
 										defaultValue={null}
 										rules={{
-											required: "Field is required",
+											required: t("validation.required"),
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
-									label={t("products.name")}
+									label={t("field.name")}
 									htmlFor='name'
 									className={cn({
 										"text--danger": errors?.name,
@@ -273,7 +285,7 @@ const ProductsForm = (props: Props) => {
 											return (
 												<Input
 													name='name'
-													placeholder={t("products.name")}
+													placeholder={t("field.name")}
 													{...fieldRest}
 													innerRef={ref}
 													pigment={errors?.name ? "danger" : "primary"}
@@ -284,16 +296,22 @@ const ProductsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: `${t("validation.fieldRequired")}`,
-											minLength: { value: 2, message: `${t("validation.min6Chars")}` },
-											maxLength: { value: 99, message: `${t("validation.max99Chars")}` },
+											required: t("validation.required"),
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 99,
+												message: t("validation.maxLength", { value: 99 }),
+											},
 										}}
 									/>
 								</FormControl>
 							</Flex.Col>
 							<Flex.Col col='12'>
 								<FormControl
-									label='Description'
+									label={t("field.description")}
 									htmlFor='description'
 									className={cn({
 										"text--danger": errors?.description,
@@ -304,7 +322,7 @@ const ProductsForm = (props: Props) => {
 											const { ref, ...fieldRest } = field;
 											return (
 												<TextArea
-													placeholder='Enter Description'
+													placeholder={t("field.description")}
 													{...fieldRest}
 													innerRef={ref}
 													// maxLength={250}
@@ -317,9 +335,15 @@ const ProductsForm = (props: Props) => {
 										control={control}
 										defaultValue=''
 										rules={{
-											required: "Field is required",
-											minLength: { value: 2, message: "Min 2 characters" },
-											maxLength: { value: 250, message: "Max 250 characters" },
+											required: t("validation.required"),
+											minLength: {
+												value: 2,
+												message: t("validation.minLength", { value: 2 }),
+											},
+											maxLength: {
+												value: 250,
+												message: t("validation.maxLength", { value: 250 }),
+											},
 										}}
 									/>
 								</FormControl>
@@ -338,7 +362,7 @@ const ProductsForm = (props: Props) => {
 											<Flex spacingY='md'>
 												<Flex.Col col='12'>
 													<FormControl
-														label={t("products.image")}
+														label={t("field.image")}
 														htmlFor='image'
 														className={cn({
 															"text--danger": errors?.image,
@@ -369,7 +393,7 @@ const ProductsForm = (props: Props) => {
 																	<Input
 																		type='file'
 																		accept='image/*'
-																		placeholder={t("products.image")}
+																		placeholder={t("field.image")}
 																		{...fieldRest}
 																		onChange={(e) => onChange(e.target.files)}
 																		value={value?.[0]?.filename}
@@ -382,14 +406,14 @@ const ProductsForm = (props: Props) => {
 															control={control}
 															defaultValue=''
 															rules={{
-																validate: (files) => imageValidator({ file: files?.[0] }),
+																validate: (files) => imageValidator({ file: files?.[0], t }),
 															}}
 														/>
 													</FormControl>
 												</Flex.Col>
 												<Flex.Col col={{ base: "12", sm: "6" }}>
 													<FormControl
-														label={t("products.width")}
+														label={t("field.width")}
 														htmlFor='width'
 														className={cn({
 															"text--danger": errors?.width,
@@ -402,7 +426,7 @@ const ProductsForm = (props: Props) => {
 																	<Input
 																		type='number'
 																		name='width'
-																		placeholder={t("users.widthCm")}
+																		placeholder={t("field.widthCm")}
 																		{...fieldRest}
 																		innerRef={ref}
 																		pigment={errors?.width ? "danger" : "primary"}
@@ -420,7 +444,7 @@ const ProductsForm = (props: Props) => {
 												</Flex.Col>
 												<Flex.Col col={{ base: "12", sm: "6" }}>
 													<FormControl
-														label={t("products.height")}
+														label={t("field.height")}
 														htmlFor='height'
 														className={cn({
 															"text--danger": errors?.height,
@@ -433,7 +457,7 @@ const ProductsForm = (props: Props) => {
 																	<Input
 																		type='number'
 																		name='height'
-																		placeholder={t("users.heightCm")}
+																		placeholder={t("field.heightCm")}
 																		{...fieldRest}
 																		innerRef={ref}
 																		pigment={errors?.height ? "danger" : "primary"}
@@ -451,7 +475,7 @@ const ProductsForm = (props: Props) => {
 												</Flex.Col>
 												<Flex.Col col={{ base: "12", sm: "6" }}>
 													<FormControl
-														label={t("products.weight")}
+														label={t("field.weight")}
 														htmlFor='weight'
 														className={cn({
 															"text--danger": errors?.weight,
@@ -464,7 +488,7 @@ const ProductsForm = (props: Props) => {
 																	<Input
 																		type='number'
 																		name='weight'
-																		placeholder={t("users.weightKg")}
+																		placeholder={t("field.weightKg")}
 																		{...fieldRest}
 																		innerRef={ref}
 																		pigment={errors?.weight ? "danger" : "primary"}
@@ -482,7 +506,7 @@ const ProductsForm = (props: Props) => {
 												</Flex.Col>
 												<Flex.Col col={{ base: "12", sm: "6" }}>
 													<FormControl
-														label={t("products.length")}
+														label={t("field.length")}
 														htmlFor='length'
 														className={cn({
 															"text--danger": errors?.length,
@@ -495,7 +519,7 @@ const ProductsForm = (props: Props) => {
 																	<Input
 																		type='number'
 																		name='length'
-																		placeholder={t("users.lengthCm")}
+																		placeholder={t("field.lengthCm")}
 																		{...fieldRest}
 																		innerRef={ref}
 																		pigment={errors?.length ? "danger" : "primary"}
@@ -521,7 +545,7 @@ const ProductsForm = (props: Props) => {
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button type='submit' form='permissions-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
-						{payload ? t("common.update") : t("common.submit")}
+						{t(`action.${payload ? "update" : "add"}`, { entry: t("common.product") })}
 					</Button>
 				</Card.Footer>
 			</Card>

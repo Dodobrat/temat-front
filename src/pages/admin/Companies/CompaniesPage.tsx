@@ -1,4 +1,5 @@
 import { useEffect, useState, Suspense, lazy } from "react";
+import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
@@ -23,6 +24,7 @@ const CompaniesDrawer = lazy(() => import("./CompaniesDrawer"));
 const CompaniesPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
 
@@ -119,19 +121,19 @@ const CompaniesPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Companies</title>
+				<title>Temat | {t("common.company", { count: 0 })}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Companies
+							{t("common.company", { count: 0 })}
 						</Heading>
 					</Flex.Col>
 					{userCan("companyCreate") && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowCompaniesForm({ state: true, payload: null })} iconStart={<IconAdd />}>
-								Add New
+								{t("action.add")}
 							</Button>
 						</Flex.Col>
 					)}
@@ -144,14 +146,14 @@ const CompaniesPage = () => {
 							<Input
 								type='search'
 								className='temat__table__search'
-								placeholder='Search by name...'
+								placeholder={t("common.searchBy", { keyword: t("field.name") })}
 								value={searchString}
 								onChange={handleOnSearchChange}
 								pigment={searchStringError ? "danger" : "primary"}
 								preffix={<IconSearch className='dui__icon' />}
 								suffix={
 									searchStringError && (
-										<Tooltip content={"Minimum 2 characters"}>
+										<Tooltip content={t("validation.minLength", { value: 2 })}>
 											<div>
 												<IconErrorCircle className='text--danger dui__icon' />
 											</div>
@@ -162,7 +164,7 @@ const CompaniesPage = () => {
 						</Flex.Col>
 						<Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>
-								Filters
+								{t("common.filter", { count: 0 })}
 							</Button>
 						</Flex.Col>
 					</Flex>

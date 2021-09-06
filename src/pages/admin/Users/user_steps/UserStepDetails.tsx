@@ -1,12 +1,13 @@
-import { FormControl } from "@dodobrat/react-ui-kit";
-import { Input } from "@dodobrat/react-ui-kit";
-import { Flex } from "@dodobrat/react-ui-kit";
-import { Controller } from "react-hook-form";
-import cn from "classnames";
 import { useTranslation } from "react-i18next";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import { Controller } from "react-hook-form";
+import { Flex, Input, FormControl } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
 import { usePhoneCodes } from "../../../../actions/fetchHooks";
-import { PhoneCode } from "../../../common/Orders/order_steps/OrderStepShipping";
+
+import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import PhoneCode from "../../../../components/util/PhoneCode";
+
 import { imageValidator } from "../../../../helpers/formValidations";
 
 interface Props {
@@ -23,7 +24,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 		<>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.firstName")}
+					label={t("field.firstName")}
 					htmlFor='firstName'
 					className={cn({
 						"text--danger": errors?.firstName,
@@ -35,7 +36,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							return (
 								<Input
 									name='firstName'
-									placeholder={t("users.firstName")}
+									placeholder={t("field.firstName")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.firstName ? "danger" : "primary"}
@@ -46,16 +47,22 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							required: "Field is required",
-							minLength: { value: 2, message: "Min 2 characters" },
-							maxLength: { value: 50, message: "Max 50 characters" },
+							required: t("validation.required"),
+							minLength: {
+								value: 2,
+								message: t("validation.minLength", { value: 2 }),
+							},
+							maxLength: {
+								value: 50,
+								message: t("validation.maxLength", { value: 50 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "6" }}>
 				<FormControl
-					label={t("users.lastName")}
+					label={t("field.lastName")}
 					htmlFor='lastName'
 					className={cn({
 						"text--danger": errors?.lastName,
@@ -67,7 +74,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							return (
 								<Input
 									name='lastName'
-									placeholder={t("users.lastName")}
+									placeholder={t("field.lastName")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.lastName ? "danger" : "primary"}
@@ -78,16 +85,22 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							required: "Field is required",
-							minLength: { value: 2, message: "Min 2 characters" },
-							maxLength: { value: 50, message: "Max 50 characters" },
+							required: t("validation.required"),
+							minLength: {
+								value: 2,
+								message: t("validation.minLength", { value: 2 }),
+							},
+							maxLength: {
+								value: 50,
+								message: t("validation.maxLength", { value: 50 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "5", md: "4" }}>
 				<FormControl
-					label={t("users.phoneCode")}
+					label={t("field.phoneCode")}
 					htmlFor='phoneCodeId'
 					className={cn({
 						"text--danger": errors?.phoneCodeId,
@@ -114,14 +127,14 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue={null}
 						rules={{
-							validate: (val) => (watchPhone.toString().length > 0 && !val ? "Field is required" : true),
+							validate: (val) => (watchPhone.toString().length > 0 && !val ? t("validation.required") : true),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "7", xs: "8" }}>
 				<FormControl
-					label={t("users.phone")}
+					label={t("field.phone")}
 					htmlFor='phone'
 					className={cn({
 						"text--danger": errors?.phone,
@@ -133,7 +146,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							return (
 								<Input
 									type='tel'
-									placeholder={t("users.phone")}
+									placeholder={t("field.phone")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.phone ? "danger" : "primary"}
@@ -146,17 +159,23 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						rules={{
 							pattern: {
 								value: /^[0-9]{9}$/,
-								message: "Invalid characters supplied",
+								message: t("validation.pattern"),
 							},
-							minLength: { value: 9, message: "Min 9 characters" },
-							maxLength: { value: 9, message: "Max 9 characters" },
+							minLength: {
+								value: 9,
+								message: t("validation.minLength", { value: 9 }),
+							},
+							maxLength: {
+								value: 9,
+								message: t("validation.maxLength", { value: 9 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("users.email")}
+					label={t("field.email")}
 					htmlFor='email'
 					className={cn({
 						"text--danger": errors?.email,
@@ -168,7 +187,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							return (
 								<Input
 									type='email'
-									placeholder={t("users.email")}
+									placeholder={t("field.email")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.email ? "danger" : "primary"}
@@ -179,10 +198,10 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 							pattern: {
 								value: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-								message: "Invalid Email",
+								message: t("validation.pattern"),
 							},
 						}}
 					/>
@@ -190,7 +209,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("users.image")}
+					label={t("field.image")}
 					htmlFor='image'
 					className={cn({
 						"text--danger": errors?.image,
@@ -217,7 +236,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 								<Input
 									type='file'
 									accept='image/*'
-									placeholder={t("users.image")}
+									placeholder={t("field.image")}
 									{...fieldRest}
 									onChange={(e) => onChange(e.target.files)}
 									value={value?.[0]?.filename}
@@ -230,14 +249,14 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							validate: (files) => imageValidator({ file: files?.[0] }),
+							validate: (files) => imageValidator({ file: files?.[0], t }),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col='12'>
 				<FormControl
-					label={t("users.country")}
+					label={t("field.country")}
 					htmlFor='country'
 					className={cn({
 						"text--danger": errors?.country,
@@ -248,7 +267,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							const { ref, ...fieldRest } = field;
 							return (
 								<Input
-									placeholder={t("users.country")}
+									placeholder={t("field.country")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.country ? "danger" : "primary"}
@@ -259,15 +278,21 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							minLength: { value: 2, message: "Min 2 characters" },
-							maxLength: { value: 50, message: "Max 50 characters" },
+							minLength: {
+								value: 2,
+								message: t("validation.minLength", { value: 2 }),
+							},
+							maxLength: {
+								value: 50,
+								message: t("validation.maxLength", { value: 50 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "8" }}>
 				<FormControl
-					label={t("users.city")}
+					label={t("field.city")}
 					htmlFor='city'
 					className={cn({
 						"text--danger": errors?.city,
@@ -278,7 +303,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							const { ref, ...fieldRest } = field;
 							return (
 								<Input
-									placeholder={t("users.city")}
+									placeholder={t("field.city")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.city ? "danger" : "primary"}
@@ -289,15 +314,21 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							minLength: { value: 2, message: "Min 2 characters" },
-							maxLength: { value: 60, message: "Max 60 characters" },
+							minLength: {
+								value: 2,
+								message: t("validation.minLength", { value: 2 }),
+							},
+							maxLength: {
+								value: 60,
+								message: t("validation.maxLength", { value: 60 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "4" }}>
 				<FormControl
-					label={t("users.zipCode")}
+					label={t("field.zipCode")}
 					htmlFor='zipCode'
 					className={cn({
 						"text--danger": errors?.zipCode,
@@ -308,7 +339,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							const { ref, ...fieldRest } = field;
 							return (
 								<Input
-									placeholder={t("users.zipCode")}
+									placeholder={t("field.zipCode")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.zipCode ? "danger" : "primary"}
@@ -319,15 +350,21 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							minLength: { value: 3, message: "Min 3 characters" },
-							maxLength: { value: 10, message: "Max 10 characters" },
+							minLength: {
+								value: 3,
+								message: t("validation.minLength", { value: 3 }),
+							},
+							maxLength: {
+								value: 10,
+								message: t("validation.maxLength", { value: 10 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "8" }}>
 				<FormControl
-					label={t("users.streetName")}
+					label={t("field.streetName")}
 					htmlFor='streetName'
 					className={cn({
 						"text--danger": errors?.streetName,
@@ -338,7 +375,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							const { ref, ...fieldRest } = field;
 							return (
 								<Input
-									placeholder={t("users.streetName")}
+									placeholder={t("field.streetName")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.streetName ? "danger" : "primary"}
@@ -349,15 +386,21 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							minLength: { value: 2, message: "Min 2 characters" },
-							maxLength: { value: 50, message: "Max 50 characters" },
+							minLength: {
+								value: 2,
+								message: t("validation.minLength", { value: 2 }),
+							},
+							maxLength: {
+								value: 50,
+								message: t("validation.maxLength", { value: 50 }),
+							},
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", xs: "4" }}>
 				<FormControl
-					label={t("users.streetNumber")}
+					label={t("field.streetNumber")}
 					htmlFor='streetNumber'
 					className={cn({
 						"text--danger": errors?.streetNumber,
@@ -368,7 +411,7 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 							const { ref, ...fieldRest } = field;
 							return (
 								<Input
-									placeholder={t("users.streetNumber")}
+									placeholder={t("field.streetNumber")}
 									{...fieldRest}
 									innerRef={ref}
 									pigment={errors?.streetNumber ? "danger" : "primary"}
@@ -379,8 +422,14 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 						control={control}
 						defaultValue=''
 						rules={{
-							minLength: { value: 1, message: "Min 1 characters" },
-							maxLength: { value: 10, message: "Max 10 characters" },
+							minLength: {
+								value: 1,
+								message: t("validation.minLength", { value: 1 }),
+							},
+							maxLength: {
+								value: 10,
+								message: t("validation.maxLength", { value: 10 }),
+							},
 						}}
 					/>
 				</FormControl>

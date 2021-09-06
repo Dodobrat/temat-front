@@ -2,12 +2,14 @@ type imageValidatorType = {
 	file: File;
 	multi?: boolean;
 	sizeInMb?: number | string;
+	t: any;
 };
 
-export const imageValidator: ({ file, multi, sizeInMb }: imageValidatorType) => string | true = ({
+export const imageValidator: ({ file, multi, sizeInMb, t }: imageValidatorType) => string | true = ({
 	file,
 	multi = false,
 	sizeInMb = process.env.REACT_APP_MAX_FILE_SIZE_UPLOAD,
+	t,
 }) => {
 	const size = 1024 * 1024 * Number(sizeInMb);
 
@@ -17,9 +19,9 @@ export const imageValidator: ({ file, multi, sizeInMb }: imageValidatorType) => 
 		return true;
 	}
 	if (multi) {
-		return `One of the files is bigger than ${sizeInMb} MB`;
+		return t("validation.multiMaxFileSize", { sizeInMb });
 	} else {
-		return `File should be smaller than ${sizeInMb} MB`;
+		return t("validation.maxFileSize", { sizeInMb });
 	}
 };
 

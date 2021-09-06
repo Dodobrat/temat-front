@@ -12,13 +12,13 @@ const RolesPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Settings</title>
+				<title>Temat | {t("common.settings")}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							{t("pages.settings")}
+							{t("common.settings")}
 						</Heading>
 					</Flex.Col>
 				</Flex>

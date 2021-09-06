@@ -24,6 +24,7 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 
 	const {
 		control,
+		setValue,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -73,12 +74,12 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 
 	return (
 		<Form id='orders-form' onSubmit={handleSubmit(onSubmit)}>
-			<OrderStepPayment formProps={{ control, errors }} />
+			<OrderStepPayment initialData={data.payment} formProps={{ control, errors, setValue }} />
 			<PortalWrapper element={formFooter ?? null}>
 				<Flex wrap='nowrap' justify='flex-end' className='w-100' style={{ flex: 1 }}>
 					<Flex.Col col='auto'>
 						<Button type='submit' form='orders-form' isLoading={isLoadingDetailsUpdate}>
-							{isUpdating ? t("common.update") : t("common.next")}
+							{isUpdating ? t("action.update", { entry: t("step.payment") }) : t("common.next")}
 						</Button>
 					</Flex.Col>
 				</Flex>

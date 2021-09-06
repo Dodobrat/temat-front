@@ -1,4 +1,5 @@
 import { Drawer, Card, Button, Text, Flex, Badge } from "@dodobrat/react-ui-kit";
+import { useTranslation } from "react-i18next";
 import { IconClose } from "../../../components/ui/icons";
 import { parseDate } from "../../../helpers/dateHelpers";
 
@@ -18,6 +19,8 @@ const viewValueProps = {
 const RolesViewDrawer = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
+	const { t } = useTranslation();
+
 	return (
 		<Drawer isOpen onClose={onClose} position='right' sizing='xl' animation='none' {...rest}>
 			<Card elevation='none'>
@@ -27,24 +30,24 @@ const RolesViewDrawer = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>Role</Text>
+					<Text className='mb--0'>{t("common.role")}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Flex spacingY={{ base: "sm", sm: "lg" }}>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Name</Badge>
+							<Badge pigment='secondary'>{t("field.name")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text className='mb--0 ellipsis'>{payload?.name}</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Description</Badge>
+							<Badge pigment='secondary'>{t("field.description")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text className='mb--0'>{payload?.description}</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Created</Badge>
+							<Badge pigment='secondary'>{t("common.created")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text className='mb--0'>{parseDate(payload?.dateCreated, true)}</Text>

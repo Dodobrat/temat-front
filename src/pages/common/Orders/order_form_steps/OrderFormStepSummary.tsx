@@ -55,7 +55,7 @@ const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }: any) =
 					</Flex.Col>
 					<Flex.Col col='auto'>
 						<Button type='submit' form='orders-form' isLoading={isLoadingAdd}>
-							{t("common.next")}
+							{t("action.add", { entry: t("common.order") })}
 						</Button>
 					</Flex.Col>
 				</Flex>

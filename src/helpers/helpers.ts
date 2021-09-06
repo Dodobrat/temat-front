@@ -1,6 +1,6 @@
-export const confirmOnExit: (callback: Function) => void = (callback) => {
+export const confirmOnExit: (callback: Function, t: any) => void = (callback, t) => {
 	// eslint-disable-next-line no-restricted-globals
-	const confirmFormExit = confirm("You will lose progress! Are you sure you wish to continue?");
+	const confirmFormExit = confirm(t("confirmation.loseProgress"));
 	if (confirmFormExit) {
 		callback?.();
 	}

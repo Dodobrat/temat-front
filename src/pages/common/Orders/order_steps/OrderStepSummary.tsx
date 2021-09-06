@@ -8,13 +8,17 @@ import { IconEdit, LogoPdf } from "../../../../components/ui/icons";
 
 import { parseDate } from "../../../../helpers/dateHelpers";
 
-const EmptyEntry = () => (
-	<Heading as='p' centered className='my--3'>
-		No Data!
-	</Heading>
-);
+const EmptyEntry = () => {
+	const { t } = useTranslation();
+	return (
+		<Heading as='p' centered className='my--3'>
+			{t("table.noData")}
+		</Heading>
+	);
+};
 
 const ProductsDetails = ({ products, ...rest }) => {
+	const { t } = useTranslation();
 	if (products.length === 0) return <EmptyEntry />;
 	return (
 		<ListGroup elevation='none'>
@@ -28,7 +32,9 @@ const ProductsDetails = ({ products, ...rest }) => {
 						<Flex.Col col='auto'>
 							{entry?.price} {entry?.currency}
 						</Flex.Col>
-						<Flex.Col col='auto'>Qty. {entry?.quantity}</Flex.Col>
+						<Flex.Col col='auto'>
+							{t("common.qty")} {entry?.quantity}
+						</Flex.Col>
 					</Flex>
 				</ListGroup.Item>
 			))}
@@ -62,7 +68,7 @@ const ShippingDetails = ({ details, ...rest }) => {
 				.map((entry: any) => (
 					<ListGroup.Item key={entry[0]}>
 						<Flex align='center' wrap='nowrap' {...rest}>
-							<Flex.Col>{t(`orders.${entry[0]}`)}</Flex.Col>
+							<Flex.Col>{t(`field.${entry[0].replace("Id", "")}`)}</Flex.Col>
 							<Flex.Col col='auto'>{parseShippingEntry(entry[1])}</Flex.Col>
 						</Flex>
 					</ListGroup.Item>
@@ -94,14 +100,18 @@ const ReceiverDetails = ({ details, ...rest }) => {
 		<ListGroup elevation='none'>
 			{Object.entries(details)
 				.filter((entryItem) => entryItem[1])
-				.map((entry: any) => (
-					<ListGroup.Item key={entry[0]}>
-						<Flex align='center' wrap='nowrap' {...rest}>
-							<Flex.Col>{t(`orders.${entry[0]}`)}</Flex.Col>
-							<Flex.Col col='auto'>{parseShippingEntry(entry[1])}</Flex.Col>
-						</Flex>
-					</ListGroup.Item>
-				))}
+				.map((entry: any) => {
+					const sanitizedEntryKey = entry[0].replace("receiver", "").replace("Id", "");
+					const entryKey = sanitizedEntryKey.charAt(0).toLowerCase() + sanitizedEntryKey.slice(1);
+					return (
+						<ListGroup.Item key={entry[0]}>
+							<Flex align='center' wrap='nowrap' {...rest}>
+								<Flex.Col>{t(`field.${entryKey}`)}</Flex.Col>
+								<Flex.Col col='auto'>{parseShippingEntry(entry[1])}</Flex.Col>
+							</Flex>
+						</ListGroup.Item>
+					);
+				})}
 		</ListGroup>
 	);
 };
@@ -117,7 +127,7 @@ const PaymentDetails = ({ details, ...rest }) => {
 			{Object.entries(details).map((entry: any) => (
 				<ListGroup.Item key={entry[0]}>
 					<Flex align='center' wrap='nowrap' {...rest}>
-						<Flex.Col>{t(`orders.${entry[0]}`)}</Flex.Col>
+						<Flex.Col>{t(`field.${entry[0].replace("Id", "")}`)}</Flex.Col>
 						<Flex.Col col='auto'>{entry[1]?.label ?? entry[1]}</Flex.Col>
 					</Flex>
 				</ListGroup.Item>
@@ -128,6 +138,7 @@ const PaymentDetails = ({ details, ...rest }) => {
 
 const ExtraDetails = ({ details, ...rest }) => {
 	const values = Object.values(details);
+	const { t } = useTranslation();
 
 	if (values.length === 0) return <EmptyEntry />;
 
@@ -144,7 +155,7 @@ const ExtraDetails = ({ details, ...rest }) => {
 				</ListGroup.Item>
 			))}
 			<ListGroup.Item>
-				<Text>Customer Note:</Text>
+				<Text>{t("field.note")}:</Text>
 				{!!details?.customerNote ? <Text className='mb--0'>{details?.customerNote}</Text> : <EmptyEntry />}
 			</ListGroup.Item>
 		</ListGroup>
@@ -172,7 +183,7 @@ const OrderStepSummary = () => {
 						<Flex wrap='nowrap' align='center' spacingX={null} spacingY={null}>
 							<Flex.Col>
 								<Heading as='p' className='mb--0'>
-									{t(`orders.${item[0]}`)}
+									{t(`step.${item[0]}`)}
 								</Heading>
 							</Flex.Col>
 							<Flex.Col

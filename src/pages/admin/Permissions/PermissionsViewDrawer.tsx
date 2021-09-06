@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { Drawer, Card, Button, Text, Flex, Badge } from "@dodobrat/react-ui-kit";
-import { IconClose } from "../../../components/ui/icons";
 import cn from "classnames";
+
+import { IconClose } from "../../../components/ui/icons";
 import { parseDate } from "../../../helpers/dateHelpers";
 import { parseRoles } from "../../../helpers/helpers";
 
@@ -20,6 +22,8 @@ const viewValueProps = {
 const PermissionsViewDrawer = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
+	const { t } = useTranslation();
+
 	return (
 		<Drawer isOpen onClose={onClose} position='right' sizing='xl' animation='none' {...rest}>
 			<Card elevation='none'>
@@ -29,24 +33,24 @@ const PermissionsViewDrawer = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>Permission</Text>
+					<Text className='mb--0'>{t("common.permission")}</Text>
 				</Card.Header>
 				<Card.Body>
 					<Flex spacingY={{ base: "sm", sm: "lg" }}>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Name</Badge>
+							<Badge pigment='secondary'>{t("field.name")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text className='mb--0 ellipsis'>{payload?.name}</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Description</Badge>
+							<Badge pigment='secondary'>{t("field.description")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text className='mb--0'>{payload?.description}</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Roles</Badge>
+							<Badge pigment='secondary'>{t("field.role", { count: 0 })}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							{parseRoles(payload?.roles).map((role) => (
@@ -56,7 +60,7 @@ const PermissionsViewDrawer = (props: Props) => {
 							))}
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Status</Badge>
+							<Badge pigment='secondary'>{t("field.status")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text
@@ -65,11 +69,11 @@ const PermissionsViewDrawer = (props: Props) => {
 									"text--success": !!payload?.active,
 									"text--danger": !payload?.active,
 								})}>
-								{!!payload?.active ? "Active" : "Inactive"}
+								{!!payload?.active ? t("common.active") : t("common.inactive")}
 							</Text>
 						</Flex.Col>
 						<Flex.Col {...viewKeyProps}>
-							<Badge pigment='secondary'>Created</Badge>
+							<Badge pigment='secondary'>{t("common.created")}</Badge>
 						</Flex.Col>
 						<Flex.Col {...viewValueProps}>
 							<Text className='mb--0'>{parseDate(payload?.dateCreated, true)}</Text>

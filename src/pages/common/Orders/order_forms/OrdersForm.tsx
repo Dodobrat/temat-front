@@ -23,18 +23,18 @@ const OrdersForm = (props: Props) => {
 
 	const orderFormSteps = useMemo(
 		() => [
-			{ step: 1, label: "Payment" },
-			{ step: 2, label: "Shipping" },
-			{ step: 3, label: "Receiver" },
-			{ step: 4, label: "Products" },
-			{ step: 5, label: "Extras" },
-			{ step: 6, label: "Summary" },
+			{ step: 1, label: t("step.payment") },
+			{ step: 2, label: t("step.shipping") },
+			{ step: 3, label: t("step.receiver") },
+			{ step: 4, label: t("step.products") },
+			{ step: 5, label: t("step.extras") },
+			{ step: 6, label: t("step.summary") },
 		],
-		[]
+		[t]
 	);
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest} withFocusLock>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest} withFocusLock>
 			<Card>
 				<Card.Header
 					actions={
@@ -42,7 +42,7 @@ const OrdersForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{t("orders.addOrder")}</Text>
+					<Text className='mb--0'>{t("action.add", { entry: t("common.order") })}</Text>
 				</Card.Header>
 				<OrdersProvider>
 					<OrdersFormWizard steps={orderFormSteps} onClose={onClose} withPrefetch={userCan("orderCreate")} />

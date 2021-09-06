@@ -19,6 +19,7 @@ import PermissionRolesCell from "./table_cells/PermissionRolesCell";
 import OrderStatusCell from "./table_cells/OrderStatusCell";
 import { AllElevationOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 import ShippingPlanStatusCell from "./table_cells/ShippingPlanStatusCell";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	columns: any[];
@@ -85,6 +86,8 @@ const DataTable = ({
 		useSortBy,
 		usePagination
 	);
+
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		fetchData({ pageIndex, pageSize, sortBy });
@@ -160,7 +163,7 @@ const DataTable = ({
 						default: {
 							return (
 								<Table.Cell style={{ ...cell.column?.style }} {...cell.getCellProps()}>
-									<span className={cn({ "text--opaque": !cell.value })}>{cell.value ?? "N/A"}</span>
+									<span className={cn({ "text--opaque": !cell.value })}>{cell.value ?? t("common.na")}</span>
 								</Table.Cell>
 							);
 						}
@@ -213,12 +216,13 @@ const DataTable = ({
 						</Flex.Col>
 						<Flex.Col>
 							<Text className='mb--0 ml--2'>
-								Page <Text as='strong'>{pageIndex + 1}</Text> of <Text as='strong'>{pageOptions.length}</Text>
+								{t("table.page")} <Text as='strong'>{pageIndex + 1}</Text> {t("common.of").toLowerCase()}{" "}
+								<Text as='strong'>{pageOptions.length}</Text>
 							</Text>
 						</Flex.Col>
 						<Flex.Col col='auto'>
 							<Text className='mb--0'>
-								<Text as='strong'>{serverTotalResults}</Text> entries
+								<Text as='strong'>{serverTotalResults}</Text> {t("table.entries").toLowerCase()}
 							</Text>
 						</Flex.Col>
 						<Flex.Col col='auto'>
@@ -228,8 +232,11 @@ const DataTable = ({
 								menuPlacement='auto'
 								inputId='table-per-page-id'
 								isSearchable={false}
-								options={[10, 20, 30, 40, 50, 100].map((pageSize) => ({ value: pageSize, label: `Show ${pageSize}` }))}
-								value={{ value: pageSize, label: `Show ${pageSize}` }}
+								options={[10, 20, 30, 40, 50, 100].map((pageSize) => ({
+									value: pageSize,
+									label: `${t("common.show")} ${pageSize}`,
+								}))}
+								value={{ value: pageSize, label: `${t("common.show")} ${pageSize}` }}
 								onChange={(option) => {
 									setPageSize(Number(option.value));
 								}}

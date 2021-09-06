@@ -43,7 +43,7 @@ const OrdersUpdateForm = (props: Props) => {
 	}, [data]);
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest} withFocusLock>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest} withFocusLock>
 			<Card isLoading={isFetching}>
 				<Card.Header
 					actions={
@@ -51,7 +51,7 @@ const OrdersUpdateForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{t("orders.updateOrder")}</Text>
+					<Text className='mb--0'>{t("action.update", { entry: t("common.order") })}</Text>
 				</Card.Header>
 				<OrdersUpdateProvider>
 					<OrdersUpdateFormWizard payload={fetchedOrder} />

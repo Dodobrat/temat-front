@@ -3,7 +3,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { errorToast } from "../helpers/toastEmitter";
 import { useDataTableGenerateType } from "../types/global.types";
 
-const useDataTableGenerate: useDataTableGenerateType = ({ useFetch, columns, actions }) => {
+const useDataTableGenerate: useDataTableGenerateType = ({ useFetch, columns, actions = [] }) => {
 	const { userCan } = useAuthContext();
 
 	const [queryParams, setQueryParams] = useState({

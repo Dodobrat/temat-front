@@ -7,6 +7,7 @@ import cn from "classnames";
 import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
 
 import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import { useEffect, useMemo } from "react";
 
 const selectProps = {
 	className: "temat__select__container",
@@ -15,31 +16,51 @@ const selectProps = {
 	isSearchable: false,
 };
 
-export const paidByOptions = [
-	{ value: "receiver", label: "Receiver" },
-	{ value: "sender", label: "Sender" },
-];
-
-export const payAfterOptions = [
-	{ value: "none", label: "Delivery" },
-	{ value: "view", label: "Delivery and View" },
-	{ value: "test", label: "Delivery and Test" },
-];
-
 interface Props {
 	initialData?: any;
 	formProps?: any;
-	useContext?: any;
 }
 
-const OrderStepPayment = ({ formProps: { control, errors } }: Props) => {
+const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue } }: Props) => {
 	const { t } = useTranslation();
+
+	const paidByOptions = useMemo(
+		() => [
+			{ value: "receiver", label: t("options.receiver") },
+			{ value: "sender", label: t("options.sender") },
+		],
+		[t]
+	);
+
+	const payAfterOptions = useMemo(
+		() => [
+			{ value: "none", label: t("options.delivery") },
+			{ value: "view", label: t("options.deliveryWith", { with: t("common.view") }) },
+			{ value: "test", label: t("options.deliveryWith", { with: t("common.test") }) },
+		],
+		[t]
+	);
+
+	useEffect(() => {
+		if (initialData?.shippingPaidBy) {
+			setValue(
+				"shippingPaidBy",
+				paidByOptions.find((option) => option.value === initialData?.shippingPaidBy)
+			);
+		}
+		if (initialData?.payAfter) {
+			setValue(
+				"payAfter",
+				payAfterOptions.find((option) => option.value === initialData?.payAfter)
+			);
+		}
+	}, [initialData?.shippingPaidBy, initialData?.payAfter, setValue, paidByOptions, payAfterOptions]);
 
 	return (
 		<Flex>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("orders.paymentMethod")}
+					label={t("field.paymentMethod")}
 					htmlFor='paymentMethodId'
 					className={cn({
 						"text--danger": errors?.paymentMethodId,
@@ -63,14 +84,14 @@ const OrderStepPayment = ({ formProps: { control, errors } }: Props) => {
 						control={control}
 						defaultValue={null}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("orders.currency")}
+					label={t("field.currency")}
 					htmlFor='currencyId'
 					className={cn({
 						"text--danger": errors?.currencyId,
@@ -95,14 +116,14 @@ const OrderStepPayment = ({ formProps: { control, errors } }: Props) => {
 						control={control}
 						defaultValue={null}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("orders.paymentMethod")}
+					label={t("field.shippingPaidBy")}
 					htmlFor='shippingPaidBy'
 					className={cn({
 						"text--danger": errors?.shippingPaidBy,
@@ -124,14 +145,14 @@ const OrderStepPayment = ({ formProps: { control, errors } }: Props) => {
 						control={control}
 						defaultValue={paidByOptions[0]}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("orders.payAfter")}
+					label={t("field.payAfter")}
 					htmlFor='payAfter'
 					className={cn({
 						"text--danger": errors?.payAfter,
@@ -153,7 +174,7 @@ const OrderStepPayment = ({ formProps: { control, errors } }: Props) => {
 						control={control}
 						defaultValue={payAfterOptions[0]}
 						rules={{
-							required: "Field is required",
+							required: t("validation.required"),
 						}}
 					/>
 				</FormControl>

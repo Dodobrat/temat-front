@@ -6,20 +6,25 @@ import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import { useParams } from "react-router-dom";
 import { Flex } from "@dodobrat/react-ui-kit";
+import { useTranslation } from "react-i18next";
 
 const ProductsViewPage = () => {
 	const { id }: any = useParams();
 
+	const { t } = useTranslation();
+
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Product #{id}</title>
+				<title>
+					Temat | {t("common.product")} #{id}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Product #{id}
+							{t("common.product")} #{id}
 						</Heading>
 					</Flex.Col>
 				</Flex>

@@ -195,6 +195,7 @@ export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specia
 		["orderHistoryById", specialKey],
 		async ({ queryKey }) => {
 			const orderId = queryKey[1]?.order?.details?.id;
+			if (!orderId) return;
 			const { data } = await axios.get(`${apiUrl}/orders/${orderId}/history?${parseParams(specs)}`);
 			return data;
 		},

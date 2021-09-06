@@ -43,7 +43,7 @@ const OrderStepCompany = ({ useContext = useOrdersContext, withPrefetch }) => {
 	return (
 		<Form id='orders-form' onSubmit={handleSubmit(onSubmit)}>
 			<FormControl
-				label={t("orders.companyId")}
+				label={t("field.company")}
 				htmlFor='companyId'
 				className={cn({
 					"text--danger": errors?.companyId,
@@ -67,7 +67,7 @@ const OrderStepCompany = ({ useContext = useOrdersContext, withPrefetch }) => {
 					defaultValue={null}
 					shouldUnregister
 					rules={{
-						required: "Field is required",
+						required: t("validation.required"),
 					}}
 				/>
 			</FormControl>

@@ -18,7 +18,7 @@ const UsersUpdateForm = (props: Props) => {
 	const { t } = useTranslation();
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -26,7 +26,7 @@ const UsersUpdateForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{t("users.updateUser")}</Text>
+					<Text className='mb--0'>{t("action.update", { entry: t("common.user") })}</Text>
 				</Card.Header>
 				<Tabs className='max-h--unset' contentClassName='w--100' elevation='none'>
 					<Tabs.Panel tab={t("users.credentials")}>

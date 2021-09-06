@@ -90,7 +90,7 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 					)}
 					<Flex.Col col='auto'>
 						<Button type='submit' form='orders-form' isLoading={isLoadingFilesUpdate}>
-							{isUpdating ? t("common.update") : t("common.next")}
+							{isUpdating ? t("action.update", { entry: t("step.extras") }) : t("common.next")}
 						</Button>
 					</Flex.Col>
 				</Flex>

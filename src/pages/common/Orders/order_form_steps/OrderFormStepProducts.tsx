@@ -87,7 +87,7 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = fal
 					)}
 					<Flex.Col col='auto'>
 						<Button type='submit' form='orders-form' isLoading={isLoadingProductsUpdate}>
-							{isUpdating ? t("common.update") : t("common.next")}
+							{isUpdating ? t("action.update", { entry: t("step.products") }) : t("common.next")}
 						</Button>
 					</Flex.Col>
 				</Flex>

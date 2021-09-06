@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
 
 import { useShippingPlanById } from "../../../../actions/fetchHooks";
@@ -18,6 +19,8 @@ interface Props {
 const ShippingPlansForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
+	const { t } = useTranslation();
+
 	const { data, isFetching } = useShippingPlanById({
 		specs: {
 			filters: {
@@ -34,7 +37,7 @@ const ShippingPlansForm = (props: Props) => {
 	const fetchedPlan = data?.data ?? null;
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose)} isOpen animation='none' {...rest}>
+		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
 			<Card isLoading={isFetching}>
 				<Card.Header
 					actions={
@@ -42,7 +45,7 @@ const ShippingPlansForm = (props: Props) => {
 							<IconClose />
 						</Button>
 					}>
-					<Text className='mb--0'>{payload ? "Edit" : "Add"} Shipping Plan</Text>
+					<Text className='mb--0'>{t(`action.${payload ? "update" : "add"}`, { entry: t("common.shippingPlan") })}</Text>
 				</Card.Header>
 				<ShippingPlansProvider>
 					<ShippingPlansFormWizard onClose={onClose} payload={fetchedPlan} withPrefetch={!payload} />

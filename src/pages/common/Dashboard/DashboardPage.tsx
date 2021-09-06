@@ -8,8 +8,11 @@ import { errorToast } from "../../../helpers/toastEmitter";
 import { useAuthContext } from "../../../context/AuthContext";
 import ComingSoon from "../../../components/ui/ComingSoon";
 import { Flex } from "@dodobrat/react-ui-kit";
+import { useTranslation } from "react-i18next";
 
 const DashboardPage = () => {
+	const { t } = useTranslation();
+
 	const {
 		userValue: { user },
 	} = useAuthContext();
@@ -32,20 +35,20 @@ const DashboardPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | Dashboard</title>
+				<title>Temat | {t("common.dashboard")}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							Dashboard
+							{t("common.dashboard")}
 						</Heading>
 					</Flex.Col>
 				</Flex>
 			</PageHeader>
 			<PageContent>
 				<Card>
-					<Card.Header>Statistics</Card.Header>
+					<Card.Header>{t("common.statistic", { count: 0 })}</Card.Header>
 					<Card.Body>
 						<ComingSoon elevation='none' />
 					</Card.Body>
