@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
@@ -17,6 +17,7 @@ import { confirmOnExit } from "../../../helpers/helpers";
 import { imageValidator } from "../../../helpers/formValidations";
 import OrderStepProducts from "../Orders/order_steps/OrderStepProducts";
 import { parseProductsToFormData } from "../Orders/orderHelpers";
+import { Checkbox } from "@dodobrat/react-ui-kit";
 
 interface Props {
 	onClose: () => void;
@@ -25,10 +26,25 @@ interface Props {
 
 const ProductsForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
-	const { userCan } = useAuthContext();
+	const {
+		userValue: { user },
+		userCan,
+	} = useAuthContext();
 	const { t } = useTranslation();
 
 	const queryClient = useQueryClient();
+
+	const defaultCompanyId = () => {
+		if (payload && userCan(["productUpdateTheir", "productUpdate"])) {
+			return payload?.companyId;
+		}
+		if (userCan("productCreate")) {
+			return null;
+		}
+		if (userCan("productCreateTheir")) {
+			return user?.companyId;
+		}
+	};
 
 	const {
 		control,
@@ -42,11 +58,20 @@ const ProductsForm = (props: Props) => {
 			...payload,
 			products: [],
 			image: "",
-			companyId: payload && payload?.companyId ? { value: payload?.companyId, label: payload?.companyName } : null,
+			companyId: defaultCompanyId(),
 		},
 	});
 
 	const watchCompany = watch("companyId");
+	const watchIsCombo = watch("isCombo");
+
+	console.log(watch());
+
+	useEffect(() => {
+		if (watchCompany) {
+			setValue("products", []);
+		}
+	}, [watchCompany, setValue]);
 
 	const noAdditionalData = useMemo(() => {
 		if (!payload) {
@@ -85,13 +110,17 @@ const ProductsForm = (props: Props) => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log(data);
-
 		const formData = new FormData();
 
 		parseProductsToFormData(data.products, formData);
 
 		for (const entry of Object.entries(data)) {
+			if (Array.isArray(entry[1])) {
+				continue;
+			}
+			if (typeof entry[1] === "boolean") {
+				formData.append(entry[0], entry[1].toString());
+			}
 			if (!!entry[1]) {
 				if (entry[1] instanceof FileList) {
 					formData.append(entry[0], entry[1][0]);
@@ -99,6 +128,8 @@ const ProductsForm = (props: Props) => {
 					formData.append(entry[0], entry[1]["value"]);
 				} else if (typeof entry[1] === "string") {
 					formData.append(entry[0], entry[1]);
+				} else if (typeof entry[1] === "number") {
+					formData.append(entry[0], entry[1].toString());
 				}
 			}
 		}
@@ -125,153 +156,6 @@ const ProductsForm = (props: Props) => {
 					<Form id='permissions-form' onSubmit={handleSubmit(onSubmit)}>
 						<Flex spacingY='md'>
 							<Flex.Col col='12'>
-								<OrderStepProducts
-									companyId={watchCompany?.value}
-									selectProps={{
-										defaultOptions: !!watchCompany?.value,
-										querySpecialKey: watchCompany?.value,
-										cacheUniqs: [watchCompany?.value],
-									}}
-									formProps={{ control, errors, watch, setValue, clearErrors }}
-								/>
-							</Flex.Col>
-							<Flex.Col col='12'>
-								<FormControl
-									label={t("field.barcode")}
-									htmlFor='barcode'
-									className={cn({
-										"text--danger": errors?.barcode,
-									})}
-									hintMsg={errors?.barcode?.message}>
-									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='barcode'
-													placeholder={t("field.barcode")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.barcode ? "danger" : "primary"}
-												/>
-											);
-										}}
-										name='barcode'
-										control={control}
-										defaultValue=''
-										rules={{
-											required: t("validation.required"),
-											minLength: {
-												value: 14,
-												message: t("validation.minLength", { value: 14 }),
-											},
-											maxLength: {
-												value: 13,
-												message: t("validation.maxLength", { value: 13 }),
-											},
-										}}
-									/>
-								</FormControl>
-							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
-								<FormControl
-									label={t("field.sku")}
-									htmlFor='sku'
-									className={cn({
-										"text--danger": errors?.sku,
-									})}
-									hintMsg={errors?.sku?.message}>
-									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='sku'
-													placeholder={t("field.sku")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.sku ? "danger" : "primary"}
-												/>
-											);
-										}}
-										name='sku'
-										control={control}
-										defaultValue=''
-										rules={{
-											maxLength: {
-												value: 99,
-												message: t("validation.maxLength", { value: 99 }),
-											},
-										}}
-									/>
-								</FormControl>
-							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
-								<FormControl
-									label={t("field.minQty")}
-									htmlFor='minQty'
-									className={cn({
-										"text--danger": errors?.minQty,
-									})}
-									hintMsg={errors?.minQty?.message}>
-									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='minQty'
-													type='number'
-													placeholder={t("field.minQty")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.minQty ? "danger" : "primary"}
-												/>
-											);
-										}}
-										name='minQty'
-										control={control}
-										defaultValue=''
-										rules={{
-											required: t("validation.required"),
-											maxLength: {
-												value: 9,
-												message: t("validation.maxLength", { value: 9 }),
-											},
-										}}
-									/>
-								</FormControl>
-							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
-								<FormControl
-									label={t("field.company")}
-									htmlFor='companyId'
-									className={cn({
-										"text--danger": errors?.companyId,
-									})}
-									hintMsg={errors?.companyId?.message}>
-									<Controller
-										render={({ field }) => (
-											<AsyncSelect
-												useFetch={useCompanies}
-												isClearable={false}
-												defaultOptions
-												preSelectOption={!payload}
-												className={cn({
-													"temat__select__container--danger": errors?.companyId,
-												})}
-												{...field}
-											/>
-										)}
-										name='companyId'
-										control={control}
-										defaultValue={null}
-										rules={{
-											required: t("validation.required"),
-										}}
-									/>
-								</FormControl>
-							</Flex.Col>
-							<Flex.Col col={{ base: "12", xs: "6" }}>
 								<FormControl
 									label={t("field.name")}
 									htmlFor='name'
@@ -348,6 +232,238 @@ const ProductsForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
+								<FormControl
+									label={t("field.barcode")}
+									htmlFor='barcode'
+									className={cn({
+										"text--danger": errors?.barcode,
+									})}
+									hintMsg={errors?.barcode?.message}>
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													name='barcode'
+													placeholder={t("field.barcode")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.barcode ? "danger" : "primary"}
+												/>
+											);
+										}}
+										name='barcode'
+										control={control}
+										defaultValue=''
+										rules={{
+											required: t("validation.required"),
+											minLength: {
+												value: 13,
+												message: t("validation.minLength", { value: 13 }),
+											},
+											maxLength: {
+												value: 14,
+												message: t("validation.maxLength", { value: 14 }),
+											},
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
+								<FormControl
+									label={t("field.image")}
+									htmlFor='image'
+									className={cn({
+										"text--danger": errors?.image,
+									})}
+									hintMsg={
+										<>
+											{payload?.image ? (
+												<>
+													<a
+														href={payload?.image}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='text--info'>
+														Image Link
+													</a>
+													{!!errors?.image?.message && <br />}
+												</>
+											) : (
+												""
+											)}
+											{errors?.image?.message ?? ""}
+										</>
+									}>
+									<Controller
+										render={({ field }) => {
+											const { ref, onChange, value, ...fieldRest } = field;
+											return (
+												<Input
+													type='file'
+													accept='image/*'
+													placeholder={t("field.image")}
+													{...fieldRest}
+													onChange={(e) => onChange(e.target.files)}
+													value={value?.[0]?.filename}
+													innerRef={ref}
+													pigment={errors?.image ? "danger" : "primary"}
+												/>
+											);
+										}}
+										name='image'
+										control={control}
+										defaultValue=''
+										rules={{
+											validate: (files) => imageValidator({ file: files?.[0], t }),
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
+								<FormControl
+									label={t("field.sku")}
+									htmlFor='sku'
+									className={cn({
+										"text--danger": errors?.sku,
+									})}
+									hintMsg={errors?.sku?.message}>
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													name='sku'
+													placeholder={t("field.sku")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.sku ? "danger" : "primary"}
+												/>
+											);
+										}}
+										name='sku'
+										control={control}
+										defaultValue=''
+										rules={{
+											maxLength: {
+												value: 99,
+												message: t("validation.maxLength", { value: 99 }),
+											},
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "6" }}>
+								<FormControl
+									label={t("field.minQty")}
+									htmlFor='minQty'
+									className={cn({
+										"text--danger": errors?.minQty,
+									})}
+									hintMsg={errors?.minQty?.message}>
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													name='minQty'
+													type='number'
+													placeholder={t("field.minQty")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.minQty ? "danger" : "primary"}
+												/>
+											);
+										}}
+										name='minQty'
+										control={control}
+										defaultValue=''
+										rules={{
+											required: t("validation.required"),
+											maxLength: {
+												value: 9,
+												message: t("validation.maxLength", { value: 9 }),
+											},
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+
+							{userCan("productCreate") && (
+								<Flex.Col col='12'>
+									<FormControl
+										label={t("field.company")}
+										htmlFor='companyId'
+										className={cn({
+											"text--danger": errors?.companyId,
+										})}
+										hintMsg={errors?.companyId?.message}>
+										<Controller
+											render={({ field }) => (
+												<AsyncSelect
+													useFetch={useCompanies}
+													isClearable={false}
+													defaultOptions
+													preSelectOption={!payload}
+													className={cn({
+														"temat__select__container--danger": errors?.companyId,
+													})}
+													{...field}
+												/>
+											)}
+											name='companyId'
+											control={control}
+											defaultValue={null}
+											rules={{
+												required: t("validation.required"),
+											}}
+										/>
+									</FormControl>
+								</Flex.Col>
+							)}
+
+							<Flex.Col col='12'>
+								<FormControl
+									withLabel={false}
+									htmlFor='isCombo'
+									className={cn({
+										"text--danger": errors?.isCombo,
+									})}
+									hintMsg={errors?.isCombo?.message}>
+									<Controller
+										render={({ field }) => {
+											const { ref, onChange, ...fieldRest } = field;
+											return (
+												<Checkbox
+													{...fieldRest}
+													checked={field.value}
+													onChange={(e) => onChange(e.target.checked)}
+													innerRef={ref}
+													pigment={errors?.isCombo ? "danger" : "primary"}>
+													{t("field.isCombo")}
+												</Checkbox>
+											);
+										}}
+										name='isCombo'
+										control={control}
+										defaultValue={false}
+									/>
+								</FormControl>
+							</Flex.Col>
+							{watchIsCombo && (
+								<Flex.Col col='12'>
+									<OrderStepProducts
+										companyId={watchCompany?.value ?? user?.companyId}
+										selectProps={{
+											defaultOptions: !!watchCompany?.value ?? !!user?.companyId,
+											querySpecialKey: watchCompany?.value ?? user?.companyId,
+											cacheUniqs: [watchCompany?.value ?? user?.companyId],
+										}}
+										formProps={{ control, errors, watch, setValue, clearErrors }}
+									/>
+								</Flex.Col>
+							)}
 							{userCan("productAddAdditionalDetails") && (
 								<Flex.Col col='12'>
 									<Collapse
@@ -356,61 +472,10 @@ const ProductsForm = (props: Props) => {
 										isCollapsed={isCollapsed}
 										onToggle={(collapsed) => setIsCollapsed(!collapsed)}>
 										<Collapse.Toggle collapseIndicator={false} className='justify--center'>
-											<Text className='mb--0'>{t("products.addAdditionalData")}</Text>
+											<Text className='mb--0'>{t("action.add", { entry: t("common.details") })}</Text>
 										</Collapse.Toggle>
 										<Collapse.Content className='temat__form__collapse__content'>
 											<Flex spacingY='md'>
-												<Flex.Col col='12'>
-													<FormControl
-														label={t("field.image")}
-														htmlFor='image'
-														className={cn({
-															"text--danger": errors?.image,
-														})}
-														hintMsg={
-															<>
-																{payload?.image ? (
-																	<>
-																		<a
-																			href={payload?.image}
-																			target='_blank'
-																			rel='noopener noreferrer'
-																			className='text--info'>
-																			Image Link
-																		</a>
-																		{!!errors?.image?.message && <br />}
-																	</>
-																) : (
-																	""
-																)}
-																{errors?.image?.message ?? ""}
-															</>
-														}>
-														<Controller
-															render={({ field }) => {
-																const { ref, onChange, value, ...fieldRest } = field;
-																return (
-																	<Input
-																		type='file'
-																		accept='image/*'
-																		placeholder={t("field.image")}
-																		{...fieldRest}
-																		onChange={(e) => onChange(e.target.files)}
-																		value={value?.[0]?.filename}
-																		innerRef={ref}
-																		pigment={errors?.image ? "danger" : "primary"}
-																	/>
-																);
-															}}
-															name='image'
-															control={control}
-															defaultValue=''
-															rules={{
-																validate: (files) => imageValidator({ file: files?.[0], t }),
-															}}
-														/>
-													</FormControl>
-												</Flex.Col>
 												<Flex.Col col={{ base: "12", sm: "6" }}>
 													<FormControl
 														label={t("field.width")}

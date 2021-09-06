@@ -29,10 +29,10 @@ const UsersUpdateForm = (props: Props) => {
 					<Text className='mb--0'>{t("action.update", { entry: t("common.user") })}</Text>
 				</Card.Header>
 				<Tabs className='max-h--unset' contentClassName='w--100' elevation='none'>
-					<Tabs.Panel tab={t("users.credentials")}>
+					<Tabs.Panel tab={t("common.credentials")}>
 						<UserFormStepCredentials payload={payload} />
 					</Tabs.Panel>
-					<Tabs.Panel tab={t("users.details")}>
+					<Tabs.Panel tab={t("common.details")}>
 						<UserFormStepDetails payload={payload} />
 					</Tabs.Panel>
 				</Tabs>

@@ -52,6 +52,7 @@
 		"notFound": "Not Found",
 		"info": "Info",
 		"details": "Details",
+		"credentials": "Creadentials",
 		"comingSoon": "Coming Soon",
 		"underDevelopment": "Under Development"
 	},
@@ -64,6 +65,7 @@
 		"agentPhoneCode": "Agent Phone Code",
 		"agentPhone": "Agent Phone",
 		"isCompany": "Is Company",
+		"isCombo": "Is Combination of products",
 		"username": "Username",
 		"company": "Company",
 		"warehouse": "Warehouse",

@@ -37,6 +37,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 									placeholder={t("field.username")}
 									{...fieldRest}
 									innerRef={ref}
+									disabled={!!payload}
 									pigment={errors?.username ? "danger" : "primary"}
 								/>
 							);

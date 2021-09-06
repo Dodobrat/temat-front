@@ -6,6 +6,7 @@ import { useAuthContext } from "../../context/AuthContext";
 
 import { IconUserCircle, IconMenu, IconHamburger } from "../../components/ui/icons";
 import { PagesOptionsType } from "../../types/global.types";
+import Image from "../../components/ui/Image";
 
 interface Props {
 	pages: PagesOptionsType[];
@@ -38,9 +39,19 @@ const SidebarContent = forwardRef(({ pages = [] }: Props, ref) => {
 				to={`/app/users/${user?.id}`}
 				className='py--3'
 				main={
-					<Button flavor='rounded' equalDimensions pigment='secondary'>
-						<IconUserCircle />
-					</Button>
+					user?.image ? (
+						<div
+							style={{
+								width: "2rem",
+								height: "2rem",
+							}}>
+							<Image imgSrc={user?.image} alt={user?.username} />
+						</div>
+					) : (
+						<Button equalDimensions pigment='secondary'>
+							<IconUserCircle className='dui__icons' />
+						</Button>
+					)
 				}
 				extended={
 					<div>

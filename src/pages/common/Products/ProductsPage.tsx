@@ -132,7 +132,7 @@ const ProductsPage = () => {
 							{t("common.product", { count: 0 })}
 						</Heading>
 					</Flex.Col>
-					{userCan("productCreate") && (
+					{userCan(["productCreate", "productCreateTheir"]) && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowProductForm({ state: true, payload: null })} iconStart={<IconAdd />}>
 								{t("action.add")}

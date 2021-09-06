@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { Form, Button, PortalWrapper, Flex } from "@dodobrat/react-ui-kit";
 
+import { useAuthContext } from "../../../../context/AuthContext";
+
 import { useUserPersonalUpdate } from "../../../../actions/mutateHooks";
 
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
@@ -13,6 +15,10 @@ const UserFormStepDetails = ({ payload }) => {
 
 	const queryClient = useQueryClient();
 	const { t } = useTranslation();
+
+	const {
+		userValue: { user },
+	} = useAuthContext();
 
 	const {
 		control,
@@ -26,7 +32,7 @@ const UserFormStepDetails = ({ payload }) => {
 		},
 	});
 
-	const { mutate: updatePersonalUser, isLoading: isLoadingPersonalUpdate } = useUserPersonalUpdate({
+	const { mutateAsync: updatePersonalUser, isLoading: isLoadingPersonalUpdate } = useUserPersonalUpdate({
 		queryConfig: {
 			onSuccess: (res) => {
 				queryClient.invalidateQueries("users");
@@ -56,7 +62,11 @@ const UserFormStepDetails = ({ payload }) => {
 			formData,
 		};
 
-		updatePersonalUser(toSend);
+		updatePersonalUser(toSend).then(() => {
+			if (user?.id === payload?.id) {
+				queryClient.invalidateQueries("logged_user");
+			}
+		});
 	};
 
 	return (
@@ -68,7 +78,7 @@ const UserFormStepDetails = ({ payload }) => {
 				<Flex wrap='nowrap' justify='flex-end' className='w-100' style={{ flex: 1 }}>
 					<Flex.Col col='auto'>
 						<Button type='submit' form='user-form' isLoading={isLoadingPersonalUpdate}>
-							{t("action.update", { entry: t("common.user") })}
+							{t("action.update", { entry: t("common.details") })}
 						</Button>
 					</Flex.Col>
 				</Flex>

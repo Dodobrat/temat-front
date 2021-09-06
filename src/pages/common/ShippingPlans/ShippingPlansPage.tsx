@@ -76,7 +76,7 @@ const ShippingPlansPage = () => {
 							{t("common.shippingPlan", { count: 0 })}
 						</Heading>
 					</Flex.Col>
-					{userCan("planCreate") && (
+					{userCan(["planCreate", "planCreateTheir"]) && (
 						<Flex.Col col='auto'>
 							<Button onClick={() => setShowShippingPlansForm({ state: true, payload: null })} iconStart={<IconAdd />}>
 								{t("action.add")}
