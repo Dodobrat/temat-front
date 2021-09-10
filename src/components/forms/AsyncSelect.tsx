@@ -146,6 +146,7 @@ const AsyncSelect = forwardRef((props: Props, ref) => {
 			cacheUniqs={[clearCacheCounter, ...cacheUniqs]}
 			value={selectValue}
 			onChange={_onChange}
+			menuPlacement='auto'
 			{...rest}
 			selectRef={ref}
 			additional={{

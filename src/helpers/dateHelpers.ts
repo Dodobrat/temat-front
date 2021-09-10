@@ -45,6 +45,9 @@ export const excludeUnavailableDates = () => {
 	if (isCurrSaturday && currHour > 12) {
 		excludedDates.push(currDate);
 	}
+	if (isNotSunday(currDate) && !isCurrSaturday && currHour > 16) {
+		excludedDates.push(currDate);
+	}
 
 	return excludedDates;
 };
@@ -54,19 +57,19 @@ export const getClosestValidDate = () => {
 	let nextAvailableDate = today;
 	let currentTime = Date.now();
 
-	if (!isNotSunday(currentTime)) {
-		currentTime += 1000 * 60 * 60 * 24;
-		nextAvailableDate = new Date(currentTime);
-	}
-
 	if (excludeUnavailableDates().length > 0) {
 		if (isNotSunday(currentTime)) {
-			nextAvailableDate = new Date(currentTime);
+			currentTime += 1000 * 60 * 60 * 24;
 			nextAvailableDate = new Date(currentTime);
 		} else {
 			currentTime += 1000 * 60 * 60 * 24;
 			nextAvailableDate = new Date(currentTime);
 		}
+	}
+
+	if (!isNotSunday(currentTime)) {
+		currentTime += 1000 * 60 * 60 * 24;
+		nextAvailableDate = new Date(currentTime);
 	}
 
 	return nextAvailableDate;

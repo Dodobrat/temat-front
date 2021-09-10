@@ -173,6 +173,24 @@ export const useOrders: FetchQueryType = ({ specs, queryConfig, specialKey }) =>
 	);
 };
 
+export const useOrderLocate: FetchQueryType = ({ queryConfig, specialKey }) => {
+	return useQuery(
+		["locatedOrder", specialKey],
+		async ({ queryKey }) => {
+			const orderId = queryKey[1]?.orderId;
+			if (orderId === "") return;
+			const { data } = await axios.get(`${apiUrl}/orders/pack/${orderId}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
 export const useOrderById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
 		["orderById", specialKey],

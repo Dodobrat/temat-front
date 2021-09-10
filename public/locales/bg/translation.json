@@ -1,5 +1,6 @@
 {
 	"common": {
+		"orderDetails": "Вземи Детайли за Поръчка",
 		"login": "Влез",
 		"dashboard": "Контролен Панел",
 		"settings": "Настройки",
@@ -96,6 +97,7 @@
 		"shipDate": "Дата на Изпращане",
 		"shippingMethod": "Начин на изпращане",
 		"note": "Бележка",
+		"keyword": "Ключова дума",
 		"status": "Статус",
 		"barcode": "Баркод",
 		"paymentMethod": "Начин на плащане",

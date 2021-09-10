@@ -12,7 +12,12 @@ import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 import { useAuthContext } from "../../../context/AuthContext";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 
-import { IconAdd, IconErrorCircle, IconFilter, IconSearch } from "../../../components/ui/icons";
+import {
+	IconAdd,
+	IconErrorCircle,
+	// IconFilter,
+	IconSearch,
+} from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
@@ -162,11 +167,11 @@ const CompaniesPage = () => {
 								}
 							/>
 						</Flex.Col>
-						<Flex.Col col='auto'>
+						{/* <Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>
 								{t("common.filter", { count: 0 })}
 							</Button>
-						</Flex.Col>
+						</Flex.Col> */}
 					</Flex>
 				</PortalWrapper>
 				<DataTable {...tableProps} />

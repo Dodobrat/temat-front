@@ -1,5 +1,6 @@
 {
 	"common": {
+		"orderDetails": "Get Order Details",
 		"login": "Login",
 		"dashboard": "Dashboard",
 		"settings": "Settings",
@@ -96,6 +97,7 @@
 		"shipDate": "Ship Date",
 		"shippingMethod": "Shipping Method",
 		"note": "Note",
+		"keyword": "Keyword",
 		"status": "Status",
 		"barcode": "Barcode",
 		"paymentMethod": "Payment Method",

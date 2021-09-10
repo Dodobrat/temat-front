@@ -38,9 +38,16 @@ const addressInfo = (order: { address: any }) => {
 const clientInfo = (order: { client: any }) => {
 	const client = order?.client;
 
-	const receiverInfo = [client?.receiverName, client?.receiverPhone].filter((entry) => entry);
-	const agentInfo = [client?.receiverAgentName, client?.receiverAgentPhone].filter((entry) => entry);
-	const contactInfo = [client?.phone, client?.email].filter((entry) => entry);
+	//Not the perfect check for phoneCode availabilty
+	const receiverInfo = [
+		client?.receiverName,
+		client?.receiverPhoneCode && `${client?.receiverPhoneCode} ${client?.receiverPhone}`,
+	].filter((entry) => entry);
+	const agentInfo = [
+		client?.receiverAgentName,
+		client?.receiverAgentPhoneCode && `${client?.receiverAgentPhoneCode} ${client?.receiverAgentPhone}`,
+	].filter((entry) => entry);
+	const contactInfo = [client?.phoneCode && `${client?.phoneCode} ${client?.phone}`, client?.email].filter((entry) => entry);
 
 	const receiver = receiverInfo.length > 0 ? receiverInfo.join(" | ") : null;
 	const agent = agentInfo.length > 0 ? agentInfo.join(" | ") : null;
@@ -54,7 +61,7 @@ const paymentInfo = (order: { payment: any }) => {
 
 	const shippingMethod = payment?.shippingMethodName;
 	const paidBy = payment?.shippingPaidBy;
-	const orderAmount = `${payment?.totalAmount ?? ""} ${payment?.symbol}`;
+	const orderAmount = `${payment?.totalAmount ?? "0"} ${payment?.symbol}`;
 
 	return { shippingMethod, paidBy, orderAmount };
 };

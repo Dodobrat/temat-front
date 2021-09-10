@@ -12,7 +12,12 @@ import { useUsers } from "../../../actions/fetchHooks";
 import { useUserCredentialsUpdate, useUserDelete } from "../../../actions/mutateHooks";
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 
-import { IconAdd, IconErrorCircle, IconFilter, IconSearch } from "../../../components/ui/icons";
+import {
+	IconAdd,
+	IconErrorCircle,
+	// IconFilter,
+	IconSearch,
+} from "../../../components/ui/icons";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
@@ -168,11 +173,11 @@ const UsersPage = () => {
 								}
 							/>
 						</Flex.Col>
-						<Flex.Col col='auto'>
+						{/* <Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>
 								{t("common.filter", { count: 0 })}
 							</Button>
-						</Flex.Col>
+						</Flex.Col> */}
 					</Flex>
 				</PortalWrapper>
 				<DataTable {...tableProps} />
