@@ -20,7 +20,7 @@ const AddressCell = (props: Props) => {
 			{hasAddress && (
 				<Flex spacingY={null} spacingX='sm' wrap='nowrap' align='center'>
 					<Flex.Col col='auto'>
-						<IconLocation />
+						<IconLocation className='dui__icon' />
 					</Flex.Col>
 					<Flex.Col>
 						<Flex spacingY={null}>

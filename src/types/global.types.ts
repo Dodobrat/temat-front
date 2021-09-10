@@ -15,6 +15,7 @@ export type ResponseColumnType = {
 	title: string;
 	canSort: boolean;
 	type?: string;
+	breakpoint?: string;
 	id?: string;
 	[key: string]: any;
 };

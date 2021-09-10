@@ -71,6 +71,12 @@ const ProductsForm = (props: Props) => {
 		}
 	}, [watchCompany, setValue]);
 
+	useEffect(() => {
+		if (watchIsCombo > 0) {
+			console.log("isCombo");
+		}
+	}, [watchIsCombo]);
+
 	const noAdditionalData = useMemo(() => {
 		if (!payload) {
 			return true;
@@ -449,7 +455,7 @@ const ProductsForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							{watchIsCombo && (
+							{watchIsCombo > 0 && (
 								<Flex.Col col='12'>
 									<OrderStepProducts
 										companyId={watchCompany?.value ?? user?.companyId}

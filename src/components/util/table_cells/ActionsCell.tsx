@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Button, Flex, Table, ZoomPortal } from "@dodobrat/react-ui-kit";
+import { useTranslation } from "react-i18next";
+import { Tooltip, Button, Flex, Table } from "@dodobrat/react-ui-kit";
+
 import { IconEdit, IconEye, IconTrash, IconUserManage } from "../../ui/icons";
 import ActionConfirmation from "../ActionConfirmation";
-import { Tooltip } from "@dodobrat/react-ui-kit";
-import { useTranslation } from "react-i18next";
 
 interface Props {
 	cell: any;
@@ -81,9 +81,12 @@ const ActionsCell = (props: Props) => {
 					))}
 				</Flex>
 			</Table.Cell>
-			<ZoomPortal in={confirmation.state}>
-				<ActionConfirmation onClose={closeConfirmation} payload={confirmation.payload} actionType={confirmation.actionType} />
-			</ZoomPortal>
+			<ActionConfirmation
+				isOpen={confirmation.state}
+				onClose={closeConfirmation}
+				payload={confirmation.payload}
+				actionType={confirmation.actionType}
+			/>
 		</>
 	);
 };

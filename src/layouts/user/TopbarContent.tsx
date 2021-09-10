@@ -16,6 +16,7 @@ import {
 	Flex,
 	Container,
 	Skeleton,
+	Heading,
 } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
@@ -23,6 +24,7 @@ import { useAuthContext } from "../../context/AuthContext";
 
 import { useOrderLocate } from "../../actions/fetchHooks";
 
+import ActionConfirmation from "../../components/util/ActionConfirmation";
 import { IconClose, IconHamburger, IconLogout, IconRadar } from "../../components/ui/icons";
 import { errorToast } from "../../helpers/toastEmitter";
 
@@ -43,10 +45,14 @@ const TopbarContent = () => {
 		formState: { errors },
 	} = useForm();
 
+	const [logoutWarning, setLogoutWarning] = useState({ state: false, payload: logout });
 	const [orderDetailsModal, setOrderDetailsModal] = useState(false);
 	const [orderSeekKey, setOrderSeekKey] = useState("");
 
 	const closeOrderDetailsModal = () => setOrderDetailsModal(false);
+
+	const handleLogout = () => setLogoutWarning((prev) => ({ ...prev, state: true }));
+	const closeConfirmation = () => setLogoutWarning((prev) => ({ ...prev, state: false }));
 
 	const {
 		data: orderId,
@@ -105,7 +111,7 @@ const TopbarContent = () => {
 							<Flex.Col
 								as={Button}
 								col='auto'
-								onClick={logout}
+								onClick={handleLogout}
 								flavor='rounded'
 								equalDimensions
 								pigment='default'
@@ -116,6 +122,9 @@ const TopbarContent = () => {
 					</Flex.Col>
 				</Flex>
 			</Container>
+			<ActionConfirmation isOpen={logoutWarning.state} onClose={closeConfirmation} payload={logoutWarning.payload}>
+				<Heading as='h6'>{t("confirmation.logout")}</Heading>
+			</ActionConfirmation>
 			<Portal animation='zoom' isOpen={orderDetailsModal} onClose={closeOrderDetailsModal}>
 				<Card>
 					<Card.Header

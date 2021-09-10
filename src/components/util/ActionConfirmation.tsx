@@ -10,7 +10,7 @@ interface Props {
 }
 
 const ActionConfirmation = (props: Props) => {
-	const { onClose, payload, actionType, ...rest } = props;
+	const { onClose, payload, actionType, children, ...rest } = props;
 
 	const { t } = useTranslation();
 
@@ -20,7 +20,7 @@ const ActionConfirmation = (props: Props) => {
 	};
 
 	return (
-		<Portal onClose={onClose} isOpen animation='none' {...rest}>
+		<Portal onClose={onClose} animation='zoom' {...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -31,10 +31,14 @@ const ActionConfirmation = (props: Props) => {
 					<Text className='mb--0'>{t("common.confirm")}</Text>
 				</Card.Header>
 				<Card.Body>
-					<Heading as='p' className='mb--2'>
-						{t("confirmation.action", { action: t(`action.${actionType}`).toUpperCase() })}
-					</Heading>
-					<Text className='mb--0 text--danger'>{t("confirmation.warning")}</Text>
+					{children ?? (
+						<>
+							<Heading as='p' className='mb--2'>
+								{t("confirmation.action", { action: t(`action.${actionType}`).toUpperCase() })}
+							</Heading>
+							<Text className='mb--0 text--danger'>{t("confirmation.warning")}</Text>
+						</>
+					)}
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
 					<Button className='ml--2' pigment='default' onClick={onClose}>

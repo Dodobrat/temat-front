@@ -58,6 +58,7 @@ const useDataTableGenerate: useDataTableGenerateType = ({ useFetch, columns, act
 					accessor: col.accessor,
 					disableSortBy: !col.canSort,
 					type: col?.type,
+					breakpoint: col?.breakpoint,
 					id: col?.id,
 				});
 			}

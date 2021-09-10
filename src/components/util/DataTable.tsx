@@ -20,6 +20,7 @@ import OrderStatusCell from "./table_cells/OrderStatusCell";
 import { AllElevationOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
 import ShippingPlanStatusCell from "./table_cells/ShippingPlanStatusCell";
 import { useTranslation } from "react-i18next";
+import { useWindowResize } from "@dodobrat/react-ui-kit";
 
 interface Props {
 	columns: any[];
@@ -88,6 +89,7 @@ const DataTable = ({
 	);
 
 	const { t } = useTranslation();
+	const { width } = useWindowResize(250);
 
 	useEffect(() => {
 		fetchData({ pageIndex, pageSize, sortBy });
@@ -96,20 +98,25 @@ const DataTable = ({
 	const Header = ({ headerGroup }) => {
 		return (
 			<Table.Row {...headerGroup.getHeaderGroupProps()}>
-				{headerGroup.headers.map((column) => (
-					<Table.HCell {...column.getHeaderProps(column.getSortByToggleProps())}>
-						<Flex wrap='nowrap'>
-							<Flex.Col style={{ textAlign: column.type === "Actions" ? "right" : "left" }}>
-								{column.render("Header")}
-							</Flex.Col>
-							{!column.disableSortBy && (
-								<Flex.Col col='auto'>
-									{column.isSorted ? column.isSortedDesc ? <IconArrowDown /> : <IconArrowUp /> : ""}
+				{headerGroup.headers.map((column) => {
+					if (width <= column?.breakpoint) {
+						return null;
+					}
+					return (
+						<Table.HCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+							<Flex wrap='nowrap'>
+								<Flex.Col style={{ textAlign: column.type === "Actions" ? "right" : "left" }}>
+									{column.render("Header")}
 								</Flex.Col>
-							)}
-						</Flex>
-					</Table.HCell>
-				))}
+								{!column.disableSortBy && (
+									<Flex.Col col='auto'>
+										{column.isSorted ? column.isSortedDesc ? <IconArrowDown /> : <IconArrowUp /> : ""}
+									</Flex.Col>
+								)}
+							</Flex>
+						</Table.HCell>
+					);
+				})}
 			</Table.Row>
 		);
 	};
@@ -118,6 +125,9 @@ const DataTable = ({
 		return (
 			<Table.Row {...row.getRowProps()}>
 				{row.cells.map((cell) => {
+					if (width <= cell.column?.breakpoint) {
+						return null;
+					}
 					switch (cell.column.type) {
 						case "DateTime":
 						case "Date": {
@@ -234,9 +244,9 @@ const DataTable = ({
 								isSearchable={false}
 								options={[10, 20, 30, 40, 50, 100].map((pageSize) => ({
 									value: pageSize,
-									label: `${t("common.show")} ${pageSize}`,
+									label: pageSize,
 								}))}
-								value={{ value: pageSize, label: `${t("common.show")} ${pageSize}` }}
+								value={{ value: pageSize, label: pageSize }}
 								onChange={(option) => {
 									setPageSize(Number(option.value));
 								}}

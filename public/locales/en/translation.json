@@ -170,6 +170,7 @@
 	"confirmation": {
 		"loseProgress": "You will lose progress! Are you sure you wish to continue?",
 		"action": "Are you sure you want to {{action}} entry?",
+		"logout": "Are you sure you want to logout?",
 		"warning": "This action is irrevirsible and cannot be undone"
 	}
 }
