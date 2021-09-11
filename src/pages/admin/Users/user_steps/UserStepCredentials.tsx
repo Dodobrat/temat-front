@@ -1,12 +1,12 @@
-import { FormControl } from "@dodobrat/react-ui-kit";
-import { Input } from "@dodobrat/react-ui-kit";
-import { Flex } from "@dodobrat/react-ui-kit";
-import { Controller } from "react-hook-form";
-import cn from "classnames";
 import { useTranslation } from "react-i18next";
+import { Controller } from "react-hook-form";
+import { Flex, Input, FormControl } from "@dodobrat/react-ui-kit";
+import cn from "classnames";
+
 import { IconEyeCrossed, IconEye } from "../../../../components/ui/icons";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useCompanies, useRoles, useWarehouses } from "../../../../actions/fetchHooks";
+
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 interface Props {
 	payload?: any;
@@ -73,11 +73,12 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 					hintMsg={errors?.roleId?.message}>
 					<Controller
 						render={({ field }) => (
-							<AsyncSelect
-								inputId='user-role-id'
+							<WindowedAsyncSelect
+								inputId='role'
 								useFetch={useRoles}
 								isClearable={false}
 								defaultOptions
+								isFetchedAtOnce
 								preSelectOption={!payload}
 								className={cn({
 									"temat__select__container--danger": errors?.roleId,
@@ -176,10 +177,10 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 					hintMsg={errors?.companyId?.message}>
 					<Controller
 						render={({ field }) => (
-							<AsyncSelect
-								inputId='user-company-id'
+							<WindowedAsyncSelect
+								inputId='companyId'
 								useFetch={useCompanies}
-								isClearable={false}
+								isClearable
 								defaultOptions
 								className={cn({
 									"temat__select__container--danger": errors?.companyId,
@@ -204,10 +205,10 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 					hintMsg={errors?.warehouseId?.message}>
 					<Controller
 						render={({ field }) => (
-							<AsyncSelect
-								inputId='user-warehouse-id'
+							<WindowedAsyncSelect
+								inputId='warehouseId'
 								useFetch={useWarehouses}
-								isClearable={false}
+								isClearable
 								defaultOptions
 								className={cn({
 									"temat__select__container--danger": errors?.warehouseId,

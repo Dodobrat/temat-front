@@ -7,7 +7,7 @@ import cn from "classnames";
 import { useCompanyAdd, useCompanyUpdate } from "../../../actions/mutateHooks";
 import { usePhoneCodes } from "../../../actions/fetchHooks";
 
-import AsyncSelect from "../../../components/forms/AsyncSelect";
+import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
 import PhoneCode from "../../../components/util/PhoneCode";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
@@ -33,6 +33,7 @@ const CompaniesForm = (props: Props) => {
 	} = useForm({
 		defaultValues: {
 			...payload,
+			phoneCodeId: null,
 			image: "",
 		},
 	});
@@ -251,13 +252,15 @@ const CompaniesForm = (props: Props) => {
 									hintMsg={errors?.phoneCodeId?.message}>
 									<Controller
 										render={({ field }) => (
-											<AsyncSelect
+											<WindowedAsyncSelect
+												inputId='phoneCodeId'
 												useFetch={usePhoneCodes}
 												defaultSearchString={payload?.phoneCode ?? "359"}
 												isClearable={false}
+												filterKey='code'
 												defaultOptions
 												preSelectOption
-												searchStringLength={1}
+												isFetchedAtOnce
 												labelComponent={(data) => <PhoneCode data={data} />}
 												className={cn({
 													"temat__select__container--danger": errors?.phoneCodeId,

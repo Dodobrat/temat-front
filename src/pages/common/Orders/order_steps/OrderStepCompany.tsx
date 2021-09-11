@@ -7,7 +7,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 
 import { useCompanies } from "../../../../actions/fetchHooks";
 
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 const OrderStepCompany = ({ useContext = useOrdersContext, withPrefetch }) => {
 	const formFooter = document.getElementById("orders-form-footer");
@@ -51,7 +51,8 @@ const OrderStepCompany = ({ useContext = useOrdersContext, withPrefetch }) => {
 				hintMsg={errors?.companyId?.message}>
 				<Controller
 					render={({ field }) => (
-						<AsyncSelect
+						<WindowedAsyncSelect
+							inputId='companyId'
 							useFetch={useCompanies}
 							isClearable={false}
 							defaultOptions={withPrefetch}

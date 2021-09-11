@@ -5,8 +5,8 @@ import cn from "classnames";
 
 import { usePhoneCodes } from "../../../../actions/fetchHooks";
 
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import PhoneCode from "../../../../components/util/PhoneCode";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors, watch } }) => {
 	const { t } = useTranslation();
@@ -65,13 +65,15 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 						render={({ field }) => {
 							const searchString = field.value?.value ? "" : field?.value ?? "359";
 							return (
-								<AsyncSelect
+								<WindowedAsyncSelect
+									inputId='receiverPhoneCodeId'
 									useFetch={usePhoneCodes}
 									defaultSearchString={searchString}
 									isClearable={false}
+									filterKey='code'
 									defaultOptions
 									preSelectOption
-									searchStringLength={1}
+									isFetchedAtOnce
 									labelComponent={(data) => <PhoneCode data={data} />}
 									className={cn({
 										"temat__select__container--danger": errors?.receiverPhoneCodeId,
@@ -245,13 +247,15 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 								render={({ field }) => {
 									const searchString = field.value?.value ? "" : field?.value ?? "359";
 									return (
-										<AsyncSelect
+										<WindowedAsyncSelect
+											inputId='receiverAgentPhoneCodeId'
 											useFetch={usePhoneCodes}
 											defaultSearchString={searchString}
 											isClearable={false}
+											filterKey='code'
 											defaultOptions
 											preSelectOption
-											searchStringLength={1}
+											isFetchedAtOnce
 											labelComponent={(data) => <PhoneCode data={data} />}
 											className={cn({
 												"temat__select__container--danger": errors?.receiverAgentPhoneCodeId,

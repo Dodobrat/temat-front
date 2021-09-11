@@ -8,7 +8,7 @@ import { useRoles } from "../../../actions/fetchHooks";
 import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHooks";
 
 import { IconClose } from "../../../components/ui/icons";
-import AsyncSelect from "../../../components/forms/AsyncSelect";
+import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
 import { confirmOnExit, parseRoles } from "../../../helpers/helpers";
@@ -140,10 +140,12 @@ const PermissionsForm = (props: Props) => {
 									hintMsg={errors?.roles?.message}>
 									<Controller
 										render={({ field }) => (
-											<AsyncSelect
+											<WindowedAsyncSelect
 												useFetch={useRoles}
+												inputId='role'
 												isMulti
 												defaultOptions
+												isFetchedAtOnce
 												isClearable={false}
 												closeMenuOnSelect={false}
 												className={cn({

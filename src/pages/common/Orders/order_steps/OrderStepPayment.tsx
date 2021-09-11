@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
 import WindowedSelect from "react-windowed-select";
@@ -6,8 +7,7 @@ import cn from "classnames";
 
 import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
 
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
-import { useEffect, useMemo } from "react";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 const selectProps = {
 	className: "temat__select__container",
@@ -68,11 +68,12 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 					hintMsg={errors?.paymentMethodId?.message}>
 					<Controller
 						render={({ field }) => (
-							<AsyncSelect
-								inputId='payment-method'
+							<WindowedAsyncSelect
+								inputId='paymentMethodId'
 								useFetch={usePaymentMethods}
 								defaultOptions
 								preSelectOption
+								isFetchedAtOnce
 								isClearable={false}
 								className={cn({
 									"temat__select__container--danger": errors?.phoneCodeId,
@@ -99,11 +100,12 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 					hintMsg={errors?.currencyId?.message}>
 					<Controller
 						render={({ field }) => (
-							<AsyncSelect
-								inputId='currency'
+							<WindowedAsyncSelect
+								inputId='currencyId'
 								useFetch={useCurrency}
 								defaultOptions
 								preSelectOption
+								isFetchedAtOnce
 								labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
 								isClearable={false}
 								className={cn({
@@ -132,9 +134,9 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 					<Controller
 						render={({ field }) => (
 							<WindowedSelect
+								inputId='shippingPaidBy'
 								{...selectProps}
 								options={paidByOptions}
-								inputId='paid-by'
 								className={cn(selectProps.className, {
 									"temat__select__container--danger": errors?.payAfter,
 								})}
@@ -163,7 +165,7 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 							<WindowedSelect
 								{...selectProps}
 								options={payAfterOptions}
-								inputId='pay-after'
+								inputId='payAfter'
 								className={cn(selectProps.className, {
 									"temat__select__container--danger": errors?.payAfter,
 								})}

@@ -4,8 +4,8 @@ import { Button, PortalWrapper, FormControl, Form } from "@dodobrat/react-ui-kit
 import cn from "classnames";
 
 import { useCompanies } from "../../../../actions/fetchHooks";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import { useShippingPlansContext } from "../../../../context/ShippingPlansContext";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 const ShippingPlanStepCompany = ({ withPrefetch }) => {
 	const formFooter = document.getElementById("shipping-plan-form-footer");
@@ -18,6 +18,7 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 
 	const {
 		control,
+		watch,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -25,6 +26,8 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 			companyId: data?.companyId,
 		},
 	});
+
+	const watchCompany = watch("companyId");
 
 	const onSubmit = (data: any) => {
 		setData((prev) => ({
@@ -44,7 +47,8 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 				hintMsg={errors?.companyId?.message}>
 				<Controller
 					render={({ field }) => (
-						<AsyncSelect
+						<WindowedAsyncSelect
+							inputId='companyId'
 							useFetch={useCompanies}
 							isClearable={false}
 							defaultOptions={withPrefetch}
@@ -65,9 +69,11 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 				/>
 			</FormControl>
 			<PortalWrapper element={formFooter ?? null}>
-				<Button type='submit' form='shipping-plan-form'>
-					{t("common.next")}
-				</Button>
+				{watchCompany?.value && (
+					<Button type='submit' form='shipping-plan-form'>
+						{t("common.next")}
+					</Button>
+				)}
 			</PortalWrapper>
 		</Form>
 	);

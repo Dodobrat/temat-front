@@ -42,8 +42,13 @@ const TopbarContent = () => {
 	const {
 		handleSubmit,
 		control,
+		reset,
 		formState: { errors },
-	} = useForm();
+	} = useForm({
+		defaultValues: {
+			keyword: "",
+		},
+	});
 
 	const [logoutWarning, setLogoutWarning] = useState({ state: false, payload: logout });
 	const [orderDetailsModal, setOrderDetailsModal] = useState(false);
@@ -54,12 +59,9 @@ const TopbarContent = () => {
 	const handleLogout = () => setLogoutWarning((prev) => ({ ...prev, state: true }));
 	const closeConfirmation = () => setLogoutWarning((prev) => ({ ...prev, state: false }));
 
-	const {
-		data: orderId,
-		refetch,
-		isFetching,
-	} = useOrderLocate({
+	const { data, refetch, isFetching } = useOrderLocate({
 		queryConfig: {
+			onSuccess: () => reset({ keyword: "" }),
 			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { orderId: orderSeekKey },
@@ -72,17 +74,13 @@ const TopbarContent = () => {
 	}, [orderSeekKey, refetch]);
 
 	useEffect(() => {
-		if (orderId) {
-			console.log(orderId);
-			history.push(`/orders/${orderId}`);
+		if (data) {
+			history.push(`/app/orders/${data?.data?.orderId}`);
 			closeOrderDetailsModal();
 		}
-	}, [orderId, history]);
+	}, [data, history, reset]);
 
-	const onSubmit = (data: any) => {
-		console.log(data);
-		setOrderSeekKey(data?.keyword);
-	};
+	const onSubmit = (data: any) => setOrderSeekKey(data?.keyword);
 
 	return (
 		<AdminLayout.Topbar>

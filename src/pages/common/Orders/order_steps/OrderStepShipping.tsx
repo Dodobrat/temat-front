@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, FormControl } from "@dodobrat/react-ui-kit";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import { Controller } from "react-hook-form";
+import { Input, Flex, FormControl } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
+
 import {
 	useDeliveryCities,
 	useDeliveryCountries,
@@ -10,15 +11,14 @@ import {
 	useDeliveryOffices,
 	useDeliveryStreets,
 } from "../../../../actions/fetchHooks";
-import { Input } from "@dodobrat/react-ui-kit";
+
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 import CalendarPicker from "../../../../components/util/CalendarPicker";
-import { Controller } from "react-hook-form";
 
 const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, getValues, setValue, reset } }: any) => {
 	const { t } = useTranslation();
 
 	const [clearInputsCounter, setClearInputsCounter] = useState(0);
-
 	const watchDelivery = watch("shippingMethodId", initialData?.shippingMethodId);
 	const watchCountry = watch("country");
 	const watchCity = watch("city");
@@ -86,13 +86,15 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 						render={({ field }) => {
 							field.onChange = handleDeliveryTypeOnChange;
 							return (
-								<AsyncSelect
+								<WindowedAsyncSelect
+									inputId='shippingMethodId'
 									useFetch={useDeliveryMethods}
 									querySpecs={{
 										sortBy: [{ asc: true, id: "name" }],
 									}}
 									isClearable={false}
 									defaultOptions
+									isFetchedAtOnce
 									placeholder={t("field.select", { field: t("field.shippingMethod") })}
 									className={cn({
 										"temat__select__container--danger": errors?.shippingMethodId,
@@ -122,7 +124,8 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 						hintMsg={errors?.officeId?.message}>
 						<Controller
 							render={({ field }) => (
-								<AsyncSelect
+								<WindowedAsyncSelect
+									inputId='officeId'
 									useFetch={useDeliveryOffices}
 									querySpecs={{ courier: watchDelivery?.data?.courierName }}
 									querySpecialKey={[watchDelivery?.data?.courierName]}
@@ -132,7 +135,6 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									className={cn({
 										"temat__select__container--danger": errors?.officeId,
 									})}
-									cacheUniqs={[watchDelivery?.data?.courierName]}
 									{...field}
 								/>
 							)}
@@ -159,20 +161,20 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 							hintMsg={errors?.country?.message}>
 							<Controller
 								render={({ field }) => (
-									<AsyncSelect
+									<WindowedAsyncSelect
+										inputId='country'
 										{...field}
 										useFetch={useDeliveryCountries}
 										querySpecs={{ courier: watchDelivery?.data?.courierName }}
 										querySpecialKey={[watchDelivery?.data?.courierName]}
-										isClearable={false}
 										placeholder={t("field.select", { field: t("field.country") })}
 										defaultSearchString='bulgaria'
+										filterKey='nameEn'
 										defaultOptions
-										preSelectOption
+										// preSelectOption
 										className={cn({
 											"temat__select__container--danger": errors?.country,
 										})}
-										cacheUniqs={[watchDelivery?.data?.courierName]}
 									/>
 								)}
 								name='country'
@@ -184,152 +186,163 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 							/>
 						</FormControl>
 					</Flex.Col>
-					<Flex.Col col={{ base: "12", sm: "8" }}>
-						<FormControl
-							label={t("field.city")}
-							htmlFor='city'
-							className={cn({
-								"text--danger": errors?.city,
-							})}
-							hintMsg={errors?.city?.message}>
-							<Controller
-								render={({ field }) => (
-									<AsyncSelect
-										useFetch={useDeliveryCities}
-										querySpecs={{
-											courier: watchDelivery?.data?.courierName,
-											countryId: watchCountry?.value,
+
+					{!!watchCountry?.value && (
+						<>
+							<Flex.Col col={{ base: "12", sm: "8" }}>
+								<FormControl
+									label={t("field.city")}
+									htmlFor='city'
+									className={cn({
+										"text--danger": errors?.city,
+									})}
+									hintMsg={errors?.city?.message}>
+									<Controller
+										render={({ field }) => (
+											<WindowedAsyncSelect
+												inputId='city'
+												useFetch={useDeliveryCities}
+												querySpecs={{
+													courier: watchDelivery?.data?.courierName,
+													countryId: watchCountry?.value,
+												}}
+												querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
+												isClearable={false}
+												filterKey='nameEn'
+												placeholder={t("field.select", { field: t("field.city") })}
+												className={cn({
+													"temat__select__container--danger": errors?.city,
+												})}
+												{...field}
+											/>
+										)}
+										name='city'
+										control={control}
+										defaultValue={null}
+										rules={{
+											required: t("validation.required"),
 										}}
-										querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
-										isClearable={false}
-										placeholder={t("field.select", { field: t("field.city") })}
-										defaultOptions={!!watchCountry?.value && !watchCity?.value}
-										className={cn({
-											"temat__select__container--danger": errors?.city,
-										})}
-										cacheUniqs={[watchDelivery?.data?.courierName, watchCountry?.value]}
-										{...field}
 									/>
-								)}
-								name='city'
-								control={control}
-								defaultValue={null}
-								rules={{
-									required: t("validation.required"),
-								}}
-							/>
-						</FormControl>
-					</Flex.Col>
-					<Flex.Col col={{ base: "12", xs: "4" }}>
-						<FormControl
-							label={t("field.zipCode")}
-							htmlFor='zipCode'
-							className={cn({
-								"text--danger": errors?.zipCode,
-							})}
-							hintMsg={errors?.zipCode?.message}>
-							<Controller
-								render={({ field }) => {
-									const { ref, ...fieldRest } = field;
-									return (
-										<Input
-											placeholder={t("field.zipCode")}
-											{...fieldRest}
-											innerRef={ref}
-											pigment={errors?.zipCode ? "danger" : "primary"}
-										/>
-									);
-								}}
-								name='zipCode'
-								control={control}
-								defaultValue=''
-								rules={{
-									minLength: {
-										value: 3,
-										message: t("validation.minLength", { value: 3 }),
-									},
-									maxLength: {
-										value: 10,
-										message: t("validation.maxLength", { value: 10 }),
-									},
-								}}
-							/>
-						</FormControl>
-					</Flex.Col>
-					<Flex.Col col={{ base: "12", sm: "8" }}>
-						<FormControl
-							label={t("field.streetName")}
-							htmlFor='streetName'
-							className={cn({
-								"text--danger": errors?.streetName,
-							})}
-							hintMsg={errors?.streetName?.message}>
-							<Controller
-								render={({ field }) => (
-									<AsyncSelect
-										useFetch={useDeliveryStreets}
-										querySpecs={{
-											courier: watchDelivery?.data?.courierName,
-											sortBy: [{ id: "name", desc: true }],
-											cityId: watchCity?.value,
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "4" }}>
+								<FormControl
+									label={t("field.zipCode")}
+									htmlFor='zipCode'
+									className={cn({
+										"text--danger": errors?.zipCode,
+									})}
+									hintMsg={errors?.zipCode?.message}>
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("field.zipCode")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.zipCode ? "danger" : "primary"}
+												/>
+											);
 										}}
-										querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
-										isClearable={false}
-										placeholder={t("field.select", { field: t("field.streetName") })}
-										defaultOptions={!!watchCountry?.value && !!watchCity?.value && !watchStreet?.value}
-										className={cn({
-											"temat__select__container--danger": errors?.streetName,
-										})}
-										cacheUniqs={[watchDelivery?.data?.courierName, watchCity?.value]}
-										{...field}
+										name='zipCode'
+										control={control}
+										defaultValue=''
+										rules={{
+											minLength: {
+												value: 3,
+												message: t("validation.minLength", { value: 3 }),
+											},
+											maxLength: {
+												value: 10,
+												message: t("validation.maxLength", { value: 10 }),
+											},
+										}}
 									/>
-								)}
-								name='streetName'
-								control={control}
-								defaultValue={null}
-								rules={{
-									required: t("validation.required"),
-								}}
-							/>
-						</FormControl>
-					</Flex.Col>
-					<Flex.Col col={{ base: "12", xs: "4" }}>
-						<FormControl
-							label={t("field.streetNumber")}
-							htmlFor='streetNumber'
-							className={cn({
-								"text--danger": errors?.streetNumber,
-							})}
-							hintMsg={errors?.streetNumber?.message}>
-							<Controller
-								render={({ field }) => {
-									const { ref, ...fieldRest } = field;
-									return (
-										<Input
-											placeholder={t("field.streetNumber")}
-											{...fieldRest}
-											innerRef={ref}
-											pigment={errors?.streetNumber ? "danger" : "primary"}
-										/>
-									);
-								}}
-								name='streetNumber'
-								control={control}
-								defaultValue=''
-								rules={{
-									required: t("validation.required"),
-									minLength: {
-										value: 1,
-										message: t("validation.minLength", { value: 1 }),
-									},
-									maxLength: {
-										value: 10,
-										message: t("validation.maxLength", { value: 10 }),
-									},
-								}}
-							/>
-						</FormControl>
-					</Flex.Col>
+								</FormControl>
+							</Flex.Col>
+						</>
+					)}
+
+					{!!watchCountry?.value && !!watchCity?.value && (
+						<>
+							<Flex.Col col={{ base: "12", sm: "8" }}>
+								<FormControl
+									label={t("field.streetName")}
+									htmlFor='streetName'
+									className={cn({
+										"text--danger": errors?.streetName,
+									})}
+									hintMsg={errors?.streetName?.message}>
+									<Controller
+										render={({ field }) => (
+											<WindowedAsyncSelect
+												inputId='streetName'
+												useFetch={useDeliveryStreets}
+												querySpecs={{
+													courier: watchDelivery?.data?.courierName,
+													sortBy: [{ id: "name", desc: true }],
+													cityId: watchCity?.value,
+												}}
+												querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
+												isClearable={false}
+												filterKey='nameEn'
+												placeholder={t("field.select", { field: t("field.streetName") })}
+												defaultOptions={!!watchCountry?.value && !!watchCity?.value && !watchStreet?.value}
+												className={cn({
+													"temat__select__container--danger": errors?.streetName,
+												})}
+												{...field}
+											/>
+										)}
+										name='streetName'
+										control={control}
+										defaultValue={null}
+										rules={{
+											required: t("validation.required"),
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+							<Flex.Col col={{ base: "12", xs: "4" }}>
+								<FormControl
+									label={t("field.streetNumber")}
+									htmlFor='streetNumber'
+									className={cn({
+										"text--danger": errors?.streetNumber,
+									})}
+									hintMsg={errors?.streetNumber?.message}>
+									<Controller
+										render={({ field }) => {
+											const { ref, ...fieldRest } = field;
+											return (
+												<Input
+													placeholder={t("field.streetNumber")}
+													{...fieldRest}
+													innerRef={ref}
+													pigment={errors?.streetNumber ? "danger" : "primary"}
+												/>
+											);
+										}}
+										name='streetNumber'
+										control={control}
+										defaultValue=''
+										rules={{
+											required: t("validation.required"),
+											minLength: {
+												value: 1,
+												message: t("validation.minLength", { value: 1 }),
+											},
+											maxLength: {
+												value: 10,
+												message: t("validation.maxLength", { value: 10 }),
+											},
+										}}
+									/>
+								</FormControl>
+							</Flex.Col>
+						</>
+					)}
 				</>
 			)}
 		</Flex>

@@ -5,10 +5,10 @@ import cn from "classnames";
 
 import { usePhoneCodes } from "../../../../actions/fetchHooks";
 
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
 import PhoneCode from "../../../../components/util/PhoneCode";
 
 import { imageValidator } from "../../../../helpers/formValidations";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 interface Props {
 	payload?: any;
@@ -108,14 +108,14 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 					hintMsg={errors?.phoneCodeId?.message}>
 					<Controller
 						render={({ field }) => (
-							<AsyncSelect
-								inputId='phone-code-id'
+							<WindowedAsyncSelect
+								inputId='phoneCodeId'
 								useFetch={usePhoneCodes}
 								defaultSearchString={payload?.phoneCode ?? "359"}
+								filterKey='code'
 								isClearable={false}
 								defaultOptions
 								preSelectOption
-								searchStringLength={1}
 								labelComponent={(data) => <PhoneCode data={data} />}
 								className={cn({
 									"temat__select__container--danger": errors?.phoneCodeId,

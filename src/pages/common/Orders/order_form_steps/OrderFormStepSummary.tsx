@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import { useForm } from "react-hook-form";
-import { Form, Button, PortalWrapper, Flex } from "@dodobrat/react-ui-kit";
+import { Button, PortalWrapper, Flex } from "@dodobrat/react-ui-kit";
 
 import { useOrdersContext } from "../../../../context/OrdersContext";
 
@@ -22,12 +21,6 @@ const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }: any) =
 		stepValue: { setCurrStep },
 	} = useContext();
 
-	const { handleSubmit } = useForm({
-		defaultValues: {
-			...data,
-		},
-	});
-
 	const { mutate: addOrder, isLoading: isLoadingAdd } = useOrderAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
@@ -39,28 +32,28 @@ const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }: any) =
 		},
 	});
 
-	const onSubmit = (data: any) => {
+	const onSubmit = () => {
 		addOrder(parseOrderAddData(data));
 	};
 
 	return (
-		<Form id='orders-form' onSubmit={handleSubmit(onSubmit)}>
+		<div>
 			<OrderStepSummary />
 			<PortalWrapper element={formFooter ?? null}>
 				<Flex wrap='nowrap' justify='space-between' className='w-100' style={{ flex: 1 }}>
 					<Flex.Col col='auto'>
-						<Button type='button' pigment={null} pigmentColor='none' onClick={() => setCurrStep(5)}>
+						<Button pigment={null} pigmentColor='none' onClick={() => setCurrStep(5)}>
 							{t("common.back")}
 						</Button>
 					</Flex.Col>
 					<Flex.Col col='auto'>
-						<Button type='submit' form='orders-form' isLoading={isLoadingAdd}>
+						<Button onClick={onSubmit} isLoading={isLoadingAdd}>
 							{t("action.add", { entry: t("common.order") })}
 						</Button>
 					</Flex.Col>
 				</Flex>
 			</PortalWrapper>
-		</Form>
+		</div>
 	);
 };
 

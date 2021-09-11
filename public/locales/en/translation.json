@@ -113,7 +113,8 @@
 		"length": "Length",
 		"lengthCm": "Length in cm",
 		"weight": "Weight",
-		"weightKg": "Weight in kg"
+		"weightKg": "Weight in kg",
+		"moreEntries": "{{value}} more entries"
 	},
 	"step": {
 		"extras": "Extras",

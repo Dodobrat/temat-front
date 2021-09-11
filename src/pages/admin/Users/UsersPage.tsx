@@ -132,13 +132,13 @@ const UsersPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.company", { count: 0 })}</title>
+				<title>Temat | {t("common.user", { count: 0 })}</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
 					<Flex.Col>
 						<Heading as='p' className='mb--0'>
-							{t("common.company", { count: 0 })}
+							{t("common.user", { count: 0 })}
 						</Heading>
 					</Flex.Col>
 					{userCan("userCreate") && (

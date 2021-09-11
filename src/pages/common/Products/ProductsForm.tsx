@@ -9,7 +9,7 @@ import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
 import { useCompanies } from "../../../actions/fetchHooks";
 import { useAuthContext } from "../../../context/AuthContext";
 
-import AsyncSelect from "../../../components/forms/AsyncSelect";
+import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
 
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
@@ -405,7 +405,8 @@ const ProductsForm = (props: Props) => {
 										hintMsg={errors?.companyId?.message}>
 										<Controller
 											render={({ field }) => (
-												<AsyncSelect
+												<WindowedAsyncSelect
+													inputId='companyId'
 													useFetch={useCompanies}
 													isClearable={false}
 													defaultOptions

@@ -113,7 +113,8 @@
 		"length": "Дължина",
 		"lengthCm": "Дължина в см",
 		"weight": "Тегло",
-		"weightKg": "Тегло в кг"
+		"weightKg": "Тегло в кг",
+		"moreEntries": "{{value}} още резултата"
 	},
 	"step": {
 		"extras": "Допълнения",

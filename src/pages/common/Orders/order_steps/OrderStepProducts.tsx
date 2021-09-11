@@ -7,7 +7,7 @@ import cn from "classnames";
 import { useProducts } from "../../../../actions/fetchHooks";
 
 import { IconTrash } from "../../../../components/ui/icons";
-import AsyncSelect from "../../../../components/forms/AsyncSelect";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 import Image from "../../../../components/ui/Image";
 interface Props {
 	initialData?: any;
@@ -61,14 +61,12 @@ const OrderStepProducts = ({
 
 	const specificProductQty = useCallback(
 		(target, product) => {
-			let tmp = Math.min(target.value, 99);
-
 			const newProductList = watchProducts.map((item) => {
 				const IteratedUniqueId = item?.data?.id ?? item?.productId;
 				const ProductUniqueId = product?.data?.id ?? product?.productId;
 
 				if (IteratedUniqueId === ProductUniqueId) {
-					return { ...item, quantity: Math.max(tmp, 1) };
+					return { ...item, quantity: target.value };
 				}
 				return item;
 			});
@@ -124,6 +122,7 @@ const OrderStepProducts = ({
 											<Flex.Col col='auto' className='pr--1'>
 												<Input
 													type='number'
+													onFocus={(e) => e.target.select()}
 													step='0.01'
 													suffix={productEntry?.currency}
 													style={{ width: "4rem" }}
@@ -134,6 +133,7 @@ const OrderStepProducts = ({
 											<Flex.Col col='auto' className='px--1'>
 												<Input
 													type='number'
+													onFocus={(e) => e.target.select()}
 													preffix={t("common.qty")}
 													style={{ width: "4rem" }}
 													value={productEntry?.qty}
@@ -169,12 +169,13 @@ const OrderStepProducts = ({
 						field.onChange = handleOnChange;
 
 						return (
-							<AsyncSelect
-								inputId='products-select-id'
+							<WindowedAsyncSelect
+								inputId='pickProduct'
 								useFetch={useProducts}
 								queryFilters={{
 									companyId: innerSetCompanyId,
 								}}
+								controlShouldRenderValue={false}
 								isMulti
 								isClearable={false}
 								className={cn("temat__select__phantom__values", {
