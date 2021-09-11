@@ -92,7 +92,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("field.shippingPayee")}
+					label={t("field.shipmentPayee")}
 					htmlFor='shipmentPayeeId'
 					className={cn({
 						"text--danger": errors?.shipmentPayeeId,

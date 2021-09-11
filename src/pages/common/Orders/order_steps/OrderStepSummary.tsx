@@ -4,7 +4,7 @@ import { ListGroup, Button, Flex, Heading, Text } from "@dodobrat/react-ui-kit";
 import { useOrdersContext } from "../../../../context/OrdersContext";
 
 import Image from "../../../../components/ui/Image";
-import { IconEdit, LogoPdf } from "../../../../components/ui/icons";
+import { IconEdit, LogoPdf, IconCheck, IconClose } from "../../../../components/ui/icons";
 
 import { parseDate } from "../../../../helpers/dateHelpers";
 
@@ -89,7 +89,15 @@ const ReceiverDetails = ({ details, ...rest }) => {
 				return entry.label;
 			}
 			if (typeof entry === "boolean") {
-				return entry.toString();
+				return entry.toString() === "true" ? (
+					<div className='px--2 bg--success bgtext--success flavor--default'>
+						<IconCheck className='dui__icon' />
+					</div>
+				) : (
+					<div className='px--2 bg--danger bgtext--danger flavor--default'>
+						<IconClose className='dui__icon' />
+					</div>
+				);
 			}
 			return entry;
 		}

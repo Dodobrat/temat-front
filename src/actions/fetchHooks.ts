@@ -464,7 +464,7 @@ export const usePhoneCodes: FetchQueryType = ({ specs, queryConfig, specialKey }
 //SHIPPING PAID BY
 export const useShippingPaidBy: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
-		["shippingPayee", specialKey],
+		["shipmentPayee", specialKey],
 		async () => {
 			const { data } = await axios.get(`${apiUrl}/helpers/deliveryPayee?${parseParams(specs)}`);
 			return data;

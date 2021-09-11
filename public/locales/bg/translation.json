@@ -102,7 +102,7 @@
 		"barcode": "Баркод",
 		"paymentMethod": "Начин на плащане",
 		"currency": "Валута",
-		"shippingPayee": "Доставката се поема от",
+		"shipmentPayee": "Доставката се поема от",
 		"payAfter": "Плащане след",
 		"sku": "SKU",
 		"minQty": "мин. кол",
