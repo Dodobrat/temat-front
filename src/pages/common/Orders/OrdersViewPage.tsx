@@ -60,7 +60,7 @@ const paymentInfo = (order: { payment: any }) => {
 	const payment = order?.payment;
 
 	const shippingMethod = payment?.shippingMethodName;
-	const paidBy = payment?.shippingPaidBy;
+	const paidBy = payment?.shipmentPayeeName;
 	const orderAmount = `${payment?.totalAmount ?? "0"} ${payment?.symbol}`;
 
 	return { shippingMethod, paidBy, orderAmount };

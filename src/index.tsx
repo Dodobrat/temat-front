@@ -25,6 +25,7 @@ const queryClient = new QueryClient({
 const appConfig: GlobalOptions = {
 	containerSize: "fhd",
 	tooltipShowOnFocus: false,
+	portalAnimation: "zoom",
 };
 
 ReactDOM.render(

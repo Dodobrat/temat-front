@@ -16,7 +16,9 @@ import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelec
 import CalendarPicker from "../../../../components/util/CalendarPicker";
 
 const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, getValues, setValue, reset } }: any) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+
+	const currLocale = i18n.language.split("-")[0];
 
 	const [clearInputsCounter, setClearInputsCounter] = useState(0);
 	const watchDelivery = watch("shippingMethodId", initialData?.shippingMethodId);
@@ -130,6 +132,8 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									querySpecs={{ courier: watchDelivery?.data?.courierName }}
 									querySpecialKey={[watchDelivery?.data?.courierName]}
 									isClearable={false}
+									labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+									filterKey={currLocale === "bg" ? "name" : "nameEn"}
 									defaultOptions
 									placeholder={t("field.select", { field: t("field.office") })}
 									className={cn({
@@ -169,7 +173,8 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										querySpecialKey={[watchDelivery?.data?.courierName]}
 										placeholder={t("field.select", { field: t("field.country") })}
 										defaultSearchString='bulgaria'
-										filterKey='nameEn'
+										labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+										filterKey={currLocale === "bg" ? "name" : "nameEn"}
 										defaultOptions
 										// preSelectOption
 										className={cn({
@@ -208,7 +213,8 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 												}}
 												querySpecialKey={[watchDelivery?.data?.courierName, watchCountry?.value]}
 												isClearable={false}
-												filterKey='nameEn'
+												labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+												filterKey={currLocale === "bg" ? "name" : "nameEn"}
 												placeholder={t("field.select", { field: t("field.city") })}
 												className={cn({
 													"temat__select__container--danger": errors?.city,
@@ -286,7 +292,8 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 												}}
 												querySpecialKey={[watchDelivery?.data?.courierName, watchCity?.value]}
 												isClearable={false}
-												filterKey='nameEn'
+												labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+												filterKey={currLocale === "bg" ? "name" : "nameEn"}
 												placeholder={t("field.select", { field: t("field.streetName") })}
 												defaultOptions={!!watchCountry?.value && !!watchCity?.value && !watchStreet?.value}
 												className={cn({

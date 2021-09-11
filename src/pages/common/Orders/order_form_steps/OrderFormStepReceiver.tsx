@@ -70,7 +70,12 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = fal
 
 	return (
 		<Form id='orders-form' onSubmit={handleSubmit(onSubmit)}>
-			<OrderStepReceiver shipping={data.shipping} initialData={data.receiver} formProps={{ control, errors, watch }} />
+			<OrderStepReceiver
+				shipping={data.shipping}
+				initialData={data.receiver}
+				formProps={{ control, errors, watch }}
+				isUpdating={isUpdating}
+			/>
 			<PortalWrapper element={formFooter ?? null}>
 				<Flex wrap='nowrap' justify={isUpdating ? "flex-end" : "space-between"} className='w-100' style={{ flex: 1 }}>
 					{!isUpdating && (

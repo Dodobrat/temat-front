@@ -460,3 +460,39 @@ export const usePhoneCodes: FetchQueryType = ({ specs, queryConfig, specialKey }
 		}
 	);
 };
+
+//SHIPPING PAID BY
+export const useShippingPaidBy: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["shippingPayee", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/deliveryPayee?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};
+
+//SHIPPING PAID BY
+export const usePayAfter: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["payAfter", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/payAfter?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			...queryConfig,
+			keepPreviousData: true,
+			enabled: queryConfig?.enabled ?? false,
+			cacheTime: halfDay,
+			staleTime: halfDay,
+		}
+	);
+};

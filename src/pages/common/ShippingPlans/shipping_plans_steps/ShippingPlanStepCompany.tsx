@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import { Button, PortalWrapper, FormControl, Form } from "@dodobrat/react-ui-kit";
@@ -8,7 +9,11 @@ import { useShippingPlansContext } from "../../../../context/ShippingPlansContex
 import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
 const ShippingPlanStepCompany = ({ withPrefetch }) => {
-	const formFooter = document.getElementById("shipping-plan-form-footer");
+	const [formFooter, setFormFooter] = useState(document.getElementById("shipping-plan-form-footer"));
+
+	useEffect(() => {
+		setFormFooter(document.getElementById("shipping-plan-form-footer"));
+	}, []);
 
 	const { t } = useTranslation();
 
@@ -18,7 +23,6 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 
 	const {
 		control,
-		watch,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
@@ -26,8 +30,6 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 			companyId: data?.companyId,
 		},
 	});
-
-	const watchCompany = watch("companyId");
 
 	const onSubmit = (data: any) => {
 		setData((prev) => ({
@@ -68,12 +70,10 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 					}}
 				/>
 			</FormControl>
-			<PortalWrapper element={formFooter ?? null}>
-				{watchCompany?.value && (
-					<Button type='submit' form='shipping-plan-form'>
-						{t("common.next")}
-					</Button>
-				)}
+			<PortalWrapper element={formFooter}>
+				<Button type='submit' form='shipping-plan-form'>
+					{t("common.next")}
+				</Button>
 			</PortalWrapper>
 		</Form>
 	);

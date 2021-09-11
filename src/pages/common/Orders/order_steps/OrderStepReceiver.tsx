@@ -8,7 +8,7 @@ import { usePhoneCodes } from "../../../../actions/fetchHooks";
 import PhoneCode from "../../../../components/util/PhoneCode";
 import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
-const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors, watch } }) => {
+const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors, watch }, isUpdating }) => {
 	const { t } = useTranslation();
 
 	const courierName = shipping?.shippingMethodId?.data?.courierName;
@@ -62,26 +62,23 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 					})}
 					hintMsg={errors?.receiverPhoneCodeId?.message}>
 					<Controller
-						render={({ field }) => {
-							const searchString = field.value?.value ? "" : field?.value ?? "359";
-							return (
-								<WindowedAsyncSelect
-									inputId='receiverPhoneCodeId'
-									useFetch={usePhoneCodes}
-									defaultSearchString={searchString}
-									isClearable={false}
-									filterKey='code'
-									defaultOptions
-									preSelectOption
-									isFetchedAtOnce
-									labelComponent={(data) => <PhoneCode data={data} />}
-									className={cn({
-										"temat__select__container--danger": errors?.receiverPhoneCodeId,
-									})}
-									{...field}
-								/>
-							);
-						}}
+						render={({ field }) => (
+							<WindowedAsyncSelect
+								inputId='receiverPhoneCodeId'
+								useFetch={usePhoneCodes}
+								defaultSearchString={isUpdating ? initialData?.receiverPhoneCodeIdHint : "359"}
+								isClearable={false}
+								filterKey='code'
+								defaultOptions
+								preSelectOption
+								isFetchedAtOnce
+								labelComponent={(data) => <PhoneCode data={data} />}
+								className={cn({
+									"temat__select__container--danger": errors?.receiverPhoneCodeId,
+								})}
+								{...field}
+							/>
+						)}
 						name='receiverPhoneCodeId'
 						control={control}
 						defaultValue={null}
@@ -244,26 +241,23 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							})}
 							hintMsg={errors?.receiverAgentPhoneCodeId?.message}>
 							<Controller
-								render={({ field }) => {
-									const searchString = field.value?.value ? "" : field?.value ?? "359";
-									return (
-										<WindowedAsyncSelect
-											inputId='receiverAgentPhoneCodeId'
-											useFetch={usePhoneCodes}
-											defaultSearchString={searchString}
-											isClearable={false}
-											filterKey='code'
-											defaultOptions
-											preSelectOption
-											isFetchedAtOnce
-											labelComponent={(data) => <PhoneCode data={data} />}
-											className={cn({
-												"temat__select__container--danger": errors?.receiverAgentPhoneCodeId,
-											})}
-											{...field}
-										/>
-									);
-								}}
+								render={({ field }) => (
+									<WindowedAsyncSelect
+										inputId='receiverAgentPhoneCodeId'
+										useFetch={usePhoneCodes}
+										defaultSearchString={isUpdating ? initialData?.receiverAgentPhoneCodeIdHint : "359"}
+										isClearable={false}
+										filterKey='code'
+										defaultOptions
+										preSelectOption
+										isFetchedAtOnce
+										labelComponent={(data) => <PhoneCode data={data} />}
+										className={cn({
+											"temat__select__container--danger": errors?.receiverAgentPhoneCodeId,
+										})}
+										{...field}
+									/>
+								)}
 								name='receiverAgentPhoneCodeId'
 								control={control}
 								defaultValue={null}

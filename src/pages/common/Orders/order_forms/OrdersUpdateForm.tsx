@@ -30,7 +30,10 @@ const OrdersUpdateForm = (props: Props) => {
 			},
 		},
 		queryConfig: {
-			onError: (err: any) => errorToast(err),
+			onError: (err: any) => {
+				errorToast(err);
+				onClose();
+			},
 		},
 		specialKey: { orderId: payload?.id, filters: ["products", "files"] },
 	});

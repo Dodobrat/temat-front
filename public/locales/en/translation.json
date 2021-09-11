@@ -102,7 +102,7 @@
 		"barcode": "Barcode",
 		"paymentMethod": "Payment Method",
 		"currency": "Currency",
-		"shippingPaidBy": "Shipping Paid By",
+		"shippingPayee": "Shipping Paid By",
 		"payAfter": "Pay After",
 		"sku": "SKU",
 		"minQty": "min. Qty",

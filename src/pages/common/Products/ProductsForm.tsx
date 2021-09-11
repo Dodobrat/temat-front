@@ -6,7 +6,7 @@ import { Portal, Card, Collapse, Button, Text, Form, Flex, FormControl, Input, T
 import cn from "classnames";
 
 import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
-import { useCompanies } from "../../../actions/fetchHooks";
+import { useCompanies, useProductById } from "../../../actions/fetchHooks";
 import { useAuthContext } from "../../../context/AuthContext";
 
 import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
@@ -65,17 +65,44 @@ const ProductsForm = (props: Props) => {
 	const watchCompany = watch("companyId");
 	const watchIsCombo = watch("isCombo");
 
+	const { data, isFetching } = useProductById({
+		specs: {
+			param: payload?.id,
+		},
+		queryConfig: {
+			enabled: !!payload && watchIsCombo > 0,
+			onError: (err: any) => errorToast(err),
+		},
+		specialKey: { productId: payload?.id },
+	});
+
+	const parsedCombos = useMemo(() => {
+		if (data) {
+			return data?.data?.combos?.reduce((prev, curr) => {
+				const parsedCurr = {
+					data: curr,
+					value: curr?.id,
+					label: curr?.name,
+					price: curr?.price,
+					quantity: curr?.qty,
+				};
+				return [...prev, parsedCurr];
+			}, []);
+		}
+		return [];
+	}, [data]);
+
 	useEffect(() => {
-		if (watchCompany) {
+		if (watchCompany && !payload) {
 			setValue("products", []);
 		}
-	}, [watchCompany, setValue]);
+	}, [watchCompany, payload, setValue]);
 
 	useEffect(() => {
 		if (watchIsCombo > 0) {
-			console.log("isCombo");
+			setValue("products", parsedCombos);
 		}
-	}, [watchIsCombo]);
+	}, [watchIsCombo, setValue, parsedCombos]);
 
 	const noAdditionalData = useMemo(() => {
 		if (!payload) {
@@ -107,6 +134,7 @@ const ProductsForm = (props: Props) => {
 			onSuccess: (res: any) => {
 				successToast(res);
 				queryClient.invalidateQueries("products");
+				queryClient.invalidateQueries(["productById", { productId: payload?.id }]);
 				onClose();
 			},
 			onError: (err: any) => errorToast(err),
@@ -394,7 +422,7 @@ const ProductsForm = (props: Props) => {
 								</FormControl>
 							</Flex.Col>
 
-							{userCan("productCreate") && (
+							{userCan("productCreate") && !payload && (
 								<Flex.Col col='12'>
 									<FormControl
 										label={t("field.company")}
@@ -445,6 +473,7 @@ const ProductsForm = (props: Props) => {
 													checked={field.value}
 													onChange={(e) => onChange(e.target.checked)}
 													innerRef={ref}
+													isLoading={isFetching}
 													pigment={errors?.isCombo ? "danger" : "primary"}>
 													{t("field.isCombo")}
 												</Checkbox>
@@ -459,7 +488,7 @@ const ProductsForm = (props: Props) => {
 							{watchIsCombo > 0 && (
 								<Flex.Col col='12'>
 									<OrderStepProducts
-										companyId={watchCompany?.value ?? user?.companyId}
+										companyId={watchCompany?.value ?? watchCompany}
 										selectProps={{
 											defaultOptions: !!watchCompany?.value ?? !!user?.companyId,
 											querySpecialKey: watchCompany?.value ?? user?.companyId,

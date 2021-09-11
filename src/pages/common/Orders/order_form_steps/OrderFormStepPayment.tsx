@@ -10,6 +10,7 @@ import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
 import OrderStepPayment from "../order_steps/OrderStepPayment";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parsePaymentToFormData } from "../orderHelpers";
+import { useEffect } from "react";
 
 const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = false }) => {
 	const formFooter = document.getElementById("orders-form-footer");
@@ -32,6 +33,21 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 			...data.payment,
 		},
 	});
+
+	useEffect(() => {
+		if (data.payment?.paymentMethodId?.value) {
+			setValue("paymentMethodId", data.payment?.paymentMethodId);
+		}
+		if (data.payment?.currencyId?.value) {
+			setValue("currencyId", data.payment?.currencyId);
+		}
+		if (data.payment?.shipmentPayeeId?.value) {
+			setValue("shipmentPayeeId", data.payment?.shipmentPayeeId);
+		}
+		if (data.payment?.payAfterId?.value) {
+			setValue("payAfterId", data.payment?.payAfterId);
+		}
+	}, [data.payment, setValue]);
 
 	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
 		specs: {
@@ -74,7 +90,7 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 
 	return (
 		<Form id='orders-form' onSubmit={handleSubmit(onSubmit)}>
-			<OrderStepPayment initialData={data.payment} formProps={{ control, errors, setValue }} />
+			<OrderStepPayment initialData={data.payment} formProps={{ control, errors, setValue }} isUpdating={isUpdating} />
 			<PortalWrapper element={formFooter ?? null}>
 				<Flex wrap='nowrap' justify='flex-end' className='w-100' style={{ flex: 1 }}>
 					<Flex.Col col='auto'>

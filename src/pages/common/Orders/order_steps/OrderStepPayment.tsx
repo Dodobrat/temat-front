@@ -1,60 +1,24 @@
-import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
-import WindowedSelect from "react-windowed-select";
 import { Flex, FormControl } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
-import { useCurrency, usePaymentMethods } from "../../../../actions/fetchHooks";
+import { useCurrency, usePayAfter, usePaymentMethods, useShippingPaidBy } from "../../../../actions/fetchHooks";
 
 import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
-
-const selectProps = {
-	className: "temat__select__container",
-	classNamePrefix: "temat__select",
-	menuPlacement: "auto",
-	isSearchable: false,
-};
 
 interface Props {
 	initialData?: any;
 	formProps?: any;
+	isUpdating?: boolean;
 }
 
-const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue } }: Props) => {
-	const { t } = useTranslation();
+const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, errors } }: Props) => {
+	const { t, i18n } = useTranslation();
 
-	const paidByOptions = useMemo(
-		() => [
-			{ value: "receiver", label: t("options.receiver") },
-			{ value: "sender", label: t("options.sender") },
-		],
-		[t]
-	);
+	const currLocale = i18n.language.split("-")[0];
 
-	const payAfterOptions = useMemo(
-		() => [
-			{ value: "none", label: t("options.delivery") },
-			{ value: "view", label: t("options.deliveryWith", { with: t("common.view") }) },
-			{ value: "test", label: t("options.deliveryWith", { with: t("common.test") }) },
-		],
-		[t]
-	);
-
-	useEffect(() => {
-		if (initialData?.shippingPaidBy) {
-			setValue(
-				"shippingPaidBy",
-				paidByOptions.find((option) => option.value === initialData?.shippingPaidBy)
-			);
-		}
-		if (initialData?.payAfter) {
-			setValue(
-				"payAfter",
-				payAfterOptions.find((option) => option.value === initialData?.payAfter)
-			);
-		}
-	}, [initialData?.shippingPaidBy, initialData?.payAfter, setValue, paidByOptions, payAfterOptions]);
+	const companyId = initialData?.companyId?.value ?? initialData?.companyId;
 
 	return (
 		<Flex>
@@ -71,8 +35,10 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 							<WindowedAsyncSelect
 								inputId='paymentMethodId'
 								useFetch={usePaymentMethods}
-								defaultOptions
-								preSelectOption
+								defaultOptions={!isUpdating}
+								preSelectOption={!isUpdating}
+								// labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+								// filterKey={currLocale === "bg" ? "name" : "nameEn"}
 								isFetchedAtOnce
 								isClearable={false}
 								className={cn({
@@ -103,10 +69,11 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 							<WindowedAsyncSelect
 								inputId='currencyId'
 								useFetch={useCurrency}
-								defaultOptions
-								preSelectOption
+								defaultOptions={!isUpdating}
+								preSelectOption={!isUpdating}
 								isFetchedAtOnce
 								labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
+								filterKey='abbreviation'
 								isClearable={false}
 								className={cn({
 									"temat__select__container--danger": errors?.phoneCodeId,
@@ -125,27 +92,35 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("field.shippingPaidBy")}
-					htmlFor='shippingPaidBy'
+					label={t("field.shippingPayee")}
+					htmlFor='shipmentPayeeId'
 					className={cn({
-						"text--danger": errors?.shippingPaidBy,
+						"text--danger": errors?.shipmentPayeeId,
 					})}
-					hintMsg={errors?.shippingPaidBy?.message}>
+					hintMsg={errors?.shipmentPayeeId?.message}>
 					<Controller
 						render={({ field }) => (
-							<WindowedSelect
-								inputId='shippingPaidBy'
-								{...selectProps}
-								options={paidByOptions}
-								className={cn(selectProps.className, {
-									"temat__select__container--danger": errors?.payAfter,
+							<WindowedAsyncSelect
+								inputId='shipmentPayeeId'
+								useFetch={useShippingPaidBy}
+								queryFilters={{
+									companyId: companyId,
+								}}
+								defaultOptions={!!companyId && !isUpdating}
+								preSelectOption={!isUpdating}
+								labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+								filterKey={currLocale === "bg" ? "name" : "nameEn"}
+								isFetchedAtOnce
+								isClearable={false}
+								className={cn({
+									"temat__select__container--danger": errors?.shipmentPayeeId,
 								})}
 								{...field}
 							/>
 						)}
-						name='shippingPaidBy'
+						name='shipmentPayeeId'
 						control={control}
-						defaultValue={paidByOptions[0]}
+						defaultValue={null}
 						rules={{
 							required: t("validation.required"),
 						}}
@@ -155,26 +130,34 @@ const OrderStepPayment = ({ initialData, formProps: { control, errors, setValue 
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
 					label={t("field.payAfter")}
-					htmlFor='payAfter'
+					htmlFor='payAfterId'
 					className={cn({
-						"text--danger": errors?.payAfter,
+						"text--danger": errors?.payAfterId,
 					})}
-					hintMsg={errors?.payAfter?.message}>
+					hintMsg={errors?.payAfterId?.message}>
 					<Controller
 						render={({ field }) => (
-							<WindowedSelect
-								{...selectProps}
-								options={payAfterOptions}
-								inputId='payAfter'
-								className={cn(selectProps.className, {
-									"temat__select__container--danger": errors?.payAfter,
+							<WindowedAsyncSelect
+								inputId='payAfterId'
+								useFetch={usePayAfter}
+								queryFilters={{
+									companyId: companyId,
+								}}
+								defaultOptions={!!companyId && !isUpdating}
+								preSelectOption={!isUpdating}
+								labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
+								filterKey={currLocale === "bg" ? "name" : "nameEn"}
+								isFetchedAtOnce
+								isClearable={false}
+								className={cn({
+									"temat__select__container--danger": errors?.payAfterId,
 								})}
 								{...field}
 							/>
 						)}
-						name='payAfter'
+						name='payAfterId'
 						control={control}
-						defaultValue={payAfterOptions[0]}
+						defaultValue={null}
 						rules={{
 							required: t("validation.required"),
 						}}
