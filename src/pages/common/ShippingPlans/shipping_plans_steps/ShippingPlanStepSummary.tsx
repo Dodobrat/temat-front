@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Controller, useForm } from "react-hook-form";
@@ -28,7 +28,7 @@ const parseShippingPlanData = (data) => {
 	return parsedData;
 };
 
-const ShippingPlanStepSummary = ({ payload, onClose }) => {
+const ShippingPlanStepSummary = ({ payload, onClose, onTouch }: any) => {
 	const formFooter = document.getElementById("shipping-plan-form-footer");
 
 	const { t } = useTranslation();
@@ -46,13 +46,17 @@ const ShippingPlanStepSummary = ({ payload, onClose }) => {
 		setValue,
 		clearErrors,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...data,
 			dateExpected: data?.dateExpected ?? getClosestValidDate(),
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutate: addShippingPlan, isLoading: isLoadingAdd } = useShippingPlanAdd({
 		queryConfig: {

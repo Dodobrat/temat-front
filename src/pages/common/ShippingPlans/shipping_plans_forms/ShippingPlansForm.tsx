@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
 
@@ -8,7 +9,7 @@ import ShippingPlansProvider from "../../../../context/ShippingPlansContext";
 import ShippingPlansFormWizard from "./ShippingPlansFormWizard";
 import { IconClose } from "../../../../components/ui/icons";
 
-import { confirmOnExit } from "../../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 import { errorToast } from "../../../../helpers/toastEmitter";
 
 interface Props {
@@ -20,6 +21,10 @@ const ShippingPlansForm = (props: Props) => {
 	const { onClose, payload, ...rest } = props;
 
 	const { t } = useTranslation();
+
+	const [touchedFormFields, setTouchedFormFields] = useState(false);
+
+	const handleIsFormTouched = (isTouched) => setTouchedFormFields(isTouched);
 
 	const { data, isFetching } = useShippingPlanById({
 		specs: {
@@ -37,7 +42,13 @@ const ShippingPlansForm = (props: Props) => {
 	const fetchedPlan = data?.data ?? null;
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFormFields ? { touched: true } : {}, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card isLoading={isFetching}>
 				<Card.Header
 					actions={
@@ -48,7 +59,12 @@ const ShippingPlansForm = (props: Props) => {
 					<Text className='mb--0'>{t(`action.${payload ? "update" : "add"}`, { entry: t("common.shippingPlan") })}</Text>
 				</Card.Header>
 				<ShippingPlansProvider>
-					<ShippingPlansFormWizard onClose={onClose} payload={fetchedPlan} withPrefetch={!payload} />
+					<ShippingPlansFormWizard
+						onClose={onClose}
+						payload={fetchedPlan}
+						withPrefetch={!payload}
+						onTouch={handleIsFormTouched}
+					/>
 				</ShippingPlansProvider>
 			</Card>
 		</Portal>

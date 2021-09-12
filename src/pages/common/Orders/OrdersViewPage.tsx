@@ -279,7 +279,7 @@ const OrdersViewPage = () => {
 																<Flex wrap='nowrap' align='center'>
 																	<Flex.Col col='auto'>
 																		<Badge sizing='lg' pigment='warning'>
-																			{t("field.sku")}: {product?.sku}
+																			{t("field.price")}: {product?.price}
 																		</Badge>
 																	</Flex.Col>
 																	<Flex.Col col='auto'>

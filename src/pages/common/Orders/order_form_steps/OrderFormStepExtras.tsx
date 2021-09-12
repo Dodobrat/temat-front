@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
@@ -11,7 +12,7 @@ import OrderStepExtras from "../order_steps/OrderStepExtras";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parseExtrasToFormData } from "../orderHelpers";
 
-const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false }) => {
+const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
 	const formFooter = document.getElementById("orders-form-footer");
 
 	const queryClient = useQueryClient();
@@ -30,13 +31,17 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 		setError,
 		clearErrors,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...data.extras,
 			files: data?.extras?.files ?? [],
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateFiles, isLoading: isLoadingFilesUpdate } = useOrderFilesUpdate({
 		specs: {

@@ -13,8 +13,9 @@ const ContactsCell = (props: Props) => {
 	return (
 		<Table.Cell {...rest}>
 			{rowValues?.phone && (
-				<a href={`tel:${rowValues?.phone}`} className='bgtext--default d--block temat__table__contact'>
-					<IconPhone className='mr--1' /> {rowValues?.phone}
+				<a href={`tel:${rowValues?.phoneCode}${rowValues?.phone}`} className='bgtext--default d--block temat__table__contact'>
+					<IconPhone className='mr--1' /> {rowValues?.phoneCode}
+					{rowValues?.phone}
 				</a>
 			)}
 			{rowValues?.receiverPhone && (

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
@@ -12,7 +13,7 @@ import { getClosestValidDate } from "../../../../helpers/dateHelpers";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parseShippingDataToFormData } from "../orderHelpers";
 
-const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = false }) => {
+const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
 	const formFooter = document.getElementById("orders-form-footer");
 
 	const queryClient = useQueryClient();
@@ -30,13 +31,17 @@ const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = fal
 		setValue,
 		reset,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...data.shipping,
 			shipDate: data?.shipping?.shipDate ?? getClosestValidDate(),
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
 		specs: {

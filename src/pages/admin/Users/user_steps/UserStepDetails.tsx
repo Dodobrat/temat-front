@@ -112,10 +112,11 @@ const UserStepDetails = ({ payload, formProps: { control, errors, watch } }: Pro
 								inputId='phoneCodeId'
 								useFetch={usePhoneCodes}
 								defaultSearchString={payload?.phoneCode ?? "359"}
-								filterKey='code'
 								isClearable={false}
+								filterKey='code'
 								defaultOptions
 								preSelectOption
+								isFetchedAtOnce
 								labelComponent={(data) => <PhoneCode data={data} />}
 								className={cn({
 									"temat__select__container--danger": errors?.phoneCodeId,

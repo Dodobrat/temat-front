@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
@@ -10,8 +11,12 @@ import { useUserPersonalUpdate } from "../../../../actions/mutateHooks";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import UserStepDetails from "../user_steps/UserStepDetails";
 
-const UserFormStepDetails = ({ payload }) => {
-	const formFooter = document.getElementById("user-form-footer");
+const UserFormStepDetails = ({ payload, onTouch }) => {
+	const [formFooter, setFormFooter] = useState(document.getElementById("user-form-footer"));
+
+	useEffect(() => {
+		setFormFooter(document.getElementById("user-form-footer"));
+	}, []);
 
 	const queryClient = useQueryClient();
 	const { t } = useTranslation();
@@ -24,13 +29,17 @@ const UserFormStepDetails = ({ payload }) => {
 		control,
 		watch,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...payload,
 			image: "",
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updatePersonalUser, isLoading: isLoadingPersonalUpdate } = useUserPersonalUpdate({
 		queryConfig: {

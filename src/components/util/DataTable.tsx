@@ -208,7 +208,7 @@ const DataTable = ({
 			<Card elevation={elevation}>
 				<Card.Body className='pb--2 pt--0 px--2'>
 					<Flex align='center' disableNegativeSpace>
-						<Flex.Col col='auto'>
+						<Flex.Col col={{ base: "12", sm: "auto" }}>
 							<Flex disableNegativeSpace>
 								<Flex.Col onClick={() => gotoPage(0)} disabled={!canPreviousPage} {...paginationBtnProps}>
 									<IconFirstPage />
@@ -224,13 +224,13 @@ const DataTable = ({
 								</Flex.Col>
 							</Flex>
 						</Flex.Col>
-						<Flex.Col>
-							<Text className='mb--0 ml--2'>
+						<Flex.Col col={{ base: "12", sm: "reset" }}>
+							<Text className='mb--0 ml--sm--2 text--center text--sm--left'>
 								{t("table.page")} <Text as='strong'>{pageIndex + 1}</Text> {t("common.of").toLowerCase()}{" "}
 								<Text as='strong'>{pageOptions.length}</Text>
 							</Text>
 						</Flex.Col>
-						<Flex.Col col='auto'>
+						<Flex.Col col={{ base: "reset", sm: "auto" }}>
 							<Text className='mb--0'>
 								<Text as='strong'>{serverTotalResults}</Text> {t("table.entries").toLowerCase()}
 							</Text>

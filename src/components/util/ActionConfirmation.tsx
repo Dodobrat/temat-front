@@ -20,7 +20,7 @@ const ActionConfirmation = (props: Props) => {
 	};
 
 	return (
-		<Portal onClose={onClose} animation='zoom' {...rest}>
+		<Portal onClose={onClose} onOutsideClick={onClose} innerClassName='py--4' {...rest}>
 			<Card>
 				<Card.Header
 					actions={

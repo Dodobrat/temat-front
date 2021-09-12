@@ -175,7 +175,5 @@ export const parsedFetchedData = (order) => {
 	parsedOrderData.extras.files = order?.files;
 	parsedOrderData.extras.customerNote = order?.details?.customerNote;
 
-	console.log(parsedOrderData);
-
 	return parsedOrderData;
 };

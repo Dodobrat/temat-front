@@ -8,7 +8,7 @@ import { useUserAdd } from "../../../../actions/mutateHooks";
 import { IconClose } from "../../../../components/ui/icons";
 
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
-import { confirmOnExit } from "../../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 import UserStepCredentials from "../user_steps/UserStepCredentials";
 import UserStepDetails from "../user_steps/UserStepDetails";
 
@@ -26,7 +26,7 @@ const UsersForm = (props: Props) => {
 		watch,
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, touchedFields },
 	} = useForm();
 
 	const { mutate: addUser, isLoading: isLoadingAdd } = useUserAdd({
@@ -59,7 +59,13 @@ const UsersForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFields, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card>
 				<Card.Header
 					actions={

@@ -9,7 +9,7 @@ import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
 import { IconClose } from "../../../components/ui/icons";
 
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import { confirmOnExit } from "../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -25,7 +25,7 @@ const RolesForm = (props: Props) => {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, touchedFields },
 	} = useForm({
 		defaultValues: {
 			...payload,
@@ -67,7 +67,13 @@ const RolesForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFields, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card>
 				<Card.Header
 					actions={

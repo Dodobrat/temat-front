@@ -43,7 +43,6 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 	} = props;
 
 	const [searchString, setSearchString] = useState("");
-	const [queryMeta, setQueryMeta] = useState({ total: 0, perPage: 50 });
 	const debouncedSearchString = useDebounce(searchString, 250);
 
 	const _onChange = useCallback((option) => onChange(option), [onChange]);
@@ -58,7 +57,6 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 			...querySpecs,
 		},
 		queryConfig: {
-			onSuccess: (res) => setQueryMeta({ total: res?.meta?.total, perPage: res?.meta?.perPage }),
 			onError: (err: any) => errorToast(err),
 		},
 		specialKey: ["select", queryFilters, querySpecs, querySpecialKey, debouncedSearchString],
@@ -78,32 +76,31 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 
 	const parsedOptions = useMemo(() => {
 		if (data) {
-			return data?.data
-				?.map((entry) => ({
-					value: entry?.[valueKey],
-					label: labelComponent?.(entry) ?? entry?.[labelKey],
-					data: entry,
-				}))
-				.reduce((prev, curr, idx, arr) => {
-					if (queryMeta?.total > queryMeta?.perPage) {
-						if (idx === arr.length - 1) {
-							return [
-								...prev,
-								curr,
-								{
-									value: null,
-									isDisabled: true,
-									label: <strong>{`+ ${queryMeta?.total - queryMeta?.perPage}`}</strong>,
-								},
-							];
-						}
-						return [...prev, curr];
+			return data?.data?.reduce((prev, curr, idx, arr) => {
+				const parsedCurr = {
+					value: curr?.[valueKey],
+					label: labelComponent?.(curr) ?? curr?.[labelKey],
+					data: curr,
+				};
+				if (data?.meta?.total > data?.meta?.perPage) {
+					if (idx === arr.length - 1) {
+						return [
+							...prev,
+							parsedCurr,
+							{
+								value: null,
+								isDisabled: true,
+								label: <strong>{`+ ${data?.meta?.total - data?.meta?.perPage}`}</strong>,
+							},
+						];
 					}
-					return [...prev, curr];
-				}, []);
+					return [...prev, parsedCurr];
+				}
+				return [...prev, parsedCurr];
+			}, []);
 		}
 		return [];
-	}, [data, labelComponent, labelKey, valueKey, queryMeta]);
+	}, [data, labelComponent, labelKey, valueKey]);
 
 	const filterOption = ({ label, data }, string) => {
 		const searchKey = string?.toLowerCase();

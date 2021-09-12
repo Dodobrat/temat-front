@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Tabs, Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
 
 import { IconClose } from "../../../../components/ui/icons";
 
-import { confirmOnExit } from "../../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 import UserFormStepCredentials from "../user_form_steps/UserFormStepCredentials";
 import UserFormStepDetails from "../user_form_steps/UserFormStepDetails";
 
@@ -17,8 +18,18 @@ const UsersUpdateForm = (props: Props) => {
 
 	const { t } = useTranslation();
 
+	const [touchedFormFields, setTouchedFormFields] = useState(false);
+
+	const handleIsFormTouched = (isTouched) => setTouchedFormFields(isTouched);
+
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFormFields ? { touched: true } : {}, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -30,10 +41,10 @@ const UsersUpdateForm = (props: Props) => {
 				</Card.Header>
 				<Tabs className='max-h--unset' contentClassName='w--100' elevation='none'>
 					<Tabs.Panel tab={t("common.credentials")}>
-						<UserFormStepCredentials payload={payload} />
+						<UserFormStepCredentials payload={payload} onTouch={handleIsFormTouched} />
 					</Tabs.Panel>
 					<Tabs.Panel tab={t("common.details")}>
-						<UserFormStepDetails payload={payload} />
+						<UserFormStepDetails payload={payload} onTouch={handleIsFormTouched} />
 					</Tabs.Panel>
 				</Tabs>
 				<Card.Footer justify='flex-end' id='user-form-footer' />

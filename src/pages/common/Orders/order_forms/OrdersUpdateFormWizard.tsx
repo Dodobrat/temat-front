@@ -14,10 +14,11 @@ import { parsedFetchedData } from "../orderHelpers";
 
 interface Props {
 	payload?: any;
+	onTouch?: any;
 }
 
 const OrdersUpdateFormWizard = (props: Props) => {
-	const { payload } = props;
+	const { payload, onTouch } = props;
 
 	const { t } = useTranslation();
 
@@ -41,19 +42,19 @@ const OrdersUpdateFormWizard = (props: Props) => {
 				activeTab={currStep}
 				onTabSelect={(tab: number) => setCurrStep(tab)}>
 				<Tabs.Panel tab={t("step.payment")}>
-					<OrderFormStepPayment useContext={useOrdersUpdateContext} isUpdating />
+					<OrderFormStepPayment useContext={useOrdersUpdateContext} isUpdating onTouch={onTouch} />
 				</Tabs.Panel>
 				<Tabs.Panel tab={t("step.shipping")}>
-					<OrderFormStepShipping useContext={useOrdersUpdateContext} isUpdating />
+					<OrderFormStepShipping useContext={useOrdersUpdateContext} isUpdating onTouch={onTouch} />
 				</Tabs.Panel>
 				<Tabs.Panel tab={t("step.receiver")}>
-					<OrderFormStepReceiver useContext={useOrdersUpdateContext} isUpdating />
+					<OrderFormStepReceiver useContext={useOrdersUpdateContext} isUpdating onTouch={onTouch} />
 				</Tabs.Panel>
 				<Tabs.Panel tab={t("step.products")}>
-					<OrderFormStepProducts useContext={useOrdersUpdateContext} isUpdating />
+					<OrderFormStepProducts useContext={useOrdersUpdateContext} isUpdating onTouch={onTouch} />
 				</Tabs.Panel>
 				<Tabs.Panel tab={t("step.extras")}>
-					<OrderFormStepExtras useContext={useOrdersUpdateContext} isUpdating />
+					<OrderFormStepExtras useContext={useOrdersUpdateContext} isUpdating onTouch={onTouch} />
 				</Tabs.Panel>
 			</Tabs>
 			<Card.Footer id='orders-form-footer' />

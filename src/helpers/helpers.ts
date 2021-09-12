@@ -21,3 +21,11 @@ export const parseRoles = (roles = "") => {
 export const capitalizeString = (string) => {
 	return string[0].toUpperCase() + string.slice(1).toLowerCase();
 };
+
+export const dirtyConfirmOnExit = (touchedFields, onClose, t) => {
+	const touched = Object.entries(touchedFields).length > 0;
+	if (touched) {
+		return confirmOnExit(onClose, t);
+	}
+	return onClose();
+};

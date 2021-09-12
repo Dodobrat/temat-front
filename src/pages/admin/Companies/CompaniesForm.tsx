@@ -11,7 +11,7 @@ import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
 import PhoneCode from "../../../components/util/PhoneCode";
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import { confirmOnExit } from "../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 import { imageValidator } from "../../../helpers/formValidations";
 
 interface Props {
@@ -29,7 +29,7 @@ const CompaniesForm = (props: Props) => {
 		control,
 		watch,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, touchedFields },
 	} = useForm({
 		defaultValues: {
 			...payload,
@@ -85,7 +85,13 @@ const CompaniesForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFields, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card>
 				<Card.Header
 					actions={
@@ -242,7 +248,7 @@ const CompaniesForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col={{ base: "5", md: "4" }}>
+							<Flex.Col col={{ base: "5", xs: "4" }}>
 								<FormControl
 									label={t("field.phoneCode")}
 									htmlFor='phoneCodeId'

@@ -12,7 +12,7 @@ import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parsePaymentToFormData } from "../orderHelpers";
 import { useEffect } from "react";
 
-const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = false }) => {
+const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
 	const formFooter = document.getElementById("orders-form-footer");
 
 	const queryClient = useQueryClient();
@@ -27,12 +27,16 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 		control,
 		setValue,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...data.payment,
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	useEffect(() => {
 		if (data.payment?.paymentMethodId?.value) {

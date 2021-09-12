@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
@@ -10,8 +11,12 @@ import { useUserCredentialsUpdate } from "../../../../actions/mutateHooks";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import UserStepCredentials from "../user_steps/UserStepCredentials";
 
-const UserFormStepCredentials = ({ payload }) => {
-	const formFooter = document.getElementById("user-form-footer");
+const UserFormStepCredentials = ({ payload, onTouch }) => {
+	const [formFooter, setFormFooter] = useState(document.getElementById("user-form-footer"));
+
+	useEffect(() => {
+		setFormFooter(document.getElementById("user-form-footer"));
+	}, []);
 
 	const queryClient = useQueryClient();
 	const { t } = useTranslation();
@@ -24,7 +29,7 @@ const UserFormStepCredentials = ({ payload }) => {
 		control,
 		watch,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...payload,
@@ -33,6 +38,10 @@ const UserFormStepCredentials = ({ payload }) => {
 			warehouseId: payload && payload?.warehouseId ? { value: payload?.warehouseId, label: payload?.warehouseName } : null,
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateCredentialUser, isLoading: isLoadingCredentialsUpdate } = useUserCredentialsUpdate({
 		queryConfig: {

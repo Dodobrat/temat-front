@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
 
@@ -8,7 +8,7 @@ import { useAuthContext } from "../../../../context/AuthContext";
 import OrdersFormWizard from "./OrdersFormWizard";
 import { IconClose } from "../../../../components/ui/icons";
 
-import { confirmOnExit } from "../../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -20,6 +20,18 @@ const OrdersForm = (props: Props) => {
 	const { t } = useTranslation();
 
 	const { userCan } = useAuthContext();
+
+	const [touchedFormFields, setTouchedFormFields] = useState(false);
+
+	const handleOnStep = (currStep) => {
+		if (currStep >= 1 && userCan("orderCreate")) {
+			setTouchedFormFields(true);
+		} else if (currStep >= 2) {
+			setTouchedFormFields(true);
+		} else {
+			setTouchedFormFields(false);
+		}
+	};
 
 	const orderFormSteps = useMemo(
 		() => [
@@ -34,7 +46,14 @@ const OrdersForm = (props: Props) => {
 	);
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest} withFocusLock>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFormFields ? { touched: true } : {}, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}
+			withFocusLock>
 			<Card>
 				<Card.Header
 					actions={
@@ -45,7 +64,12 @@ const OrdersForm = (props: Props) => {
 					<Text className='mb--0'>{t("action.add", { entry: t("common.order") })}</Text>
 				</Card.Header>
 				<OrdersProvider>
-					<OrdersFormWizard steps={orderFormSteps} onClose={onClose} withPrefetch={userCan("orderCreate")} />
+					<OrdersFormWizard
+						steps={orderFormSteps}
+						onStep={handleOnStep}
+						onClose={onClose}
+						withPrefetch={userCan("orderCreate")}
+					/>
 				</OrdersProvider>
 			</Card>
 		</Portal>

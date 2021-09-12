@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Portal, Card, Text, Button } from "@dodobrat/react-ui-kit";
 
@@ -10,7 +10,7 @@ import OrdersUpdateFormWizard from "./OrdersUpdateFormWizard";
 import { IconClose } from "../../../../components/ui/icons";
 
 import { errorToast } from "../../../../helpers/toastEmitter";
-import { confirmOnExit } from "../../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -38,6 +38,10 @@ const OrdersUpdateForm = (props: Props) => {
 		specialKey: { orderId: payload?.id, filters: ["products", "files"] },
 	});
 
+	const [touchedFormFields, setTouchedFormFields] = useState(false);
+
+	const handleIsFormTouched = (isTouched) => setTouchedFormFields(isTouched);
+
 	const fetchedOrder = useMemo(() => {
 		if (data) {
 			return data?.data;
@@ -46,7 +50,14 @@ const OrdersUpdateForm = (props: Props) => {
 	}, [data]);
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest} withFocusLock>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFormFields ? { touched: true } : {}, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}
+			withFocusLock>
 			<Card isLoading={isFetching}>
 				<Card.Header
 					actions={
@@ -57,7 +68,7 @@ const OrdersUpdateForm = (props: Props) => {
 					<Text className='mb--0'>{t("action.update", { entry: t("common.order") })}</Text>
 				</Card.Header>
 				<OrdersUpdateProvider>
-					<OrdersUpdateFormWizard payload={fetchedOrder} />
+					<OrdersUpdateFormWizard payload={fetchedOrder} onTouch={handleIsFormTouched} />
 				</OrdersUpdateProvider>
 			</Card>
 		</Portal>

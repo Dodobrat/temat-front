@@ -11,18 +11,24 @@ interface Props {
 	payload: any;
 	onClose: any;
 	withPrefetch?: boolean;
+	onTouch?: any;
 }
 
 const parseProductsToContext = (products) => {
 	const productsWithIds = [];
 	for (const product of products) {
-		productsWithIds.push({ ...product, value: product?.productId, quantity: product?.expected });
+		productsWithIds.push({
+			...product,
+			value: product?.productId,
+			quantity: product?.expected ?? "0",
+			price: product?.price ?? "0.00",
+		});
 	}
 	return productsWithIds;
 };
 
 const ShippingPlansFormWizard = (props: Props) => {
-	const { onClose, payload, withPrefetch } = props;
+	const { onClose, payload, withPrefetch, onTouch } = props;
 
 	const {
 		dataValue: { data, setData },
@@ -30,16 +36,17 @@ const ShippingPlansFormWizard = (props: Props) => {
 
 	const {
 		userValue: { user },
+		userCan,
 	} = useAuthContext();
 
 	useEffect(() => {
-		if (user.roleName !== "ADMIN" && !payload) {
+		if (!userCan("planCreate") && !payload) {
 			setData((prev) => ({
 				...prev,
 				companyId: user?.companyId,
 			}));
 		}
-	}, [setData, user?.companyId, user.roleName, payload]);
+	}, [setData, user?.companyId, userCan, payload]);
 
 	useEffect(() => {
 		if (payload) {
@@ -56,10 +63,10 @@ const ShippingPlansFormWizard = (props: Props) => {
 	return (
 		<>
 			<Card.Body>
-				{!data.companyId && user?.roleName === "ADMIN" ? (
-					<ShippingPlanStepCompany withPrefetch={withPrefetch} />
+				{!data.companyId && userCan("planCreate") ? (
+					<ShippingPlanStepCompany withPrefetch={withPrefetch} onTouch={onTouch} />
 				) : (
-					<ShippingPlanStepSummary payload={payload} onClose={onClose} />
+					<ShippingPlanStepSummary payload={payload} onClose={onClose} onTouch={onTouch} />
 				)}
 			</Card.Body>
 			<Card.Footer justify='flex-end' id='shipping-plan-form-footer' />

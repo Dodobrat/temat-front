@@ -95,6 +95,7 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 										sortBy: [{ asc: true, id: "name" }],
 									}}
 									isClearable={false}
+									isSearchable={false}
 									defaultOptions
 									isFetchedAtOnce
 									placeholder={t("field.select", { field: t("field.shippingMethod") })}

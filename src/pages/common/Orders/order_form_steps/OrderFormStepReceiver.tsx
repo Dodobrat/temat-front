@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { Form, Button, PortalWrapper, Flex } from "@dodobrat/react-ui-kit";
@@ -10,7 +11,7 @@ import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { useQueryClient } from "react-query";
 import { parseShippingDataToFormData } from "../orderHelpers";
 
-const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = false }) => {
+const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
 	const formFooter = document.getElementById("orders-form-footer");
 
 	const queryClient = useQueryClient();
@@ -25,12 +26,16 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = fal
 		control,
 		watch,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			...data.receiver,
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({
 		specs: {

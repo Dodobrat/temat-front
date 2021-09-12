@@ -14,12 +14,13 @@ import OrderFormStepReceiver from "../order_form_steps/OrderFormStepReceiver";
 
 interface Props {
 	steps?: any;
+	onStep?: any;
 	onClose: any;
 	withPrefetch: boolean;
 }
 
 const OrdersFormWizard = (props: Props) => {
-	const { steps, onClose, withPrefetch } = props;
+	const { steps, onClose, onStep, withPrefetch } = props;
 
 	const {
 		endValue: { hasReachedEnd },
@@ -31,6 +32,10 @@ const OrdersFormWizard = (props: Props) => {
 		userValue: { user },
 		userCan,
 	} = useAuthContext();
+
+	useEffect(() => {
+		onStep(currStep);
+	}, [currStep, onStep]);
 
 	useEffect(() => {
 		if (userCan("orderCreateTheir")) {

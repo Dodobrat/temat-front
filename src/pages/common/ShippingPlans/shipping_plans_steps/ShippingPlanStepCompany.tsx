@@ -8,7 +8,7 @@ import { useCompanies } from "../../../../actions/fetchHooks";
 import { useShippingPlansContext } from "../../../../context/ShippingPlansContext";
 import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
 
-const ShippingPlanStepCompany = ({ withPrefetch }) => {
+const ShippingPlanStepCompany = ({ withPrefetch, onTouch }: any) => {
 	const [formFooter, setFormFooter] = useState(document.getElementById("shipping-plan-form-footer"));
 
 	useEffect(() => {
@@ -24,12 +24,16 @@ const ShippingPlanStepCompany = ({ withPrefetch }) => {
 	const {
 		control,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			companyId: data?.companyId,
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const onSubmit = (data: any) => {
 		setData((prev) => ({

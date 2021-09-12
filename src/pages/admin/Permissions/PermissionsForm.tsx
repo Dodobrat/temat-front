@@ -11,7 +11,7 @@ import { IconClose } from "../../../components/ui/icons";
 import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import { confirmOnExit, parseRoles } from "../../../helpers/helpers";
+import { dirtyConfirmOnExit, parseRoles } from "../../../helpers/helpers";
 
 interface Props {
 	onClose: () => void;
@@ -27,7 +27,7 @@ const PermissionsForm = (props: Props) => {
 	const {
 		handleSubmit,
 		control,
-		formState: { errors },
+		formState: { errors, touchedFields },
 	} = useForm({
 		defaultValues: {
 			...payload,
@@ -76,7 +76,13 @@ const PermissionsForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFields, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card>
 				<Card.Header
 					actions={

@@ -41,6 +41,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 								// filterKey={currLocale === "bg" ? "name" : "nameEn"}
 								isFetchedAtOnce
 								isClearable={false}
+								isSearchable={false}
 								className={cn({
 									"temat__select__container--danger": errors?.phoneCodeId,
 								})}
@@ -75,6 +76,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 								labelComponent={(item) => `${item?.abbreviation} - ${item?.symbol}`}
 								filterKey='abbreviation'
 								isClearable={false}
+								isSearchable={false}
 								className={cn({
 									"temat__select__container--danger": errors?.phoneCodeId,
 								})}
@@ -112,6 +114,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 								filterKey={currLocale === "bg" ? "name" : "nameEn"}
 								isFetchedAtOnce
 								isClearable={false}
+								isSearchable={false}
 								className={cn({
 									"temat__select__container--danger": errors?.shipmentPayeeId,
 								})}
@@ -149,6 +152,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 								filterKey={currLocale === "bg" ? "name" : "nameEn"}
 								isFetchedAtOnce
 								isClearable={false}
+								isSearchable={false}
 								className={cn({
 									"temat__select__container--danger": errors?.payAfterId,
 								})}

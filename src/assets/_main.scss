@@ -204,11 +204,27 @@ svg {
 .text--right {
 	text-align: right;
 }
+.text--center {
+	text-align: center;
+}
+.text--left {
+	text-align: left;
+}
 
 @each $breakpointName, $breakpointSize in $breakpoints {
 	.text--#{$breakpointName}--right {
 		@media all and (min-width: $breakpointSize) {
 			text-align: right;
+		}
+	}
+	.text--#{$breakpointName}--center {
+		@media all and (min-width: $breakpointSize) {
+			text-align: center;
+		}
+	}
+	.text--#{$breakpointName}--left {
+		@media all and (min-width: $breakpointSize) {
+			text-align: left;
 		}
 	}
 }

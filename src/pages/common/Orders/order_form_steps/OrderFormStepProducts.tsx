@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useForm } from "react-hook-form";
@@ -11,7 +12,7 @@ import OrderStepProducts from "../order_steps/OrderStepProducts";
 import { errorToast, successToast } from "../../../../helpers/toastEmitter";
 import { parseProductsToFormData } from "../orderHelpers";
 
-const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = false }) => {
+const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
 	const formFooter = document.getElementById("orders-form-footer");
 
 	const queryClient = useQueryClient();
@@ -28,12 +29,16 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = fal
 		setValue,
 		clearErrors,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		defaultValues: {
 			products: data.products,
 		},
 	});
+
+	useEffect(() => {
+		onTouch(isDirty);
+	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateProducts, isLoading: isLoadingProductsUpdate } = useOrderProductUpdate({
 		specs: {

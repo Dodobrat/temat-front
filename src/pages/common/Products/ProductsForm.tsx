@@ -13,7 +13,7 @@ import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
 
 import { errorToast, successToast } from "../../../helpers/toastEmitter";
-import { confirmOnExit } from "../../../helpers/helpers";
+import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 import { imageValidator } from "../../../helpers/formValidations";
 import OrderStepProducts from "../Orders/order_steps/OrderStepProducts";
 import { parseProductsToFormData } from "../Orders/orderHelpers";
@@ -52,7 +52,7 @@ const ProductsForm = (props: Props) => {
 		setValue,
 		clearErrors,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, touchedFields },
 	} = useForm({
 		defaultValues: {
 			...payload,
@@ -174,7 +174,13 @@ const ProductsForm = (props: Props) => {
 	};
 
 	return (
-		<Portal onOutsideClick={() => confirmOnExit(onClose, t)} isOpen animation='none' {...rest}>
+		<Portal
+			onClose={onClose}
+			onOutsideClick={() => dirtyConfirmOnExit(touchedFields, onClose, t)}
+			innerClassName='py--4'
+			isOpen
+			animation='none'
+			{...rest}>
 			<Card>
 				<Card.Header
 					actions={
