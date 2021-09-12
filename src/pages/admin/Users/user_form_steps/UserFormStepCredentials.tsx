@@ -40,7 +40,7 @@ const UserFormStepCredentials = ({ payload, onTouch }) => {
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateCredentialUser, isLoading: isLoadingCredentialsUpdate } = useUserCredentialsUpdate({

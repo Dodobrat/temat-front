@@ -55,7 +55,7 @@ const ShippingPlanStepSummary = ({ payload, onClose, onTouch }: any) => {
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const { mutate: addShippingPlan, isLoading: isLoadingAdd } = useShippingPlanAdd({

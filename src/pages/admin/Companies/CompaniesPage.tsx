@@ -126,7 +126,9 @@ const CompaniesPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.company", { count: 0 })}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.company", { count: 0 })}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>

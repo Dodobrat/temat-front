@@ -40,7 +40,7 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateFiles, isLoading: isLoadingFilesUpdate } = useOrderFilesUpdate({

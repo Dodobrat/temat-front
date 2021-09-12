@@ -205,7 +205,7 @@ const OrdersViewPage = () => {
 		<PageWrapper>
 			<Helmet>
 				<title>
-					Temat | {t("common.order")} #{orderId}
+					{process.env.REACT_APP_NAME} | {t("common.order")} #{orderId}
 				</title>
 			</Helmet>
 			<PageHeader>

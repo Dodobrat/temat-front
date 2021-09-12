@@ -11,7 +11,9 @@ const NotFoundPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.notFound")}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.notFound")}
+				</title>
 			</Helmet>
 			<PageContent>
 				<Heading>404</Heading>

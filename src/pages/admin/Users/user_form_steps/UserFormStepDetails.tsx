@@ -38,7 +38,7 @@ const UserFormStepDetails = ({ payload, onTouch }) => {
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updatePersonalUser, isLoading: isLoadingPersonalUpdate } = useUserPersonalUpdate({

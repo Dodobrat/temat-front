@@ -5,7 +5,11 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ children, ...props }) => {
-	return <div {...props}>&copy; Temat Group {new Date().getFullYear()}</div>;
+	return (
+		<div {...props} className='py--4'>
+			&copy; {process.env.REACT_APP_NAME} | {new Date().getFullYear()}
+		</div>
+	);
 };
 
 export default Footer;

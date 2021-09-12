@@ -16,7 +16,7 @@ const CompaniesViewPage = () => {
 		<PageWrapper>
 			<Helmet>
 				<title>
-					Temat | {t("common.company")} #{id}
+					{process.env.REACT_APP_NAME} | {t("common.company")} #{id}
 				</title>
 			</Helmet>
 			<PageHeader>

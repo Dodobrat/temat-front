@@ -32,7 +32,7 @@ const ShippingPlanStepCompany = ({ withPrefetch, onTouch }: any) => {
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const onSubmit = (data: any) => {

@@ -17,7 +17,7 @@ const UsersViewPage = () => {
 		<PageWrapper>
 			<Helmet>
 				<title>
-					Temat | {t("common.user")} #{id}
+					{process.env.REACT_APP_NAME} | {t("common.user")} #{id}
 				</title>
 			</Helmet>
 			<PageHeader>

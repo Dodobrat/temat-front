@@ -32,7 +32,7 @@ const SidebarContent = forwardRef(({ pages = [] }: Props, ref) => {
 						{sidebarState ? <IconMenu /> : <IconHamburger />}
 					</Button>
 				}
-				extended={<Text className='mb--0'>Temat</Text>}
+				extended={<Text className='mb--0'>{process.env.REACT_APP_NAME}</Text>}
 			/>
 			<AdminLayout.Sidebar.Item
 				as={Link}

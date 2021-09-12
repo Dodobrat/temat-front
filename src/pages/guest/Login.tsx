@@ -44,7 +44,9 @@ const Login = () => {
 	return (
 		<Flex>
 			<Helmet>
-				<title>Temat | {t("common.login")}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.login")}
+				</title>
 			</Helmet>
 			<Flex.Col col={{ base: "12", xs: "10", sm: "8", md: "6" }}>
 				<Card elevation='medium' className='p--base--0 p--sm--4'>

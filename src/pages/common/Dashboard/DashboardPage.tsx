@@ -35,7 +35,9 @@ const DashboardPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.dashboard")}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.dashboard")}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>

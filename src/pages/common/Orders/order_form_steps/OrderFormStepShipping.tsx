@@ -40,7 +40,7 @@ const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = fal
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateDetails, isLoading: isLoadingDetailsUpdate } = useOrderDetailsUpdate({

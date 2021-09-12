@@ -35,7 +35,7 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	useEffect(() => {

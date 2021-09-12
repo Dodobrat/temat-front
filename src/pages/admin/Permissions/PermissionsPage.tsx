@@ -123,7 +123,9 @@ const UsersPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.permission", { count: 0 })}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.permission", { count: 0 })}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>

@@ -17,7 +17,7 @@ const ProductsViewPage = () => {
 		<PageWrapper>
 			<Helmet>
 				<title>
-					Temat | {t("common.product")} #{id}
+					{process.env.REACT_APP_NAME} | {t("common.product")} #{id}
 				</title>
 			</Helmet>
 			<PageHeader>

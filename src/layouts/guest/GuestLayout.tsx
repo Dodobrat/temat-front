@@ -26,7 +26,7 @@ const GuestLayout = () => {
 						<Flex.Col>
 							{/* TUKA E ZA LOGO */}
 							<Heading as='h6' className='auth__brand my--4'>
-								Temat Group
+								{process.env.REACT_APP_NAME} Group
 							</Heading>
 						</Flex.Col>
 						<Flex.Col col='auto'>

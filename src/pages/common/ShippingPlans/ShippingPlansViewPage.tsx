@@ -17,7 +17,7 @@ const ShippingPlansViewPage = () => {
 		<PageWrapper>
 			<Helmet>
 				<title>
-					Temat | {t("common.shippingPlan")} #{id}
+					{process.env.REACT_APP_NAME} | {t("common.shippingPlan")} #{id}
 				</title>
 			</Helmet>
 			<PageHeader>

@@ -37,7 +37,7 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = fal
 	});
 
 	useEffect(() => {
-		onTouch(isDirty);
+		onTouch?.(isDirty);
 	}, [onTouch, isDirty]);
 
 	const { mutateAsync: updateProducts, isLoading: isLoadingProductsUpdate } = useOrderProductUpdate({

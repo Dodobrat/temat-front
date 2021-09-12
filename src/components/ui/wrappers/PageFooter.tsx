@@ -9,7 +9,9 @@ const PageFooter: React.FC<PageFooterProps> = ({ children, ...rest }) => {
 	return (
 		<Container className='py--4 px--3' {...rest}>
 			<Flex spacingX={null} spacingY={null}>
-				<Flex.Col as='span'>&copy; Temat {new Date().getFullYear()}</Flex.Col>
+				<Flex.Col as='span'>
+					&copy; {process.env.REACT_APP_NAME} | {new Date().getFullYear()}
+				</Flex.Col>
 			</Flex>
 		</Container>
 	);

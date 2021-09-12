@@ -66,7 +66,9 @@ const RolesPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.role", { count: 0 })}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.role", { count: 0 })}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>

@@ -67,7 +67,9 @@ const ShippingPlansPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.shippingPlan", { count: 0 })}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.shippingPlan", { count: 0 })}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
