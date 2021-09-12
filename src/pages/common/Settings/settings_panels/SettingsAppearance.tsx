@@ -5,16 +5,32 @@ import { useConfig, SwitchGroup } from "@dodobrat/react-ui-kit";
 import { IconSun, IconMoon } from "../../../../components/ui/icons";
 import SettingsItem from "../SettingsItem";
 import SettingsWrapper from "../SettingsWrapper";
+import { Bg, En } from "../../../../components/ui/flags";
+import { Flex } from "@dodobrat/react-ui-kit";
 
 //Add flags for better UX
 const localeOptions = [
 	{
 		value: "en-US",
-		label: <>English</>,
+		label: (
+			<Flex align='center'>
+				<Flex.Col col='auto'>
+					<En className='dui__icon' />
+				</Flex.Col>
+				<Flex.Col>English</Flex.Col>
+			</Flex>
+		),
 	},
 	{
 		value: "bg-BG",
-		label: <>Български</>,
+		label: (
+			<Flex align='center'>
+				<Flex.Col col='auto'>
+					<Bg className='dui__icon' />
+				</Flex.Col>
+				<Flex.Col>Български</Flex.Col>
+			</Flex>
+		),
 	},
 ];
 
@@ -48,6 +64,7 @@ const SettingsAppearance = () => {
 					classNamePrefix='temat__select'
 					menuPlacement='auto'
 					isSearchable={false}
+					isClearable={false}
 					options={localeOptions}
 					value={localeOptions.find((item) => isCurrentLocale(item.value))}
 					onChange={(option) => i18n.changeLanguage(option.value)}

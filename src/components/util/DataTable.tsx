@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useTable, usePagination, useSortBy, Row, HeaderGroup } from "react-table";
 import { Table, Card, Flex, Text, Button } from "@dodobrat/react-ui-kit";
 import { IconFirstPage, IconBackPage, IconNextPage, IconLastPage, IconArrowDown, IconArrowUp } from "../ui/icons";
@@ -40,6 +40,9 @@ const paginationBtnProps = {
 	pigment: "default",
 	as: Button,
 };
+
+//Using container to reset scroll when switching pages
+const CONTAINER = document?.querySelector(".dui__admin__inner");
 
 const DataTable = ({
 	columns,
@@ -87,7 +90,6 @@ const DataTable = ({
 		usePagination
 	);
 
-	const dataTableRef = useRef(null);
 	const { t } = useTranslation();
 	const { width } = useWindowResize(250);
 
@@ -96,7 +98,7 @@ const DataTable = ({
 	}, [fetchData, pageIndex, pageSize, sortBy]);
 
 	useEffect(() => {
-		dataTableRef.current.scrollIntoView(true);
+		CONTAINER?.scrollTo(0, 0);
 	}, [page, pageSize]);
 
 	const Header = ({ headerGroup }) => {
@@ -188,7 +190,7 @@ const DataTable = ({
 	};
 
 	return (
-		<div className={cn("temat__card__stack", className)} ref={dataTableRef}>
+		<div className={cn("temat__card__stack", className)}>
 			{stackHeader && (
 				<Card elevation={elevation}>
 					<Card.Body id='datatable__header' className='pb--0 pt--2 px--2'></Card.Body>

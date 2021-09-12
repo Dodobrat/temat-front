@@ -40,7 +40,7 @@
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"mkicons": "npx @svgr/cli -d src/components/ui/icons src/components/ui/icons --ref --memo --title-prop --svg-props aria-label=icon --icon --replace-attr-values #000=currentColor --typescript",
-		"mkgraphics": "npx @svgr/cli -d src/components/ui/graphics src/components/ui/graphics --ref --memo --typescript"
+		"mkflags": "npx @svgr/cli -d src/components/ui/flags src/components/ui/flags --ref --memo --icon --typescript"
 	},
 	"eslintConfig": {
 		"extends": [

@@ -29,7 +29,7 @@ const RolesPage = () => {
 				</Flex>
 			</PageHeader>
 			<PageContent>
-				<Tabs activeTab={1}>
+				<Tabs activeTab={0}>
 					<Tabs.Panel tab={t("settings.appearance")}>
 						<SettingsAppearance />
 					</Tabs.Panel>

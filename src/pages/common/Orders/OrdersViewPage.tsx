@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
-import { Heading, Card, Flex, Text, Portal, CollapseFade, Badge, Button, ListGroup } from "@dodobrat/react-ui-kit";
+import { Tooltip, ZoomPortal, Heading, Card, Flex, Text, Portal, CollapseFade, Badge, Button, ListGroup } from "@dodobrat/react-ui-kit";
 // import cn from "classnames";
 
 import { useOrderById, useOrderFileDownloadById, useOrderLabelDownloadById } from "../../../actions/fetchHooks";
@@ -11,7 +11,7 @@ import { useOrderFinish } from "../../../actions/mutateHooks";
 
 import { useAuthContext } from "../../../context/AuthContext";
 
-import { IconClose, LogoPdf } from "../../../components/ui/icons";
+import { IconClose, IconEdit, LogoPdf } from "../../../components/ui/icons";
 import Image from "../../../components/ui/Image";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
@@ -21,6 +21,8 @@ import OrdersViewHistory from "./OrdersViewHistory";
 
 import { parseDate } from "../../../helpers/dateHelpers";
 import { successToast } from "../../../helpers/toastEmitter";
+
+const OrdersUpdateForm = lazy(() => import("./order_forms/OrdersUpdateForm"));
 
 const addressInfo = (order: { address: any }) => {
 	const address = order?.address;
@@ -93,9 +95,11 @@ const OrdersViewPage = () => {
 	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
 	const [clickedFileKey, setClickedFileKey] = useState(null);
 
+	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
 	const [downloadPopUp, setDownloadPopUp] = useState({ state: false, payload: null });
 
 	const closeDownloadPopUp = () => setDownloadPopUp({ state: false, payload: null });
+	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
 
 	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
 
@@ -212,23 +216,39 @@ const OrdersViewPage = () => {
 					<Flex.Col col='auto'>
 						<Button pigment='none'>{parseDate(order?.details?.dateCreated, true) ?? "Date Added"}</Button>
 					</Flex.Col>
-					{userCan("deliveryLabelCreate") && (
-						<Flex.Col col='auto'>
-							<Button pigment='info' onClick={geOrderLabel}>
-								{t("order.getLabel")}
-							</Button>
-						</Flex.Col>
-					)}
-					{userCan("orderFinishPack") && (
-						<Flex.Col col='auto'>
-							<Button
-								pigment='success'
-								onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
-								isLoading={isLoadingFinish}>
-								{order?.details?.status !== "Shipped" ? t("order.finishOrder") : t("order.finished")}
-							</Button>
-						</Flex.Col>
-					)}
+					<Flex.Col col={{ base: "12", md: "auto" }}>
+						<Flex align='center' justify='flex-end'>
+							{userCan(["orderUpdate", "orderUpdateTheir"]) && (
+								<Flex.Col col='auto'>
+									<Tooltip sizing='xs' content={<strong>{t(`action.edit`).toUpperCase()}</strong>}>
+										<Button
+											pigment='warning'
+											equalDimensions
+											onClick={() => setShowOrdersUpdateForm({ state: true, payload: { id: order?.details?.id } })}>
+											<IconEdit />
+										</Button>
+									</Tooltip>
+								</Flex.Col>
+							)}
+							{userCan("deliveryLabelCreate") && (
+								<Flex.Col col='auto'>
+									<Button pigment='info' onClick={geOrderLabel}>
+										{t("order.getLabel")}
+									</Button>
+								</Flex.Col>
+							)}
+							{userCan("orderFinishPack") && (
+								<Flex.Col col='auto'>
+									<Button
+										pigment='success'
+										onClick={() => (order?.details?.status !== "Shipped" ? finishOrder() : null)}
+										isLoading={isLoadingFinish}>
+										{order?.details?.status !== "Shipped" ? t("order.finishOrder") : t("order.finished")}
+									</Button>
+								</Flex.Col>
+							)}
+						</Flex>
+					</Flex.Col>
 				</Flex>
 			</PageHeader>
 			<PageContent>
@@ -445,6 +465,11 @@ const OrdersViewPage = () => {
 					<Card.Body>{downloadPopUp.payload}</Card.Body>
 				</Card>
 			</Portal>
+			<Suspense fallback={<div />}>
+				<ZoomPortal in={showOrdersUpdateForm.state}>
+					<OrdersUpdateForm onClose={closeOrdersUpdateForm} payload={showOrdersUpdateForm.payload} />
+				</ZoomPortal>
+			</Suspense>
 		</PageWrapper>
 	);
 };
