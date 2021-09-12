@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import { PortalWrapper, ConfigProvider } from "@dodobrat/react-ui-kit";
 import { ToastContainer } from "react-toastify";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { MutationCache, QueryClient, QueryClientProvider } from "react-query";
 // import { ReactQueryDevtools } from "react-query/devtools";
 
 import App from "./App";
@@ -16,7 +16,12 @@ import "./i18n";
 
 const halfDay = 1000 * 60 * 60 * 12;
 
+const mutationCache = new MutationCache({
+	onError: (err: any) => errorToast(err),
+});
+
 const queryClient = new QueryClient({
+	mutationCache,
 	defaultOptions: {
 		queries: {
 			retryDelay: 5000,
