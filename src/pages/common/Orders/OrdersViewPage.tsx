@@ -64,8 +64,9 @@ const paymentInfo = (order: { payment: any }) => {
 	const shippingMethod = payment?.shippingMethodName;
 	const paidBy = payment?.shipmentPayeeName;
 	const orderAmount = `${payment?.totalAmount ?? "0"} ${payment?.symbol}`;
+	const currency = payment?.symbol;
 
-	return { shippingMethod, paidBy, orderAmount };
+	return { shippingMethod, paidBy, orderAmount, currency };
 };
 
 const detailsInfo = (order: { details: any; files: any }) => {
@@ -293,7 +294,8 @@ const OrdersViewPage = () => {
 																<Flex wrap='nowrap' align='center'>
 																	<Flex.Col col='auto'>
 																		<Badge sizing='lg' pigment='warning'>
-																			{t("field.price")}: {product?.price}
+																			{t("field.price")}: {product?.price}{" "}
+																			{paymentInfo(order).currency ?? ""}
 																		</Badge>
 																	</Flex.Col>
 																	<Flex.Col col='auto'>
