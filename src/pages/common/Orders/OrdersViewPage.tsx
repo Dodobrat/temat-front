@@ -20,7 +20,7 @@ import { pickPigment } from "../../../components/util/table_cells/OrderStatusCel
 import OrdersViewHistory from "./OrdersViewHistory";
 
 import { parseDate } from "../../../helpers/dateHelpers";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 
 const addressInfo = (order: { address: any }) => {
 	const address = order?.address;
@@ -119,9 +119,6 @@ const OrdersViewPage = () => {
 				files: "true",
 			},
 		},
-		queryConfig: {
-			onError: (err: any) => errorToast(err),
-		},
 		specialKey: { orderId: orderId, filters: ["products", "files"] },
 	});
 
@@ -141,7 +138,6 @@ const OrdersViewPage = () => {
 					),
 				});
 			},
-			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { orderId: orderId },
 	});
@@ -149,7 +145,6 @@ const OrdersViewPage = () => {
 	const { data: file } = useOrderFileDownloadById({
 		queryConfig: {
 			enabled: !!clickedFileKey,
-			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { orderId: orderId, fileKey: clickedFileKey },
 	});
@@ -192,7 +187,6 @@ const OrdersViewPage = () => {
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -433,7 +427,12 @@ const OrdersViewPage = () => {
 					</Flex.Col>
 				</Flex>
 			</PageContent>
-			<Portal animation='zoom' sizing='lg' isOpen={downloadPopUp.state} onClose={closeDownloadPopUp}>
+			<Portal
+				animation='zoom'
+				sizing='lg'
+				isOpen={downloadPopUp.state}
+				onClose={closeDownloadPopUp}
+				onOutsideClick={closeDownloadPopUp}>
 				<Card>
 					<Card.Header
 						actions={

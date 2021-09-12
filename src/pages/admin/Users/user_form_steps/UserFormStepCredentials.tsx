@@ -8,7 +8,7 @@ import { useAuthContext } from "../../../../context/AuthContext";
 
 import { useUserCredentialsUpdate } from "../../../../actions/mutateHooks";
 
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import UserStepCredentials from "../user_steps/UserStepCredentials";
 
 const UserFormStepCredentials = ({ payload, onTouch }) => {
@@ -49,7 +49,6 @@ const UserFormStepCredentials = ({ payload, onTouch }) => {
 				queryClient.invalidateQueries("users");
 				successToast(res);
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

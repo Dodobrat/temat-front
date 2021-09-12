@@ -12,8 +12,6 @@ type FetchQueryType = ({
 	specialKey?: any;
 }) => UseQueryResult<any, unknown>;
 
-const halfDay = 1000 * 60 * 60 * 12;
-
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export const useLoadUser: FetchQueryType = ({ queryConfig, specialKey }) => {
@@ -24,10 +22,10 @@ export const useLoadUser: FetchQueryType = ({ queryConfig, specialKey }) => {
 			return data;
 		},
 		{
-			...queryConfig,
-			enabled: queryConfig?.enabled ?? true,
+			enabled: true,
 			cacheTime: Infinity,
 			staleTime: Infinity,
+			...queryConfig,
 		}
 	);
 };
@@ -41,10 +39,8 @@ export const useOrderStatistics: FetchQueryType = ({ specs, queryConfig, special
 			return data;
 		},
 		{
+			enabled: true,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? true,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -58,11 +54,9 @@ export const usePermissions: FetchQueryType = ({ specs, queryConfig, specialKey 
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -76,11 +70,9 @@ export const useRoles: FetchQueryType = ({ specs, queryConfig, specialKey }) => 
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -94,11 +86,9 @@ export const useProducts: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -111,10 +101,8 @@ export const useProductById: FetchQueryType = ({ specs, queryConfig, specialKey 
 			return data;
 		},
 		{
+			enabled: true,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? true,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -128,11 +116,9 @@ export const useCompanies: FetchQueryType = ({ specs, queryConfig, specialKey })
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -146,11 +132,9 @@ export const useWarehouses: FetchQueryType = ({ specs, queryConfig, specialKey }
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -164,11 +148,9 @@ export const useOrders: FetchQueryType = ({ specs, queryConfig, specialKey }) =>
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -183,10 +165,8 @@ export const useOrderLocate: FetchQueryType = ({ queryConfig, specialKey }) => {
 			return data;
 		},
 		{
+			enabled: false,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -200,10 +180,8 @@ export const useOrderById: FetchQueryType = ({ specs, queryConfig, specialKey })
 			return data;
 		},
 		{
+			enabled: true,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? true,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -218,11 +196,9 @@ export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specia
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -236,10 +212,8 @@ export const useOrderLabelDownloadById: FetchQueryType = ({ specs, queryConfig, 
 			return data;
 		},
 		{
+			enabled: false,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -254,10 +228,8 @@ export const useOrderFileDownloadById: FetchQueryType = ({ specs, queryConfig, s
 			return data;
 		},
 		{
+			enabled: false,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -271,11 +243,9 @@ export const useShippingPlans: FetchQueryType = ({ specs, queryConfig, specialKe
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -289,10 +259,8 @@ export const useShippingPlanById: FetchQueryType = ({ specs, queryConfig, specia
 			return data;
 		},
 		{
+			enabled: true,
 			...queryConfig,
-			enabled: queryConfig?.enabled ?? true,
-			cacheTime: halfDay,
-			staleTime: halfDay,
 		}
 	);
 };
@@ -306,11 +274,9 @@ export const useDeliveryMethods: FetchQueryType = ({ specs, queryConfig, special
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -323,11 +289,9 @@ export const useDeliveryOffices: FetchQueryType = ({ specs, queryConfig, special
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -340,11 +304,9 @@ export const useDeliveryCountries: FetchQueryType = ({ specs, queryConfig, speci
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -358,11 +320,9 @@ export const useDeliveryCities: FetchQueryType = ({ specs, queryConfig, specialK
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -376,11 +336,9 @@ export const useDeliveryStreets: FetchQueryType = ({ specs, queryConfig, special
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -394,11 +352,9 @@ export const useUsers: FetchQueryType = ({ specs, queryConfig, specialKey }) => 
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -416,11 +372,9 @@ export const useCurrency: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -434,11 +388,9 @@ export const usePaymentMethods: FetchQueryType = ({ specs, queryConfig, specialK
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -452,11 +404,9 @@ export const usePhoneCodes: FetchQueryType = ({ specs, queryConfig, specialKey }
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -470,11 +420,9 @@ export const useShippingPaidBy: FetchQueryType = ({ specs, queryConfig, specialK
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };
@@ -488,11 +436,9 @@ export const usePayAfter: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 			return data;
 		},
 		{
-			...queryConfig,
 			keepPreviousData: true,
-			enabled: queryConfig?.enabled ?? false,
-			cacheTime: halfDay,
-			staleTime: halfDay,
+			enabled: false,
+			...queryConfig,
 		}
 	);
 };

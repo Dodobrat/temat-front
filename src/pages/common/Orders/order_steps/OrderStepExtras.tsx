@@ -4,7 +4,7 @@ import { Button, Input, ListGroup, Flex, FormControl } from "@dodobrat/react-ui-
 
 import { useOrderFileDelete } from "../../../../actions/mutateHooks";
 
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import cn from "classnames";
 
 import { IconTrash, LogoPdf } from "../../../../components/ui/icons";
@@ -42,7 +42,6 @@ const OrderStepExtras = ({
 				successToast(res);
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

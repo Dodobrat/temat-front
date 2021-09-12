@@ -10,7 +10,7 @@ import { usePhoneCodes } from "../../../actions/fetchHooks";
 import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
 import PhoneCode from "../../../components/util/PhoneCode";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 import { imageValidator } from "../../../helpers/formValidations";
 
@@ -47,7 +47,6 @@ const CompaniesForm = (props: Props) => {
 				queryClient.invalidateQueries("companies");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -58,7 +57,6 @@ const CompaniesForm = (props: Props) => {
 				queryClient.invalidateQueries("companies");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

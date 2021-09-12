@@ -8,7 +8,7 @@ import { useRoleAdd, useRoleUpdate } from "../../../actions/mutateHooks";
 
 import { IconClose } from "../../../components/ui/icons";
 
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 
 interface Props {
@@ -39,7 +39,6 @@ const RolesForm = (props: Props) => {
 				queryClient.invalidateQueries("roles");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -51,7 +50,6 @@ const RolesForm = (props: Props) => {
 				queryClient.invalidateQueries("roles");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

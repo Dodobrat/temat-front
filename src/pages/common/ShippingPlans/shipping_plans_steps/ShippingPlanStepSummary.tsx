@@ -13,7 +13,7 @@ import CalendarPicker from "../../../../components/util/CalendarPicker";
 import OrderStepProducts from "../../Orders/order_steps/OrderStepProducts";
 
 import { getClosestValidDate } from "../../../../helpers/dateHelpers";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 
 const parseShippingPlanData = (data) => {
 	const parsedData: any = {};
@@ -65,7 +65,6 @@ const ShippingPlanStepSummary = ({ payload, onClose, onTouch }: any) => {
 				queryClient.invalidateQueries("shippingPlans");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -80,7 +79,6 @@ const ShippingPlanStepSummary = ({ payload, onClose, onTouch }: any) => {
 				queryClient.invalidateQueries("shippingPlanById");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

@@ -2,9 +2,6 @@ import { forwardRef, memo, useCallback, useEffect, useMemo, useState } from "rea
 import WindowedSelect from "react-windowed-select";
 import { useDebounce } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
-
-import { errorToast } from "../../helpers/toastEmitter";
-
 interface Props {
 	useFetch: any;
 	querySpecs?: any;
@@ -55,9 +52,6 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 				...queryFilters,
 			},
 			...querySpecs,
-		},
-		queryConfig: {
-			onError: (err: any) => errorToast(err),
 		},
 		specialKey: ["select", queryFilters, querySpecs, querySpecialKey, debouncedSearchString],
 	});

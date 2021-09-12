@@ -9,7 +9,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderProductUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepProducts from "../order_steps/OrderStepProducts";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { parseProductsToFormData } from "../orderHelpers";
 
 const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
@@ -50,7 +50,6 @@ const OrderFormStepProducts = ({ useContext = useOrdersContext, isUpdating = fal
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

@@ -7,7 +7,7 @@ import { useUserAdd } from "../../../../actions/mutateHooks";
 
 import { IconClose } from "../../../../components/ui/icons";
 
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 import UserStepCredentials from "../user_steps/UserStepCredentials";
 import UserStepDetails from "../user_steps/UserStepDetails";
@@ -36,7 +36,6 @@ const UsersForm = (props: Props) => {
 				queryClient.invalidateQueries("users");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

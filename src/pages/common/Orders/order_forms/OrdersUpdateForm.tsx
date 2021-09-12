@@ -9,7 +9,6 @@ import { useOrderById } from "../../../../actions/fetchHooks";
 import OrdersUpdateFormWizard from "./OrdersUpdateFormWizard";
 import { IconClose } from "../../../../components/ui/icons";
 
-import { errorToast } from "../../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
 
 interface Props {
@@ -27,12 +26,6 @@ const OrdersUpdateForm = (props: Props) => {
 			filters: {
 				products: "true",
 				files: "true",
-			},
-		},
-		queryConfig: {
-			onError: (err: any) => {
-				errorToast(err);
-				onClose();
 			},
 		},
 		specialKey: { orderId: payload?.id, filters: ["products", "files"] },

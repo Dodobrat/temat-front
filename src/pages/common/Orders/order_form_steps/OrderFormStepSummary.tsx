@@ -7,7 +7,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderAdd } from "../../../../actions/mutateHooks";
 
 import OrderStepSummary from "../order_steps/OrderStepSummary";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { parseOrderAddData } from "../orderHelpers";
 
 const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }: any) => {
@@ -28,7 +28,6 @@ const OrderFormStepSummary = ({ useContext = useOrdersContext, onClose }: any) =
 				queryClient.invalidateQueries("orders");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

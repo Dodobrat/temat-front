@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
-import { errorToast } from "../helpers/toastEmitter";
 import { useDataTableGenerateType } from "../types/global.types";
 
 const useDataTableGenerate: useDataTableGenerateType = ({ useFetch, columns, actions = [] }) => {
@@ -17,10 +16,6 @@ const useDataTableGenerate: useDataTableGenerateType = ({ useFetch, columns, act
 
 	const { data, refetch, isFetching, isStale } = useFetch({
 		specs: queryParams,
-		queryConfig: {
-			// onSuccess: (data) => console.log(data),
-			onError: (err: any) => errorToast(err),
-		},
 		specialKey: queryParams,
 	});
 

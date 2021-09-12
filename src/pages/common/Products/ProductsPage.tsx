@@ -21,7 +21,7 @@ import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 import { parseDefaultValues } from "../../../helpers/formValidations";
 import { useTranslation } from "react-i18next";
 
@@ -41,7 +41,6 @@ const ProductsPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("products");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -51,7 +50,6 @@ const ProductsPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("products");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

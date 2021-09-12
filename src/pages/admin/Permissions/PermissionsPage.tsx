@@ -8,7 +8,7 @@ import { usePermissionDelete, usePermissionUpdate } from "../../../actions/mutat
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 
 import {
 	IconAdd,
@@ -39,7 +39,6 @@ const UsersPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("permissions");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -49,7 +48,6 @@ const UsersPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("permissions");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

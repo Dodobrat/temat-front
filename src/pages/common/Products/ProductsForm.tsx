@@ -12,7 +12,7 @@ import { useAuthContext } from "../../../context/AuthContext";
 import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { IconClose } from "../../../components/ui/icons";
 
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 import { imageValidator } from "../../../helpers/formValidations";
 import OrderStepProducts from "../Orders/order_steps/OrderStepProducts";
@@ -71,7 +71,6 @@ const ProductsForm = (props: Props) => {
 		},
 		queryConfig: {
 			enabled: !!payload && watchIsCombo > 0,
-			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { productId: payload?.id },
 	});
@@ -125,7 +124,6 @@ const ProductsForm = (props: Props) => {
 				queryClient.invalidateQueries("products");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -137,7 +135,6 @@ const ProductsForm = (props: Props) => {
 				queryClient.invalidateQueries(["productById", { productId: payload?.id }]);
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

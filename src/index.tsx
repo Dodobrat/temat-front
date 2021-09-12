@@ -1,7 +1,5 @@
 import ReactDOM from "react-dom";
-import "./assets/app.scss";
-import "./i18n";
-import { ConfigProvider } from "@dodobrat/react-ui-kit";
+import { PortalWrapper, ConfigProvider } from "@dodobrat/react-ui-kit";
 import { ToastContainer } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "react-query";
 // import { ReactQueryDevtools } from "react-query/devtools";
@@ -11,13 +9,21 @@ import reportWebVitals from "./reportWebVitals";
 import AuthProvider from "./context/AuthContext";
 
 import { GlobalOptions } from "@dodobrat/react-ui-kit/build/helpers/global.types";
-import { PortalWrapper } from "@dodobrat/react-ui-kit";
+import { errorToast } from "./helpers/toastEmitter";
+
+import "./assets/app.scss";
+import "./i18n";
+
+const halfDay = 1000 * 60 * 60 * 12;
 
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			retryDelay: 5000,
 			retry: 0,
+			staleTime: halfDay,
+			cacheTime: halfDay,
+			onError: (err: any) => errorToast(err),
 		},
 	},
 });

@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet";
+import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import { Flex, Form, FormControl, Heading, Input, Button, Card, useLocalStorage } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
@@ -8,9 +9,6 @@ import { useLogin } from "../../actions/mutateHooks";
 import { useAuthContext } from "../../context/AuthContext";
 
 import { IconEye, IconEyeCrossed, IconLock, IconUser } from "../../components/ui/icons";
-
-import { errorToast } from "../../helpers/toastEmitter";
-import { useTranslation } from "react-i18next";
 
 const Login = () => {
 	const { t } = useTranslation();
@@ -33,7 +31,6 @@ const Login = () => {
 				setStorageToken(res.token);
 				setToken(res.token);
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

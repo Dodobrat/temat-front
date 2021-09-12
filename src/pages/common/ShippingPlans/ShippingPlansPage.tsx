@@ -10,7 +10,7 @@ import { useShippingPlanDelete } from "../../../actions/mutateHooks";
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 
 import { IconAdd } from "../../../components/ui/icons";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
@@ -31,7 +31,6 @@ const ShippingPlansPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("shippingPlans");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

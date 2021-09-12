@@ -8,7 +8,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepPayment from "../order_steps/OrderStepPayment";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { parsePaymentToFormData } from "../orderHelpers";
 import { useEffect } from "react";
 
@@ -63,7 +63,6 @@ const OrderFormStepPayment = ({ useContext = useOrdersContext, isUpdating = fals
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

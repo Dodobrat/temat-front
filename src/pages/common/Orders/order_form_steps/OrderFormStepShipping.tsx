@@ -10,7 +10,7 @@ import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepShipping from "../order_steps/OrderStepShipping";
 import { getClosestValidDate } from "../../../../helpers/dateHelpers";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { parseShippingDataToFormData } from "../orderHelpers";
 
 const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
@@ -53,7 +53,6 @@ const OrderFormStepShipping = ({ useContext = useOrdersContext, isUpdating = fal
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

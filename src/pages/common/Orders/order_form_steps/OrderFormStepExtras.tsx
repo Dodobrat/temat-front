@@ -9,7 +9,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 import { useOrderFilesUpdate } from "../../../../actions/mutateHooks";
 
 import OrderStepExtras from "../order_steps/OrderStepExtras";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { parseExtrasToFormData } from "../orderHelpers";
 
 const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false, onTouch }: any) => {
@@ -52,7 +52,6 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 				successToast(res);
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

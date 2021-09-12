@@ -10,7 +10,6 @@ import ShippingPlansFormWizard from "./ShippingPlansFormWizard";
 import { IconClose } from "../../../../components/ui/icons";
 
 import { dirtyConfirmOnExit } from "../../../../helpers/helpers";
-import { errorToast } from "../../../../helpers/toastEmitter";
 
 interface Props {
 	onClose: () => void;
@@ -34,7 +33,6 @@ const ShippingPlansForm = (props: Props) => {
 		},
 		queryConfig: {
 			enabled: !!payload,
-			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { planId: payload?.id, filters: ["products"] },
 	});

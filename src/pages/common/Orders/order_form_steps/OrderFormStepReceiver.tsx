@@ -7,7 +7,7 @@ import { useOrdersContext } from "../../../../context/OrdersContext";
 
 import OrderStepReceiver from "../order_steps/OrderStepReceiver";
 import { useOrderDetailsUpdate } from "../../../../actions/mutateHooks";
-import { errorToast, successToast } from "../../../../helpers/toastEmitter";
+import { successToast } from "../../../../helpers/toastEmitter";
 import { useQueryClient } from "react-query";
 import { parseShippingDataToFormData } from "../orderHelpers";
 
@@ -47,7 +47,6 @@ const OrderFormStepReceiver = ({ useContext = useOrdersContext, isUpdating = fal
 				queryClient.invalidateQueries("orders");
 				queryClient.invalidateQueries("orderById");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

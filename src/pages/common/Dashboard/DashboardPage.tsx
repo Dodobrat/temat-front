@@ -4,7 +4,6 @@ import PageContent from "../../../components/ui/wrappers/PageContent";
 import { Heading, Card } from "@dodobrat/react-ui-kit";
 import { Helmet } from "react-helmet";
 import { useOrderStatistics } from "../../../actions/fetchHooks";
-import { errorToast } from "../../../helpers/toastEmitter";
 import { useAuthContext } from "../../../context/AuthContext";
 import ComingSoon from "../../../components/ui/ComingSoon";
 import { Flex } from "@dodobrat/react-ui-kit";
@@ -26,7 +25,6 @@ const DashboardPage = () => {
 		},
 		queryConfig: {
 			enabled: user.roleName !== "ADMIN",
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

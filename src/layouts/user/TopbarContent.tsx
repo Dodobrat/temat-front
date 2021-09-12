@@ -26,7 +26,6 @@ import { useOrderLocate } from "../../actions/fetchHooks";
 
 import ActionConfirmation from "../../components/util/ActionConfirmation";
 import { IconClose, IconHamburger, IconLogout, IconRadar } from "../../components/ui/icons";
-import { errorToast } from "../../helpers/toastEmitter";
 
 const TopbarContent = () => {
 	const history = useHistory();
@@ -62,7 +61,6 @@ const TopbarContent = () => {
 	const { data, refetch, isFetching } = useOrderLocate({
 		queryConfig: {
 			onSuccess: () => reset({ keyword: "" }),
-			onError: (err: any) => errorToast(err),
 		},
 		specialKey: { orderId: orderSeekKey },
 	});
@@ -123,7 +121,7 @@ const TopbarContent = () => {
 			<ActionConfirmation isOpen={logoutWarning.state} onClose={closeConfirmation} payload={logoutWarning.payload}>
 				<Heading as='h6'>{t("confirmation.logout")}</Heading>
 			</ActionConfirmation>
-			<Portal animation='zoom' isOpen={orderDetailsModal} onClose={closeOrderDetailsModal}>
+			<Portal animation='zoom' isOpen={orderDetailsModal} onClose={closeOrderDetailsModal} onOutsideClick={closeOrderDetailsModal}>
 				<Card>
 					<Card.Header
 						actions={

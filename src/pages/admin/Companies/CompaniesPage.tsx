@@ -10,7 +10,7 @@ import { useCompanyDelete, useCompanyUpdate } from "../../../actions/mutateHooks
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 
 import {
 	IconAdd,
@@ -39,7 +39,6 @@ const CompaniesPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("companies");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -49,7 +48,6 @@ const CompaniesPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("companies");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

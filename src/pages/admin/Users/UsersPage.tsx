@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { PortalWrapper, Input, Tooltip, SlideIn, ZoomPortal, Heading, Flex, Button, useDebounce } from "@dodobrat/react-ui-kit";
 
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 
 import { useUsers } from "../../../actions/fetchHooks";
 import { useUserCredentialsUpdate, useUserDelete } from "../../../actions/mutateHooks";
@@ -43,7 +43,6 @@ const UsersPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("users");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -53,7 +52,6 @@ const UsersPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("users");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

@@ -10,7 +10,7 @@ import { usePermissionAdd, usePermissionUpdate } from "../../../actions/mutateHo
 import { IconClose } from "../../../components/ui/icons";
 import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit, parseRoles } from "../../../helpers/helpers";
 
 interface Props {
@@ -42,7 +42,6 @@ const PermissionsForm = (props: Props) => {
 				queryClient.invalidateQueries("permissions");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
@@ -53,7 +52,6 @@ const PermissionsForm = (props: Props) => {
 				queryClient.invalidateQueries("permissions");
 				onClose();
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 

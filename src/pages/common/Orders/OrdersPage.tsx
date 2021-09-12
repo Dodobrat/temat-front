@@ -10,7 +10,7 @@ import { useOrderDelete } from "../../../actions/mutateHooks";
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
 
 import { useAuthContext } from "../../../context/AuthContext";
-import { errorToast, successToast } from "../../../helpers/toastEmitter";
+import { successToast } from "../../../helpers/toastEmitter";
 
 import {
 	IconAdd,
@@ -40,7 +40,6 @@ const OrdersPage = () => {
 				successToast(res);
 				queryClient.invalidateQueries("orders");
 			},
-			onError: (err: any) => errorToast(err),
 		},
 	});
 
