@@ -13,7 +13,7 @@ interface Props {
 
 const viewKeyProps = {
 	col: { base: "12", sm: "3" },
-	className: "d--flex justify--flex-end",
+	className: "d--flex justify--base--flex-start justify--sm--flex-end",
 };
 const viewValueProps = {
 	col: { base: "12", sm: "9" },
