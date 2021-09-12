@@ -18,8 +18,7 @@ export const parseShippingDataToFormData = (data, formData) => {
 				formData.append(`${street}Name`, entry[1]?.label);
 			} else if (entry[0] === "officeId" && entry[1]?.value) {
 				const office = entry[0].substring(0, 6);
-				const shippingCourier = data?.shippingMethodId?.data?.courierName;
-				formData.append(`${office}Id`, shippingCourier === "speedy" ? entry[1]?.value : entry[1]?.data?.code);
+				formData.append(`${office}Id`, entry[1]?.value);
 				formData.append(`${office}Name`, entry[1]?.label);
 			} else {
 				if (entry[1]?.value) {

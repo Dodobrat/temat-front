@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
 import { Button, Input, ListGroup, Flex, FormControl } from "@dodobrat/react-ui-kit";
 
 import { useOrderFileDelete } from "../../../../actions/mutateHooks";
@@ -28,7 +27,6 @@ const OrderStepExtras = ({
 	}, [dataFiles, setValue]);
 
 	const { t } = useTranslation();
-	const queryClient = useQueryClient();
 
 	const removeFileFromList = (file) => {
 		const newFilesList = watchFiles.filter((item) => item.name !== file.name);
@@ -38,10 +36,7 @@ const OrderStepExtras = ({
 
 	const { mutate: deleteFile, isLoading: isLoadingDelete } = useOrderFileDelete({
 		queryConfig: {
-			onSuccess: (res: any) => {
-				successToast(res);
-				queryClient.invalidateQueries("orderById");
-			},
+			onSuccess: (res: any) => successToast(res),
 		},
 	});
 
