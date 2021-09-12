@@ -59,14 +59,14 @@ const OrderStepProducts = ({
 		[setValue, watchProducts]
 	);
 
-	const specificProductQty = useCallback(
-		(target, product) => {
+	const specificProductValue = useCallback(
+		(target, product, key) => {
 			const newProductList = watchProducts.map((item) => {
 				const IteratedUniqueId = item?.data?.id ?? item?.productId;
 				const ProductUniqueId = product?.data?.id ?? product?.productId;
 
 				if (IteratedUniqueId === ProductUniqueId) {
-					return { ...item, quantity: target.value };
+					return { ...item, [key]: target.value };
 				}
 				return item;
 			});
@@ -76,21 +76,14 @@ const OrderStepProducts = ({
 		[setValue, watchProducts]
 	);
 
-	const specificProductPrice = useCallback(
-		(target, product) => {
-			const newProductList = watchProducts.map((item) => {
-				const IteratedUniqueId = item?.data?.id ?? item?.productId;
-				const ProductUniqueId = product?.data?.id ?? product?.productId;
-
-				if (IteratedUniqueId === ProductUniqueId) {
-					return { ...item, price: target.value };
-				}
-				return item;
-			});
-
-			setValue("products", [...newProductList]);
+	const backspaceRemoveValue = useCallback(
+		(e, product, key) => {
+			if (e.key === "Backspace") {
+				e.target.value = "";
+				specificProductValue(e.target, product, key);
+			}
 		},
-		[setValue, watchProducts]
+		[specificProductValue]
 	);
 
 	const innerSetCompanyId = companyId || watchProducts?.payment?.companyId?.value || watchProducts?.payment?.companyId;
@@ -122,22 +115,24 @@ const OrderStepProducts = ({
 											<Flex.Col col='auto' className='pr--1'>
 												<Input
 													type='number'
-													onFocus={(e) => e.target.select()}
 													step='0.01'
 													suffix={productEntry?.currency}
 													style={{ width: "4rem" }}
-													value={productEntry?.price}
-													onChange={({ target }) => specificProductPrice(target, product)}
+													defaultValue={productEntry?.price}
+													onFocus={(e) => e.target.select()}
+													onKeyDown={(e) => backspaceRemoveValue(e, product, "price")}
+													onChange={({ target }) => specificProductValue(target, product, "price")}
 												/>
 											</Flex.Col>
 											<Flex.Col col='auto' className='px--1'>
 												<Input
 													type='number'
-													onFocus={(e) => e.target.select()}
 													preffix={t("common.qty")}
 													style={{ width: "4rem" }}
-													value={productEntry?.qty}
-													onChange={({ target }) => specificProductQty(target, product)}
+													defaultValue={productEntry?.qty}
+													onFocus={(e) => e.target.select()}
+													onKeyDown={(e) => backspaceRemoveValue(e, product, "price")}
+													onChange={({ target }) => specificProductValue(target, product, "quantity")}
 												/>
 											</Flex.Col>
 											<Flex.Col col='auto' className='pl--1 ml--base--auto ml--sm--0'>

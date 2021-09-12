@@ -44,7 +44,7 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 
 	const _onChange = useCallback((option) => onChange(option), [onChange]);
 
-	const { data, isStale, isFetching, isFetched, refetch } = useFetch({
+	const { data, isStale, isFetching, refetch } = useFetch({
 		specs: {
 			filters: {
 				withColumns: "false",
@@ -57,10 +57,10 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 	});
 
 	useEffect(() => {
-		if (defaultOptions && !isFetched) {
+		if (defaultOptions) {
 			refetch();
 		}
-	}, [defaultOptions, isFetched, refetch]);
+	}, [defaultOptions, refetch]);
 
 	useEffect(() => {
 		if (!isFetchedAtOnce && debouncedSearchString.length >= searchStringLength && isStale) {
