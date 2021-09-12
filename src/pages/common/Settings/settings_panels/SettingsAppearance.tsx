@@ -2,9 +2,9 @@ import { useTranslation } from "react-i18next";
 import WindowedSelect from "react-windowed-select";
 import { useConfig, SwitchGroup } from "@dodobrat/react-ui-kit";
 
-import { IconSun, IconMoon } from "../../../components/ui/icons";
-import SettingsItem from "./SettingsItem";
-import SettingsWrapper from "./SettingsWrapper";
+import { IconSun, IconMoon } from "../../../../components/ui/icons";
+import SettingsItem from "../SettingsItem";
+import SettingsWrapper from "../SettingsWrapper";
 
 //Add flags for better UX
 const localeOptions = [
@@ -41,8 +41,9 @@ const SettingsAppearance = () => {
 					activeOption={dark}
 				/>
 			</SettingsItem>
-			<SettingsItem title={t("settings.changeLocale")}>
+			<SettingsItem title={t("settings.changeLocale")} htmlFor='changeLocale'>
 				<WindowedSelect
+					inputId='changeLocale'
 					className='temat__select__container'
 					classNamePrefix='temat__select'
 					menuPlacement='auto'

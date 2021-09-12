@@ -166,6 +166,7 @@
 	},
 	"settings": {
 		"appearance": "Appearance",
+		"profile": "Profile",
 		"changeTheme": "Change Theme",
 		"changeLocale": "Change Language"
 	},

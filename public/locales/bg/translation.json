@@ -166,6 +166,7 @@
 	},
 	"settings": {
 		"appearance": "Изглед",
+		"profile": "Профил",
 		"changeTheme": "Смени Тема",
 		"changeLocale": "Смени Език"
 	},

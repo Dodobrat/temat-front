@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useTable, usePagination, useSortBy, Row, HeaderGroup } from "react-table";
 import { Table, Card, Flex, Text, Button } from "@dodobrat/react-ui-kit";
 import { IconFirstPage, IconBackPage, IconNextPage, IconLastPage, IconArrowDown, IconArrowUp } from "../ui/icons";
@@ -69,7 +68,7 @@ const DataTable = ({
 		previousPage,
 		setPageSize,
 		state: { pageIndex, pageSize, sortBy },
-	} = useTable(
+	}: any = useTable(
 		{
 			columns,
 			data,
@@ -83,17 +82,22 @@ const DataTable = ({
 			pageCount: serverPageCount + 1,
 			autoResetPage: false,
 			autoResetSortBy: false,
-		},
+		} as any,
 		useSortBy,
 		usePagination
 	);
 
+	const dataTableRef = useRef(null);
 	const { t } = useTranslation();
 	const { width } = useWindowResize(250);
 
 	useEffect(() => {
 		fetchData({ pageIndex, pageSize, sortBy });
 	}, [fetchData, pageIndex, pageSize, sortBy]);
+
+	useEffect(() => {
+		dataTableRef.current.scrollIntoView(true);
+	}, [page, pageSize]);
 
 	const Header = ({ headerGroup }) => {
 		return (
@@ -184,7 +188,7 @@ const DataTable = ({
 	};
 
 	return (
-		<div className={cn("temat__card__stack", className)}>
+		<div className={cn("temat__card__stack", className)} ref={dataTableRef}>
 			{stackHeader && (
 				<Card elevation={elevation}>
 					<Card.Body id='datatable__header' className='pb--0 pt--2 px--2'></Card.Body>

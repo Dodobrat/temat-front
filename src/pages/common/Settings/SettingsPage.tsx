@@ -1,10 +1,13 @@
-import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
-import PageHeader from "../../../components/ui/wrappers/PageHeader";
-import PageContent from "../../../components/ui/wrappers/PageContent";
 import { Helmet } from "react-helmet";
 import { Heading, Flex, Tabs } from "@dodobrat/react-ui-kit";
 import { useTranslation } from "react-i18next";
-import SettingsAppearance from "./SettingsAppearance";
+
+import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
+import PageHeader from "../../../components/ui/wrappers/PageHeader";
+import PageContent from "../../../components/ui/wrappers/PageContent";
+
+import SettingsAppearance from "./settings_panels/SettingsAppearance";
+import SettingsProfile from "./settings_panels/SettingsProfile";
 
 const RolesPage = () => {
 	const { t } = useTranslation();
@@ -12,7 +15,9 @@ const RolesPage = () => {
 	return (
 		<PageWrapper>
 			<Helmet>
-				<title>Temat | {t("common.settings")}</title>
+				<title>
+					{process.env.REACT_APP_NAME} | {t("common.settings")}
+				</title>
 			</Helmet>
 			<PageHeader>
 				<Flex align='center'>
@@ -24,9 +29,12 @@ const RolesPage = () => {
 				</Flex>
 			</PageHeader>
 			<PageContent>
-				<Tabs activeTab={0}>
+				<Tabs activeTab={1}>
 					<Tabs.Panel tab={t("settings.appearance")}>
 						<SettingsAppearance />
+					</Tabs.Panel>
+					<Tabs.Panel tab={t("settings.profile")}>
+						<SettingsProfile />
 					</Tabs.Panel>
 				</Tabs>
 			</PageContent>
