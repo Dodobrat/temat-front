@@ -53,20 +53,24 @@ const WindowedAsyncSelect = forwardRef((props: Props, ref) => {
 			},
 			...querySpecs,
 		},
+		queryConfig: {
+			enabled: false,
+		},
 		specialKey: ["select", queryFilters, querySpecs, querySpecialKey, debouncedSearchString],
 	});
 
 	useEffect(() => {
-		if (defaultOptions) {
+		if (defaultOptions && isStale) {
 			refetch();
 		}
-	}, [defaultOptions, refetch]);
+		//eslint-disable-next-line
+	}, []);
 
 	useEffect(() => {
 		if (!isFetchedAtOnce && debouncedSearchString.length >= searchStringLength && isStale) {
 			refetch();
 		}
-	}, [debouncedSearchString, refetch, isStale, searchStringLength, isFetchedAtOnce]);
+	}, [isFetchedAtOnce, debouncedSearchString, searchStringLength, refetch, isStale]);
 
 	const parsedOptions = useMemo(() => {
 		if (data) {

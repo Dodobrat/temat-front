@@ -24,7 +24,6 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 	const watchDelivery = watch("shippingMethodId", initialData?.shippingMethodId);
 	const watchCountry = watch("country");
 	const watchCity = watch("city");
-	const watchStreet = watch("streetName");
 
 	const handleDeliveryTypeOnChange = useCallback(
 		(option) => {
@@ -296,7 +295,6 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 												labelComponent={(item) => (currLocale === "bg" ? item?.name : item?.nameEn)}
 												filterKey={currLocale === "bg" ? "name" : "nameEn"}
 												placeholder={t("field.select", { field: t("field.streetName") })}
-												defaultOptions={!!watchCountry?.value && !!watchCity?.value && !watchStreet?.value}
 												className={cn({
 													"temat__select__container--danger": errors?.streetName,
 												})}
