@@ -126,6 +126,74 @@ export const useCompanyDelete = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
+//INVOICES
+export const useInvoiceAdd = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/invoices`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useInvoiceUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/invoices/${specs?.id}`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const useInvoiceDelete = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/invoices/${data}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+//PARTNERS
+export const usePartnerAdd = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.post(`${apiUrl}/partners`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const usePartnerUpdate = ({ specs, queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/partners/${specs?.id}`, data, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
+export const usePartnerDelete = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.delete(`${apiUrl}/partners/${data}`, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 //PRODUCTS
 export const useProductAdd = ({ queryConfig }: MutateHookType) => {
 	return useMutation(
@@ -138,10 +206,10 @@ export const useProductAdd = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
-export const useProductUpdate = ({ queryConfig }: MutateHookType) => {
+export const useProductUpdate = ({ specs, queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
-			return await axios.patch(`${apiUrl}/products/${data?.id}`, data?.formData, config).then((res) => res.data);
+			return await axios.patch(`${apiUrl}/products/${specs?.id}`, data, config).then((res) => res.data);
 		},
 		{
 			...queryConfig,

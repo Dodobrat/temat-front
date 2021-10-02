@@ -20,6 +20,11 @@ const EmptyEntry = () => {
 const ProductsDetails = ({ products, ...rest }) => {
 	const { t } = useTranslation();
 	if (products.length === 0) return <EmptyEntry />;
+	const totalAmount = products?.reduce((prev, curr) => {
+		const productCost = parseInt(curr?.quantity) * Number(curr?.price);
+		return prev + productCost;
+	}, 0);
+	const totalAmountFinal = `${parseFloat(totalAmount.toString()).toFixed(2)} ${products[0]?.currency}`;
 	return (
 		<ListGroup elevation='none'>
 			{products.map((entry) => (
@@ -38,6 +43,12 @@ const ProductsDetails = ({ products, ...rest }) => {
 					</Flex>
 				</ListGroup.Item>
 			))}
+			<ListGroup.Item>
+				<Flex>
+					<Flex.Col>{t("common.total")}</Flex.Col>
+					<Flex.Col col='auto'>{totalAmountFinal}</Flex.Col>
+				</Flex>
+			</ListGroup.Item>
 		</ListGroup>
 	);
 };

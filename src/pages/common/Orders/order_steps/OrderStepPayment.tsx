@@ -43,7 +43,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 								isClearable={false}
 								isSearchable={false}
 								className={cn({
-									"temat__select__container--danger": errors?.phoneCodeId,
+									"temat__select__container--danger": errors?.paymentMethodId,
 								})}
 								{...field}
 							/>
@@ -78,7 +78,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 								isClearable={false}
 								isSearchable={false}
 								className={cn({
-									"temat__select__container--danger": errors?.phoneCodeId,
+									"temat__select__container--danger": errors?.currencyId,
 								})}
 								{...field}
 							/>

@@ -21,6 +21,7 @@ import OrdersViewHistory from "./OrdersViewHistory";
 
 import { parseDate } from "../../../helpers/dateHelpers";
 import { successToast } from "../../../helpers/toastEmitter";
+import { parseBaseLink } from "../../../helpers/helpers";
 
 const OrdersUpdateForm = lazy(() => import("./order_forms/OrdersUpdateForm"));
 
@@ -104,19 +105,6 @@ const OrdersViewPage = () => {
 
 	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
 
-	const parseLabelLink = (data) => {
-		const { link, file } = data?.data;
-		let fileURL: string;
-
-		if (link) {
-			fileURL = link;
-		} else if (file) {
-			fileURL = `data:application/pdf;base64,${encodeURI(file)}`;
-		}
-
-		return fileURL;
-	};
-
 	const { data: orderData } = useOrderById({
 		specs: {
 			filters: {
@@ -127,7 +115,7 @@ const OrdersViewPage = () => {
 		specialKey: { orderId: orderId, filters: ["products", "files"] },
 	});
 
-	const { data: label, refetch: geOrderLabel } = useOrderLabelDownloadById({
+	const { data: label, refetch: getOrderLabel } = useOrderLabelDownloadById({
 		queryConfig: {
 			onSuccess: (res) => {
 				setDownloadPopUp({
@@ -138,7 +126,7 @@ const OrdersViewPage = () => {
 							width='100%'
 							height='100%'
 							style={{ border: "none", minHeight: "60vh" }}
-							src={parseLabelLink(res)}
+							src={parseBaseLink(res)}
 						/>
 					),
 				});
@@ -164,7 +152,7 @@ const OrdersViewPage = () => {
 						width='100%'
 						height='100%'
 						style={{ border: "none", minHeight: "60vh" }}
-						src={parseLabelLink(label)}
+						src={parseBaseLink(label)}
 					/>
 				),
 			}));
@@ -233,7 +221,7 @@ const OrdersViewPage = () => {
 							)}
 							{userCan("deliveryLabelCreate") && (
 								<Flex.Col col='auto'>
-									<Button pigment='info' onClick={geOrderLabel}>
+									<Button pigment='info' onClick={getOrderLabel}>
 										{t("order.getLabel")}
 									</Button>
 								</Flex.Col>

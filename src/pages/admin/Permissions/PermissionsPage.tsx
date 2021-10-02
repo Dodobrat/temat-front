@@ -1,7 +1,7 @@
 import { useEffect, useState, Suspense, lazy } from "react";
 import { Helmet } from "react-helmet";
 import { useQueryClient } from "react-query";
-import { Heading, Flex, Button, PortalWrapper, Input, Tooltip, ZoomPortal, useDebounce, SlideIn } from "@dodobrat/react-ui-kit";
+import { Heading, Flex, Button, PortalWrapper, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
 
 import { usePermissions } from "../../../actions/fetchHooks";
 import { usePermissionDelete, usePermissionUpdate } from "../../../actions/mutateHooks";
@@ -13,14 +13,13 @@ import { successToast } from "../../../helpers/toastEmitter";
 import {
 	IconAdd,
 	// IconFilter,
-	IconErrorCircle,
-	IconSearch,
 } from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import { useTranslation } from "react-i18next";
+import TableSearch from "../../../components/util/TableSearch";
 
 const PermissionsForm = lazy(() => import("./PermissionsForm"));
 const PermissionsDrawer = lazy(() => import("./PermissionsDrawer"));
@@ -85,8 +84,7 @@ const UsersPage = () => {
 		],
 	});
 
-	const [searchString, setSearchString] = useState("");
-	const [searchStringError, setSearchStringError] = useState(false);
+	const [debouncedSearchString, setDebouncedSearchString] = useState("");
 	const [showFilters, setShowFilters] = useState(false);
 	const [showPermissionForm, setShowPermissionForm] = useState({ state: false, payload: null });
 	const [viewPermission, setViewPermission] = useState({ state: false, payload: null });
@@ -94,19 +92,6 @@ const UsersPage = () => {
 	const closeFilters = () => setShowFilters(false);
 	const closePermissionsForm = () => setShowPermissionForm((prev) => ({ ...prev, state: false }));
 	const closePermissionView = () => setViewPermission((prev) => ({ ...prev, state: false }));
-
-	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
-
-	const handleOnSearchChange = (e: any) => {
-		const stringValue = e.target.value;
-		setSearchString(stringValue);
-
-		if (stringValue.length === 1) {
-			setSearchStringError(true);
-		} else {
-			setSearchStringError(false);
-		}
-	};
 
 	useEffect(() => {
 		setQueryParams((prev) => ({
@@ -145,24 +130,7 @@ const UsersPage = () => {
 				<PortalWrapper element={datatableHeader ?? null}>
 					<Flex className='w--100' disableNegativeSpace>
 						<Flex.Col>
-							<Input
-								type='search'
-								className='temat__table__search'
-								placeholder={t("common.searchBy", { keyword: t("field.name") })}
-								value={searchString}
-								onChange={handleOnSearchChange}
-								pigment={searchStringError ? "danger" : "primary"}
-								preffix={<IconSearch className='dui__icon' />}
-								suffix={
-									searchStringError && (
-										<Tooltip content={t("validation.minLength", { value: 2 })}>
-											<div>
-												<IconErrorCircle className='text--danger dui__icon' />
-											</div>
-										</Tooltip>
-									)
-								}
-							/>
+							<TableSearch onSearch={(val) => setDebouncedSearchString(val)} />
 						</Flex.Col>
 						{/* <Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import { Heading, Flex, Button, ZoomPortal, SlideIn, useDebounce, PortalWrapper, Input, Tooltip } from "@dodobrat/react-ui-kit";
+import { Heading, Flex, Button, ZoomPortal, SlideIn, PortalWrapper } from "@dodobrat/react-ui-kit";
 
 import { useCompanies } from "../../../actions/fetchHooks";
 import { useCompanyDelete, useCompanyUpdate } from "../../../actions/mutateHooks";
@@ -14,14 +14,13 @@ import { successToast } from "../../../helpers/toastEmitter";
 
 import {
 	IconAdd,
-	IconErrorCircle,
 	// IconFilter,
-	IconSearch,
 } from "../../../components/ui/icons";
 import DataTable from "../../../components/util/DataTable";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
+import TableSearch from "../../../components/util/TableSearch";
 
 const CompaniesForm = lazy(() => import("./CompaniesForm"));
 const CompaniesDrawer = lazy(() => import("./CompaniesDrawer"));
@@ -90,26 +89,12 @@ const CompaniesPage = () => {
 		],
 	});
 
-	const [searchString, setSearchString] = useState("");
-	const [searchStringError, setSearchStringError] = useState(false);
+	const [debouncedSearchString, setDebouncedSearchString] = useState("");
 	const [showCompaniesForm, setShowCompaniesForm] = useState({ state: false, payload: null });
 	const [showFilters, setShowFilters] = useState(false);
 
 	const closeCompaniesForm = () => setShowCompaniesForm((prev) => ({ ...prev, state: false }));
 	const closeFilters = () => setShowFilters(false);
-
-	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
-
-	const handleOnSearchChange = (e: any) => {
-		const stringValue = e.target.value;
-		setSearchString(stringValue);
-
-		if (stringValue.length === 1) {
-			setSearchStringError(true);
-		} else {
-			setSearchStringError(false);
-		}
-	};
 
 	useEffect(() => {
 		setQueryParams((prev) => ({
@@ -148,24 +133,7 @@ const CompaniesPage = () => {
 				<PortalWrapper element={datatableHeader ?? null}>
 					<Flex className='w--100' disableNegativeSpace>
 						<Flex.Col>
-							<Input
-								type='search'
-								className='temat__table__search'
-								placeholder={t("common.searchBy", { keyword: t("field.name") })}
-								value={searchString}
-								onChange={handleOnSearchChange}
-								pigment={searchStringError ? "danger" : "primary"}
-								preffix={<IconSearch className='dui__icon' />}
-								suffix={
-									searchStringError && (
-										<Tooltip content={t("validation.minLength", { value: 2 })}>
-											<div>
-												<IconErrorCircle className='text--danger dui__icon' />
-											</div>
-										</Tooltip>
-									)
-								}
-							/>
+							<TableSearch onSearch={(val) => setDebouncedSearchString(val)} />
 						</Flex.Col>
 						{/* <Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>

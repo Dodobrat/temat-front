@@ -77,6 +77,53 @@ export const useRoles: FetchQueryType = ({ specs, queryConfig, specialKey }) => 
 	);
 };
 
+//INVOICES
+export const useInvoices: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["invoices", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/invoices?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+export const useInvoicePDF: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["invoicePDF", specialKey],
+		async ({ queryKey }) => {
+			const invoiceId = queryKey[1]?.id;
+			const { data } = await axios.get(`${apiUrl}/invoices/${invoiceId}/pdf?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+//PARTNERS
+export const usePartners: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["partners", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/partners?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
 //PRODUCTS
 export const useProducts: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(

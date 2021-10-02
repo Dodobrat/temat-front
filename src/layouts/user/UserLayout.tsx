@@ -19,6 +19,7 @@ import {
 	IconArchive,
 	IconReceipt,
 	IconSettings,
+	IconAssignment,
 } from "../../components/ui/icons";
 import SidebarContent from "./SidebarContent";
 import TopbarContent from "./TopbarContent";
@@ -34,12 +35,15 @@ const CompaniesPage = lazy(() => import("../../pages/admin/Companies/CompaniesPa
 const DashboardPage = lazy(() => import("../../pages/common/Dashboard/DashboardPage"));
 const ProductsPage = lazy(() => import("../../pages/common/Products/ProductsPage"));
 const OrdersPage = lazy(() => import("../../pages/common/Orders/OrdersPage"));
+const PartnersPage = lazy(() => import("../../pages/common/Partners/PartnersPage"));
+const InvoicesPage = lazy(() => import("../../pages/common/Invoices/InvoicesPage"));
 const ShippingPlansPage = lazy(() => import("../../pages/common/ShippingPlans/ShippingPlansPage"));
 const SettingsPage = lazy(() => import("../../pages/common/Settings/SettingsPage"));
 //VIEW PAGES
 const UsersViewPage = lazy(() => import("../../pages/admin/Users/UsersViewPage"));
 const CompaniesViewPage = lazy(() => import("../../pages/admin/Companies/CompaniesViewPage"));
 const ProductsViewPage = lazy(() => import("../../pages/common/Products/ProductsViewPage"));
+const PartnersViewPage = lazy(() => import("../../pages/common/Partners/PartnersViewPage"));
 const OrdersViewPage = lazy(() => import("../../pages/common/Orders/OrdersViewPage"));
 const ShippingPlansViewPage = lazy(() => import("../../pages/common/ShippingPlans/ShippingPlansViewPage"));
 // FALLBACK
@@ -113,6 +117,20 @@ const UserLayout = () => {
 				permission: "routeCompanies",
 			},
 			{
+				path: "/app/partners",
+				component: PartnersPage,
+				icon: <IconUsers />,
+				label: t("common.partner", { count: 0 }),
+				permission: "routePartners",
+			},
+			{
+				path: "/app/invoices",
+				component: InvoicesPage,
+				icon: <IconAssignment />,
+				label: t("common.invoice", { count: 0 }),
+				permission: "routeInvoices",
+			},
+			{
 				path: "/app/permissions",
 				component: PermissionsPage,
 				icon: <IconRule />,
@@ -148,6 +166,11 @@ const UserLayout = () => {
 				path: "/app/products/:id",
 				component: ProductsViewPage,
 				permission: "productReadSingle",
+			},
+			{
+				path: "/app/partners/:id",
+				component: PartnersViewPage,
+				permission: "partnerReadSingle",
 			},
 			{
 				path: "/app/orders/:id",

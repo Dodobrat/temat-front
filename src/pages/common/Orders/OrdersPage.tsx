@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import { useDebounce, Flex, Heading, Button, PortalWrapper, Input, Tooltip, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
+import { Flex, Heading, Button, PortalWrapper, ZoomPortal, SlideIn } from "@dodobrat/react-ui-kit";
 
 import { useOrders } from "../../../actions/fetchHooks";
 import { useOrderDelete } from "../../../actions/mutateHooks";
@@ -14,14 +14,13 @@ import { successToast } from "../../../helpers/toastEmitter";
 
 import {
 	IconAdd,
-	IconErrorCircle,
 	// IconFilter,
-	IconSearch,
 } from "../../../components/ui/icons";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 import DataTable from "../../../components/util/DataTable";
+import TableSearch from "../../../components/util/TableSearch";
 
 const OrdersForm = lazy(() => import("./order_forms/OrdersForm"));
 const OrdersUpdateForm = lazy(() => import("./order_forms/OrdersUpdateForm"));
@@ -71,8 +70,7 @@ const OrdersPage = () => {
 		],
 	});
 
-	const [searchString, setSearchString] = useState("");
-	const [searchStringError, setSearchStringError] = useState(false);
+	const [debouncedSearchString, setDebouncedSearchString] = useState("");
 	const [showOrdersForm, setShowOrdersForm] = useState({ state: false });
 	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
 	const [showFilters, setShowFilters] = useState(false);
@@ -80,19 +78,6 @@ const OrdersPage = () => {
 	const closeOrdersForm = () => setShowOrdersForm(() => ({ state: false }));
 	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
 	const closeFilters = () => setShowFilters(false);
-
-	const debouncedSearchString = useDebounce(!searchStringError ? searchString : "", 500);
-
-	const handleOnSearchChange = (e: any) => {
-		const stringValue = e.target.value;
-		setSearchString(stringValue);
-
-		if (stringValue.length === 1) {
-			setSearchStringError(true);
-		} else {
-			setSearchStringError(false);
-		}
-	};
 
 	useEffect(() => {
 		setQueryParams((prev) => ({
@@ -131,24 +116,7 @@ const OrdersPage = () => {
 				<PortalWrapper element={datatableHeader ?? null}>
 					<Flex className='w--100' disableNegativeSpace>
 						<Flex.Col>
-							<Input
-								type='search'
-								className='temat__table__search'
-								placeholder={t("common.searchBy", { keyword: t("field.name") })}
-								value={searchString}
-								onChange={handleOnSearchChange}
-								pigment={searchStringError ? "danger" : "primary"}
-								preffix={<IconSearch className='dui__icon' />}
-								suffix={
-									searchStringError && (
-										<Tooltip content={t("validation.minLength", { value: 2 })}>
-											<div>
-												<IconErrorCircle className='text--danger dui__icon' />
-											</div>
-										</Tooltip>
-									)
-								}
-							/>
+							<TableSearch onSearch={(val) => setDebouncedSearchString(val)} />
 						</Flex.Col>
 						{/* <Flex.Col col='auto'>
 							<Button pigment='warning' onClick={() => setShowFilters(true)} iconStart={<IconFilter />}>
