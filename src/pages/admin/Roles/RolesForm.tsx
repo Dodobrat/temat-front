@@ -1,6 +1,6 @@
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
-import { Form, Portal, Card, Text, Button, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
+import { Form, Portal, Card, Text, Button, Flex, FormControl, InputComponent, TextAreaComponent } from "@dodobrat/react-ui-kit";
 import { Controller, useForm } from "react-hook-form";
 import cn from "classnames";
 
@@ -93,17 +93,13 @@ const RolesForm = (props: Props) => {
 									})}
 									hintMsg={errors?.name?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.name")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.name ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.name")}
+												pigment={errors?.name ? "danger" : "primary"}
+											/>
+										)}
 										name='name'
 										control={control}
 										defaultValue=''
@@ -130,19 +126,13 @@ const RolesForm = (props: Props) => {
 									})}
 									hintMsg={errors?.description?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<TextArea
-													placeholder={t("field.description")}
-													{...fieldRest}
-													innerRef={ref}
-													// maxLength={250}
-													withCharacterCount={false}
-													pigment={errors?.description ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<TextAreaComponent
+												{...field}
+												placeholder={t("field.description")}
+												pigment={errors?.description ? "danger" : "primary"}
+											/>
+										)}
 										name='description'
 										control={control}
 										defaultValue=''

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Controller, useForm } from "react-hook-form";
-import { Form, Button, Flex, TextArea, FormControl, PortalWrapper } from "@dodobrat/react-ui-kit";
+import { Form, Button, Flex, TextAreaComponent, FormControl, PortalWrapper } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { useShippingPlanAdd, useShippingPlanUpdate } from "../../../../actions/mutateHooks";
@@ -141,19 +141,13 @@ const ShippingPlanStepSummary = ({ payload, onClose, onTouch }: any) => {
 						})}
 						hintMsg={errors?.extraInfo?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<TextArea
-										placeholder={t("field.note")}
-										{...fieldRest}
-										innerRef={ref}
-										// maxLength={250}
-										withCharacterCount={false}
-										pigment={errors?.extraInfo ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<TextAreaComponent
+									{...field}
+									placeholder={t("field.note")}
+									pigment={errors?.extraInfo ? "danger" : "primary"}
+								/>
+							)}
 							name='extraInfo'
 							control={control}
 							defaultValue=''

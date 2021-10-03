@@ -115,6 +115,17 @@ export const useCompanyUpdate = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
+export const useCompanyUpdateDetails = ({ queryConfig }: MutateHookType) => {
+	return useMutation(
+		async (data: any) => {
+			return await axios.patch(`${apiUrl}/companies/${data?.id}/details`, data?.formData, config).then((res) => res.data);
+		},
+		{
+			...queryConfig,
+		}
+	);
+};
+
 export const useCompanyDelete = ({ queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
@@ -131,28 +142,6 @@ export const useInvoiceAdd = ({ queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
 			return await axios.post(`${apiUrl}/invoices`, data, config).then((res) => res.data);
-		},
-		{
-			...queryConfig,
-		}
-	);
-};
-
-export const useInvoiceUpdate = ({ specs, queryConfig }: MutateHookType) => {
-	return useMutation(
-		async (data: any) => {
-			return await axios.patch(`${apiUrl}/invoices/${specs?.id}`, data, config).then((res) => res.data);
-		},
-		{
-			...queryConfig,
-		}
-	);
-};
-
-export const useInvoiceDelete = ({ queryConfig }: MutateHookType) => {
-	return useMutation(
-		async (data: any) => {
-			return await axios.delete(`${apiUrl}/invoices/${data}`, config).then((res) => res.data);
 		},
 		{
 			...queryConfig,

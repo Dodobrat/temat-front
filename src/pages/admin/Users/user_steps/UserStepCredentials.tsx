@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
-import { Flex, Input, FormControl } from "@dodobrat/react-ui-kit";
+import { Flex, FormControl } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
-import { IconEyeCrossed, IconEye } from "../../../../components/ui/icons";
 import { useCompanies, useRoles, useWarehouses } from "../../../../actions/fetchHooks";
 
 import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
+import { InputComponent } from "@dodobrat/react-ui-kit";
+import PasswordInput from "../../../../components/forms/PasswordInput";
 
 interface Props {
 	payload?: any;
@@ -29,19 +30,14 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 					})}
 					hintMsg={errors?.username?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<Input
-									name='username'
-									placeholder={t("field.username")}
-									{...fieldRest}
-									innerRef={ref}
-									disabled={!!payload}
-									pigment={errors?.username ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => (
+							<InputComponent
+								{...field}
+								placeholder={t("field.username")}
+								disabled={!!payload}
+								pigment={errors?.username ? "danger" : "primary"}
+							/>
+						)}
 						name='username'
 						control={control}
 						defaultValue=''
@@ -105,21 +101,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 					})}
 					hintMsg={errors?.password?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<Input
-									type='password'
-									placeholder={t("field.password")}
-									passwordRevealComponent={(isVisible) =>
-										isVisible ? <IconEyeCrossed className='dui__icon' /> : <IconEye className='dui__icon' />
-									}
-									{...fieldRest}
-									innerRef={ref}
-									pigment={errors?.password ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => <PasswordInput {...field} pigment={errors?.password ? "danger" : "primary"} />}
 						name='password'
 						control={control}
 						defaultValue=''
@@ -142,21 +124,7 @@ const UserStepCredentials = ({ payload, formProps: { control, errors, watch } }:
 					})}
 					hintMsg={errors?.confirmPassword?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<Input
-									type='password'
-									placeholder={t("field.confirmPassword")}
-									passwordRevealComponent={(isVisible) =>
-										isVisible ? <IconEyeCrossed className='dui__icon' /> : <IconEye className='dui__icon' />
-									}
-									{...fieldRest}
-									innerRef={ref}
-									pigment={errors?.confirmPassword ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => <PasswordInput {...field} pigment={errors?.confirmPassword ? "danger" : "primary"} />}
 						name='confirmPassword'
 						control={control}
 						defaultValue=''

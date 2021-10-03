@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Controller, useForm } from "react-hook-form";
-import { Input, Form } from "@dodobrat/react-ui-kit";
+import { Button, FormControl, Flex, InputComponent, Form } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { useAuthContext } from "../../../../context/AuthContext";
@@ -17,9 +17,6 @@ import SettingsWrapper from "../SettingsWrapper";
 import { imageValidator } from "../../../../helpers/formValidations";
 import { successToast } from "../../../../helpers/toastEmitter";
 import Image from "../../../../components/ui/Image";
-import { Flex } from "@dodobrat/react-ui-kit";
-import { FormControl } from "@dodobrat/react-ui-kit";
-import { Button } from "@dodobrat/react-ui-kit";
 
 const SettingsProfile = () => {
 	const { t } = useTranslation();
@@ -97,7 +94,7 @@ const SettingsProfile = () => {
 						hintMsg={errors?.image?.message}>
 						<Controller
 							render={({ field }) => {
-								const { ref, onChange, value, ...fieldRest } = field;
+								const { onChange, value, ...fieldRest } = field;
 								return (
 									<Flex wrap='nowrap'>
 										<Flex.Col col='auto'>
@@ -110,14 +107,13 @@ const SettingsProfile = () => {
 											</div>
 										</Flex.Col>
 										<Flex.Col>
-											<Input
+											<InputComponent
 												type='file'
 												accept='image/*'
 												placeholder={t("field.image")}
 												{...fieldRest}
 												onChange={(e) => onChange(e.target.files)}
 												value={value?.[0]?.filename}
-												innerRef={ref}
 												pigment={errors?.image ? "danger" : "primary"}
 											/>
 										</Flex.Col>
@@ -141,18 +137,13 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.firstName?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										name='firstName'
-										placeholder={t("field.firstName")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.firstName ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.firstName")}
+									pigment={errors?.firstName ? "danger" : "primary"}
+								/>
+							)}
 							name='firstName'
 							control={control}
 							defaultValue=''
@@ -178,18 +169,13 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.lastName?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										name='lastName'
-										placeholder={t("field.lastName")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.lastName ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.lastName")}
+									pigment={errors?.lastName ? "danger" : "primary"}
+								/>
+							)}
 							name='lastName'
 							control={control}
 							defaultValue=''
@@ -215,18 +201,14 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.email?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										type='email'
-										placeholder={t("field.email")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.email ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									type='email'
+									placeholder={t("field.email")}
+									pigment={errors?.email ? "danger" : "primary"}
+								/>
+							)}
 							name='email'
 							control={control}
 							defaultValue=''
@@ -282,18 +264,14 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.phone?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										type='tel'
-										placeholder={t("field.phone")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.phone ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									type='tel'
+									placeholder={t("field.phone")}
+									pigment={errors?.phone ? "danger" : "primary"}
+								/>
+							)}
 							name='phone'
 							control={control}
 							defaultValue=''
@@ -322,17 +300,13 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.country?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										placeholder={t("field.country")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.country ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.country")}
+									pigment={errors?.country ? "danger" : "primary"}
+								/>
+							)}
 							name='country'
 							control={control}
 							defaultValue=''
@@ -357,17 +331,9 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.city?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										placeholder={t("field.city")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.city ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent {...field} placeholder={t("field.city")} pigment={errors?.city ? "danger" : "primary"} />
+							)}
 							name='city'
 							control={control}
 							defaultValue=''
@@ -392,17 +358,13 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.zipCode?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										placeholder={t("field.zipCode")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.zipCode ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.zipCode")}
+									pigment={errors?.zipCode ? "danger" : "primary"}
+								/>
+							)}
 							name='zipCode'
 							control={control}
 							defaultValue=''
@@ -427,17 +389,13 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.streetName?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										placeholder={t("field.streetName")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.streetName ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.streetName")}
+									pigment={errors?.streetName ? "danger" : "primary"}
+								/>
+							)}
 							name='streetName'
 							control={control}
 							defaultValue=''
@@ -462,17 +420,13 @@ const SettingsProfile = () => {
 						})}
 						hintMsg={errors?.streetNumber?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										placeholder={t("field.streetNumber")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.streetNumber ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.streetNumber")}
+									pigment={errors?.streetNumber ? "danger" : "primary"}
+								/>
+							)}
 							name='streetNumber'
 							control={control}
 							defaultValue=''

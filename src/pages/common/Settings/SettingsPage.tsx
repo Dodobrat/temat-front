@@ -2,15 +2,20 @@ import { Helmet } from "react-helmet";
 import { Heading, Flex, Tabs } from "@dodobrat/react-ui-kit";
 import { useTranslation } from "react-i18next";
 
+import { useAuthContext } from "../../../context/AuthContext";
+
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageContent from "../../../components/ui/wrappers/PageContent";
 
 import SettingsAppearance from "./settings_panels/SettingsAppearance";
 import SettingsProfile from "./settings_panels/SettingsProfile";
+import SettingsCompanyDetails from "./settings_panels/SettingsCompanyDetails";
 
 const RolesPage = () => {
 	const { t } = useTranslation();
+
+	const { userCan } = useAuthContext();
 
 	return (
 		<PageWrapper>
@@ -36,6 +41,11 @@ const RolesPage = () => {
 					<Tabs.Panel tab={t("settings.profile")}>
 						<SettingsProfile />
 					</Tabs.Panel>
+					{userCan("companyUpdateTheir") && (
+						<Tabs.Panel tab={t("settings.companyDetails")}>
+							<SettingsCompanyDetails />
+						</Tabs.Panel>
+					)}
 				</Tabs>
 			</PageContent>
 		</PageWrapper>

@@ -1,7 +1,7 @@
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import { Checkbox, Input, Card, Portal, Form, Flex, FormControl, Text, Button } from "@dodobrat/react-ui-kit";
+import { Checkbox, InputComponent, Card, Portal, Form, Flex, FormControl, Text, Button } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { usePartnerAdd, usePartnerUpdate } from "../../../actions/mutateHooks";
@@ -14,6 +14,7 @@ import PhoneCode from "../../../components/util/PhoneCode";
 
 import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../helpers/helpers";
+import { useEffect } from "react";
 
 interface Props {
 	onClose: () => void;
@@ -33,6 +34,7 @@ const PartnersForm = (props: Props) => {
 	const {
 		control,
 		watch,
+		setValue,
 		handleSubmit,
 		formState: { errors, touchedFields },
 	} = useForm({
@@ -45,6 +47,12 @@ const PartnersForm = (props: Props) => {
 
 	const watchVatRegistered = watch("vatRegistered");
 	const watchPhone = watch("phone");
+
+	useEffect(() => {
+		if (Boolean(!watchVatRegistered)) {
+			setValue("bulstatVAT", "");
+		}
+	}, [setValue, watchVatRegistered]);
 
 	const { mutate: addPartner, isLoading: isLoadingAdd } = usePartnerAdd({
 		queryConfig: {
@@ -76,7 +84,6 @@ const PartnersForm = (props: Props) => {
 			phone: data.phone.toString(),
 			phoneCodeId: data.phone ? data?.phoneCodeId?.value : "",
 		};
-		console.log(parsedData);
 		if (payload) {
 			return updatePartner(parsedData);
 		}
@@ -112,18 +119,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.name?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='name'
-													placeholder={t("field.name")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.name ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.name")}
+												pigment={errors?.name ? "danger" : "primary"}
+											/>
+										)}
 										name='name'
 										control={control}
 										defaultValue=''
@@ -150,18 +152,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.reference?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='reference'
-													placeholder={t("field.reference")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.reference ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.reference")}
+												pigment={errors?.reference ? "danger" : "primary"}
+											/>
+										)}
 										name='reference'
 										control={control}
 										defaultValue=''
@@ -187,17 +184,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.bulstat?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.bulstat")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.bulstat ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.bulstat")}
+												pigment={errors?.bulstat ? "danger" : "primary"}
+											/>
+										)}
 										name='bulstat'
 										control={control}
 										defaultValue=''
@@ -249,18 +242,13 @@ const PartnersForm = (props: Props) => {
 										})}
 										hintMsg={errors?.bulstatVAT?.message}>
 										<Controller
-											render={({ field }) => {
-												const { ref, ...fieldRest } = field;
-												return (
-													<Input
-														name='bulstatVAT'
-														placeholder={t("field.bulstatVAT")}
-														{...fieldRest}
-														innerRef={ref}
-														pigment={errors?.bulstatVAT ? "danger" : "primary"}
-													/>
-												);
-											}}
+											render={({ field }) => (
+												<InputComponent
+													{...field}
+													placeholder={t("field.bulstatVAT")}
+													pigment={errors?.bulstatVAT ? "danger" : "primary"}
+												/>
+											)}
 											name='bulstatVAT'
 											control={control}
 											defaultValue=''
@@ -283,17 +271,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.molFirstName?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.molFirstName")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.molFirstName ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.molFirstName")}
+												pigment={errors?.molFirstName ? "danger" : "primary"}
+											/>
+										)}
 										name='molFirstName'
 										control={control}
 										defaultValue=''
@@ -319,17 +303,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.molLastName?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.molLastName")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.molLastName ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.molLastName")}
+												pigment={errors?.molLastName ? "danger" : "primary"}
+											/>
+										)}
 										name='molLastName'
 										control={control}
 										defaultValue=''
@@ -390,18 +370,14 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.phone?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													type='tel'
-													placeholder={t("field.phone")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.phone ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												type='tel'
+												placeholder={t("field.phone")}
+												pigment={errors?.phone ? "danger" : "primary"}
+											/>
+										)}
 										name='phone'
 										control={control}
 										defaultValue=''
@@ -431,18 +407,14 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.email?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													type='email'
-													placeholder={t("field.email")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.email ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												type='email'
+												placeholder={t("field.email")}
+												pigment={errors?.email ? "danger" : "primary"}
+											/>
+										)}
 										name='email'
 										control={control}
 										defaultValue=''
@@ -464,17 +436,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.country?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.country")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.country ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.country")}
+												pigment={errors?.country ? "danger" : "primary"}
+											/>
+										)}
 										name='country'
 										control={control}
 										defaultValue=''
@@ -501,17 +469,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.city?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.city")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.city ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.city")}
+												pigment={errors?.city ? "danger" : "primary"}
+											/>
+										)}
 										name='city'
 										control={control}
 										defaultValue=''
@@ -538,17 +502,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.zipCode?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.zipCode")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.zipCode ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.zipCode")}
+												pigment={errors?.zipCode ? "danger" : "primary"}
+											/>
+										)}
 										name='zipCode'
 										control={control}
 										defaultValue=''
@@ -574,17 +534,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.streetName?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.streetName")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.streetName ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.streetName")}
+												pigment={errors?.streetName ? "danger" : "primary"}
+											/>
+										)}
 										name='streetName'
 										control={control}
 										defaultValue=''
@@ -611,17 +567,13 @@ const PartnersForm = (props: Props) => {
 									})}
 									hintMsg={errors?.streetNumber?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.streetNumber")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.streetNumber ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.streetNumber")}
+												pigment={errors?.streetNumber ? "danger" : "primary"}
+											/>
+										)}
 										name='streetNumber'
 										control={control}
 										defaultValue=''

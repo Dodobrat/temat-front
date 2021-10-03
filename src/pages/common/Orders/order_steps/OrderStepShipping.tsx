@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
-import { Input, Flex, FormControl } from "@dodobrat/react-ui-kit";
+import { InputComponent, Flex, FormControl } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import {
@@ -240,17 +240,13 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									})}
 									hintMsg={errors?.zipCode?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.zipCode")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.zipCode ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.zipCode")}
+												pigment={errors?.zipCode ? "danger" : "primary"}
+											/>
+										)}
 										name='zipCode'
 										control={control}
 										defaultValue=''
@@ -319,17 +315,13 @@ const OrderStepShipping = ({ initialData, formProps: { control, errors, watch, g
 									})}
 									hintMsg={errors?.streetNumber?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													placeholder={t("field.streetNumber")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.streetNumber ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.streetNumber")}
+												pigment={errors?.streetNumber ? "danger" : "primary"}
+											/>
+										)}
 										name='streetNumber'
 										control={control}
 										defaultValue=''

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
-import { Input, Flex, Checkbox, FormControl } from "@dodobrat/react-ui-kit";
+import { InputComponent, Flex, Checkbox, FormControl } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { usePhoneCodes } from "../../../../actions/fetchHooks";
@@ -25,17 +25,13 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 					})}
 					hintMsg={errors?.receiverName?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<Input
-									placeholder={t("field.name")}
-									{...fieldRest}
-									innerRef={ref}
-									pigment={errors?.receiverName ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => (
+							<InputComponent
+								{...field}
+								placeholder={t("field.name")}
+								pigment={errors?.receiverName ? "danger" : "primary"}
+							/>
+						)}
 						name='receiverName'
 						control={control}
 						defaultValue=''
@@ -97,18 +93,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 					})}
 					hintMsg={errors?.receiverPhone?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<Input
-									type='tel'
-									placeholder={t("field.phone")}
-									{...fieldRest}
-									innerRef={ref}
-									pigment={errors?.receiverPhone ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => (
+							<InputComponent
+								{...field}
+								type='tel'
+								placeholder={t("field.phone")}
+								pigment={errors?.receiverPhone ? "danger" : "primary"}
+							/>
+						)}
 						name='receiverPhone'
 						control={control}
 						defaultValue=''
@@ -139,18 +131,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 					})}
 					hintMsg={errors?.email?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<Input
-									type='email'
-									placeholder={t("field.email")}
-									{...fieldRest}
-									innerRef={ref}
-									pigment={errors?.email ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => (
+							<InputComponent
+								{...field}
+								type='email'
+								placeholder={t("field.email")}
+								pigment={errors?.email ? "danger" : "primary"}
+							/>
+						)}
 						name='email'
 						control={control}
 						defaultValue=''
@@ -204,17 +192,13 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							})}
 							hintMsg={errors?.receiverAgentName?.message}>
 							<Controller
-								render={({ field }) => {
-									const { ref, ...fieldRest } = field;
-									return (
-										<Input
-											placeholder={t("field.agentName")}
-											{...fieldRest}
-											innerRef={ref}
-											pigment={errors?.receiverAgentName ? "danger" : "primary"}
-										/>
-									);
-								}}
+								render={({ field }) => (
+									<InputComponent
+										{...field}
+										placeholder={t("field.agentName")}
+										pigment={errors?.receiverAgentName ? "danger" : "primary"}
+									/>
+								)}
 								name='receiverAgentName'
 								control={control}
 								defaultValue=''
@@ -276,18 +260,14 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 							})}
 							hintMsg={errors?.receiverAgentPhone?.message}>
 							<Controller
-								render={({ field }) => {
-									const { ref, ...fieldRest } = field;
-									return (
-										<Input
-											type='tel'
-											placeholder={t("field.phone")}
-											{...fieldRest}
-											innerRef={ref}
-											pigment={errors?.receiverAgentPhone ? "danger" : "primary"}
-										/>
-									);
-								}}
+								render={({ field }) => (
+									<InputComponent
+										{...field}
+										type='tel'
+										placeholder={t("field.phone")}
+										pigment={errors?.receiverAgentPhone ? "danger" : "primary"}
+									/>
+								)}
 								name='receiverAgentPhone'
 								control={control}
 								defaultValue=''
@@ -322,17 +302,13 @@ const OrderStepReceiver = ({ shipping, initialData, formProps: { control, errors
 						})}
 						hintMsg={errors?.receiverAgentName?.message}>
 						<Controller
-							render={({ field }) => {
-								const { ref, ...fieldRest } = field;
-								return (
-									<Input
-										placeholder={t("field.agentName")}
-										{...fieldRest}
-										innerRef={ref}
-										pigment={errors?.receiverAgentName ? "danger" : "primary"}
-									/>
-								);
-							}}
+							render={({ field }) => (
+								<InputComponent
+									{...field}
+									placeholder={t("field.agentName")}
+									pigment={errors?.receiverAgentName ? "danger" : "primary"}
+								/>
+							)}
 							name='receiverAgentName'
 							control={control}
 							defaultValue=''

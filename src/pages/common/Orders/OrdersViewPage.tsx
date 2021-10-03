@@ -18,10 +18,12 @@ import PageHeader from "../../../components/ui/wrappers/PageHeader";
 import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import { pickPigment } from "../../../components/util/table_cells/OrderStatusCell";
 import OrdersViewHistory from "./OrdersViewHistory";
+import OrdersViewCourierHistory from "./OrdersViewCourierHistory";
 
 import { parseDate } from "../../../helpers/dateHelpers";
 import { successToast } from "../../../helpers/toastEmitter";
 import { parseBaseLink } from "../../../helpers/helpers";
+import { SpinnerLoader } from "@dodobrat/react-ui-kit";
 
 const OrdersUpdateForm = lazy(() => import("./order_forms/OrdersUpdateForm"));
 
@@ -95,6 +97,7 @@ const OrdersViewPage = () => {
 	} = useAuthContext();
 
 	const [loadOrderHistory, setLoadOrderHistory] = useState(false);
+	const [loadOrderCourierHistory, setLoadOrderCourierHistory] = useState(false);
 	const [clickedFileKey, setClickedFileKey] = useState(null);
 
 	const [showOrdersUpdateForm, setShowOrdersUpdateForm] = useState({ state: false, payload: null });
@@ -104,6 +107,7 @@ const OrdersViewPage = () => {
 	const closeOrdersUpdateForm = () => setShowOrdersUpdateForm((prev) => ({ ...prev, state: false }));
 
 	const loadHistory = () => setLoadOrderHistory((prev) => !prev);
+	const loadCourierHistory = () => setLoadOrderCourierHistory((prev) => !prev);
 
 	const { data: orderData } = useOrderById({
 		specs: {
@@ -116,22 +120,6 @@ const OrdersViewPage = () => {
 	});
 
 	const { data: label, refetch: getOrderLabel } = useOrderLabelDownloadById({
-		queryConfig: {
-			onSuccess: (res) => {
-				setDownloadPopUp({
-					state: true,
-					payload: (
-						<iframe
-							title='shipping_label'
-							width='100%'
-							height='100%'
-							style={{ border: "none", minHeight: "60vh" }}
-							src={parseBaseLink(res)}
-						/>
-					),
-				});
-			},
-		},
 		specialKey: { orderId: orderId },
 	});
 
@@ -221,7 +209,12 @@ const OrdersViewPage = () => {
 							)}
 							{userCan("deliveryLabelCreate") && (
 								<Flex.Col col='auto'>
-									<Button pigment='info' onClick={getOrderLabel}>
+									<Button
+										pigment='info'
+										onClick={() => {
+											setDownloadPopUp((prev) => ({ state: true, payload: <SpinnerLoader className='mx--auto' /> }));
+											getOrderLabel();
+										}}>
 										{t("order.getLabel")}
 									</Button>
 								</Flex.Col>
@@ -382,6 +375,20 @@ const OrdersViewPage = () => {
 									</Button>
 									<CollapseFade in={loadOrderHistory}>
 										<OrdersViewHistory order={order} />
+									</CollapseFade>
+								</Card>
+							</Flex.Col>
+							<Flex.Col className='w--100'>
+								<Card>
+									<Button as='div' wide pigment='none' leftAlignContent onClick={loadCourierHistory}>
+										<Heading as='p' className='mb--1'>
+											{t("order.showHideCourierHistory", {
+												state: loadOrderCourierHistory ? t("common.hide") : t("common.show"),
+											})}
+										</Heading>
+									</Button>
+									<CollapseFade in={loadOrderCourierHistory}>
+										<OrdersViewCourierHistory order={order} />
 									</CollapseFade>
 								</Card>
 							</Flex.Col>

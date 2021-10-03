@@ -94,7 +94,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("field.shipmentPayee")}
+					label={t("field.shipmentPayeeId")}
 					htmlFor='shipmentPayeeId'
 					className={cn({
 						"text--danger": errors?.shipmentPayeeId,
@@ -132,7 +132,7 @@ const OrderStepPayment = ({ initialData, isUpdating, formProps: { control, error
 			</Flex.Col>
 			<Flex.Col col={{ base: "12", lg: "6" }}>
 				<FormControl
-					label={t("field.payAfter")}
+					label={t("field.payAfterId")}
 					htmlFor='payAfterId'
 					className={cn({
 						"text--danger": errors?.payAfterId,

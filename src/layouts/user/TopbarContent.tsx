@@ -3,7 +3,6 @@ import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import {
-	Input,
 	FormControl,
 	Form,
 	Card,
@@ -26,6 +25,7 @@ import { useOrderLocate } from "../../actions/fetchHooks";
 
 import ActionConfirmation from "../../components/util/ActionConfirmation";
 import { IconClose, IconHamburger, IconLogout, IconRadar } from "../../components/ui/icons";
+import { InputComponent } from "@dodobrat/react-ui-kit";
 
 const TopbarContent = () => {
 	const history = useHistory();
@@ -33,6 +33,7 @@ const TopbarContent = () => {
 	const { width } = useWindowResize(250);
 	const {
 		userValue: { user },
+		userCan,
 		logout,
 	} = useAuthContext();
 
@@ -58,22 +59,18 @@ const TopbarContent = () => {
 	const handleLogout = () => setLogoutWarning((prev) => ({ ...prev, state: true }));
 	const closeConfirmation = () => setLogoutWarning((prev) => ({ ...prev, state: false }));
 
-	const { data, refetch, isFetching } = useOrderLocate({
+	const { data, isFetching } = useOrderLocate({
 		queryConfig: {
-			onSuccess: () => reset({ keyword: "" }),
+			enabled: Boolean(orderSeekKey),
 		},
 		specialKey: { orderId: orderSeekKey },
 	});
 
 	useEffect(() => {
-		if (!!orderSeekKey) {
-			refetch();
-		}
-	}, [orderSeekKey, refetch]);
-
-	useEffect(() => {
 		if (data) {
 			history.push(`/app/orders/${data?.data?.orderId}`);
+			reset({ keyword: "" });
+			setOrderSeekKey("");
 			closeOrderDetailsModal();
 		}
 	}, [data, history, reset]);
@@ -90,14 +87,16 @@ const TopbarContent = () => {
 						</Button>
 					</Flex.Col>
 					<Flex.Col>
-						<Button
-							pigment='warning'
-							iconStart={width > 719 && <IconRadar />}
-							equalDimensions={width <= 719}
-							className={width <= 719 ? "mx--2" : "mx--0"}
-							onClick={() => setOrderDetailsModal(true)}>
-							{width > 719 ? t("common.orderDetails") : <IconRadar />}
-						</Button>
+						{userCan("orderGetPackDetails") && (
+							<Button
+								pigment='warning'
+								iconStart={width > 719 && <IconRadar />}
+								equalDimensions={width <= 719}
+								className={width <= 719 ? "mx--2" : "mx--0"}
+								onClick={() => setOrderDetailsModal(true)}>
+								{width > 719 ? t("common.orderDetails") : <IconRadar />}
+							</Button>
+						)}
 					</Flex.Col>
 					<Flex.Col col='auto'>
 						<Flex spacingY={null} align='center' disableNegativeSpace>
@@ -141,18 +140,14 @@ const TopbarContent = () => {
 								})}
 								hintMsg={errors?.keyword?.message}>
 								<Controller
-									render={({ field }) => {
-										const { ref, ...fieldRest } = field;
-										return (
-											<Input
-												placeholder={t("field.keyword")}
-												{...fieldRest}
-												autoFocus
-												innerRef={ref}
-												pigment={errors?.keyword ? "danger" : "primary"}
-											/>
-										);
-									}}
+									render={({ field }) => (
+										<InputComponent
+											{...field}
+											placeholder={t("field.keyword")}
+											autoFocus
+											pigment={errors?.keyword ? "danger" : "primary"}
+										/>
+									)}
 									name='keyword'
 									control={control}
 									defaultValue=''

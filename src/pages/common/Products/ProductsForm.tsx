@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { Portal, Card, Collapse, Button, Text, Form, Flex, FormControl, Input, TextArea } from "@dodobrat/react-ui-kit";
+import { Portal, Card, Collapse, Button, Text, Form, Flex, FormControl, InputComponent, TextAreaComponent } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { useProductAdd, useProductUpdate } from "../../../actions/mutateHooks";
@@ -199,18 +199,13 @@ const ProductsForm = (props: Props) => {
 									})}
 									hintMsg={errors?.name?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='name'
-													placeholder={t("field.name")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.name ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.name")}
+												pigment={errors?.name ? "danger" : "primary"}
+											/>
+										)}
 										name='name'
 										control={control}
 										defaultValue=''
@@ -237,19 +232,13 @@ const ProductsForm = (props: Props) => {
 									})}
 									hintMsg={errors?.description?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<TextArea
-													placeholder={t("field.description")}
-													{...fieldRest}
-													innerRef={ref}
-													// maxLength={250}
-													withCharacterCount={false}
-													pigment={errors?.description ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<TextAreaComponent
+												{...field}
+												placeholder={t("field.description")}
+												pigment={errors?.description ? "danger" : "primary"}
+											/>
+										)}
 										name='description'
 										control={control}
 										defaultValue=''
@@ -276,18 +265,13 @@ const ProductsForm = (props: Props) => {
 									})}
 									hintMsg={errors?.barcode?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='barcode'
-													placeholder={t("field.barcode")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.barcode ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.barcode")}
+												pigment={errors?.barcode ? "danger" : "primary"}
+											/>
+										)}
 										name='barcode'
 										control={control}
 										defaultValue=''
@@ -333,16 +317,15 @@ const ProductsForm = (props: Props) => {
 									}>
 									<Controller
 										render={({ field }) => {
-											const { ref, onChange, value, ...fieldRest } = field;
+											const { onChange, value, ...fieldRest } = field;
 											return (
-												<Input
+												<InputComponent
+													{...fieldRest}
 													type='file'
 													accept='image/*'
 													placeholder={t("field.image")}
-													{...fieldRest}
 													onChange={(e) => onChange(e.target.files)}
 													value={value?.[0]?.filename}
-													innerRef={ref}
 													pigment={errors?.image ? "danger" : "primary"}
 												/>
 											);
@@ -365,18 +348,13 @@ const ProductsForm = (props: Props) => {
 									})}
 									hintMsg={errors?.sku?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='sku'
-													placeholder={t("field.sku")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.sku ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												placeholder={t("field.sku")}
+												pigment={errors?.sku ? "danger" : "primary"}
+											/>
+										)}
 										name='sku'
 										control={control}
 										defaultValue=''
@@ -398,19 +376,14 @@ const ProductsForm = (props: Props) => {
 									})}
 									hintMsg={errors?.minQty?.message}>
 									<Controller
-										render={({ field }) => {
-											const { ref, ...fieldRest } = field;
-											return (
-												<Input
-													name='minQty'
-													type='number'
-													placeholder={t("field.minQty")}
-													{...fieldRest}
-													innerRef={ref}
-													pigment={errors?.minQty ? "danger" : "primary"}
-												/>
-											);
-										}}
+										render={({ field }) => (
+											<InputComponent
+												{...field}
+												type='number'
+												placeholder={t("field.minQty")}
+												pigment={errors?.minQty ? "danger" : "primary"}
+											/>
+										)}
 										name='minQty'
 										control={control}
 										defaultValue=''
@@ -522,19 +495,14 @@ const ProductsForm = (props: Props) => {
 														})}
 														hintMsg={errors?.width?.message}>
 														<Controller
-															render={({ field }) => {
-																const { ref, ...fieldRest } = field;
-																return (
-																	<Input
-																		type='number'
-																		name='width'
-																		placeholder={t("field.widthCm")}
-																		{...fieldRest}
-																		innerRef={ref}
-																		pigment={errors?.width ? "danger" : "primary"}
-																	/>
-																);
-															}}
+															render={({ field }) => (
+																<InputComponent
+																	{...field}
+																	type='number'
+																	placeholder={t("field.widthCm")}
+																	pigment={errors?.width ? "danger" : "primary"}
+																/>
+															)}
 															name='width'
 															control={control}
 															defaultValue=''
@@ -553,19 +521,14 @@ const ProductsForm = (props: Props) => {
 														})}
 														hintMsg={errors?.height?.message}>
 														<Controller
-															render={({ field }) => {
-																const { ref, ...fieldRest } = field;
-																return (
-																	<Input
-																		type='number'
-																		name='height'
-																		placeholder={t("field.heightCm")}
-																		{...fieldRest}
-																		innerRef={ref}
-																		pigment={errors?.height ? "danger" : "primary"}
-																	/>
-																);
-															}}
+															render={({ field }) => (
+																<InputComponent
+																	{...field}
+																	type='number'
+																	placeholder={t("field.heightCm")}
+																	pigment={errors?.height ? "danger" : "primary"}
+																/>
+															)}
 															name='height'
 															control={control}
 															defaultValue=''
@@ -584,19 +547,14 @@ const ProductsForm = (props: Props) => {
 														})}
 														hintMsg={errors?.weight?.message}>
 														<Controller
-															render={({ field }) => {
-																const { ref, ...fieldRest } = field;
-																return (
-																	<Input
-																		type='number'
-																		name='weight'
-																		placeholder={t("field.weightKg")}
-																		{...fieldRest}
-																		innerRef={ref}
-																		pigment={errors?.weight ? "danger" : "primary"}
-																	/>
-																);
-															}}
+															render={({ field }) => (
+																<InputComponent
+																	{...field}
+																	type='number'
+																	placeholder={t("field.weightKg")}
+																	pigment={errors?.weight ? "danger" : "primary"}
+																/>
+															)}
 															name='weight'
 															control={control}
 															defaultValue=''
@@ -615,19 +573,14 @@ const ProductsForm = (props: Props) => {
 														})}
 														hintMsg={errors?.length?.message}>
 														<Controller
-															render={({ field }) => {
-																const { ref, ...fieldRest } = field;
-																return (
-																	<Input
-																		type='number'
-																		name='length'
-																		placeholder={t("field.lengthCm")}
-																		{...fieldRest}
-																		innerRef={ref}
-																		pigment={errors?.length ? "danger" : "primary"}
-																	/>
-																);
-															}}
+															render={({ field }) => (
+																<InputComponent
+																	{...field}
+																	type='number'
+																	placeholder={t("field.lengthCm")}
+																	pigment={errors?.length ? "danger" : "primary"}
+																/>
+															)}
 															name='length'
 															control={control}
 															defaultValue=''

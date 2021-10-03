@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
 import { Helmet } from "react-helmet";
 import { Text, Card, Portal, ZoomPortal, Flex, Heading, PortalWrapper, Button } from "@dodobrat/react-ui-kit";
 
@@ -14,8 +13,6 @@ import PageWrapper from "../../../components/ui/wrappers/PageWrapper";
 import DataTable from "../../../components/util/DataTable";
 import TableSearch from "../../../components/util/TableSearch";
 import useDataTableGenerate from "../../../hooks/useDataTableGenerate";
-import { useInvoiceDelete } from "../../../actions/mutateHooks";
-import { successToast } from "../../../helpers/toastEmitter";
 import { parseBaseLink } from "../../../helpers/helpers";
 
 const InvoicesForm = lazy(() => import("./InvoicesForm"));
@@ -24,17 +21,7 @@ const InvoicesPage = () => {
 	const datatableHeader = document.getElementById("datatable__header");
 
 	const { t } = useTranslation();
-	const queryClient = useQueryClient();
 	const { userCan } = useAuthContext();
-
-	const { mutate: deleteInvoice } = useInvoiceDelete({
-		queryConfig: {
-			onSuccess: (res: any) => {
-				successToast(res);
-				queryClient.invalidateQueries("invoices");
-			},
-		},
-	});
 
 	const {
 		tableProps,
@@ -46,12 +33,6 @@ const InvoicesPage = () => {
 				permission: ["invoiceReadSingle", "invoiceReadSingleTheir"],
 				type: "view",
 				action: (entry: any) => setInvoice(entry),
-			},
-			{
-				permission: ["invoiceDelete", "invoiceDeleteTheir"],
-				type: "delete",
-				withConfirmation: true,
-				action: (entry: any) => deleteInvoice(entry.id),
 			},
 		],
 	});

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
-import { FormControl, ListGroup, Flex, Button, Input } from "@dodobrat/react-ui-kit";
+import { FormControl, ListGroup, Flex, Button, InputComponent } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { useProducts } from "../../../../actions/fetchHooks";
@@ -76,16 +76,6 @@ const OrderStepProducts = ({
 		[setValue, watchProducts]
 	);
 
-	const backspaceRemoveValue = useCallback(
-		(e, product, key) => {
-			if (e.key === "Backspace") {
-				e.target.value = "";
-				specificProductValue(e.target, product, key);
-			}
-		},
-		[specificProductValue]
-	);
-
 	const innerSetCompanyId = companyId || watchProducts?.payment?.companyId?.value || watchProducts?.payment?.companyId;
 
 	return (
@@ -112,28 +102,34 @@ const OrderStepProducts = ({
 									<Flex.Col>{productEntry.name}</Flex.Col>
 									<Flex.Col col={{ base: "12", sm: "auto" }}>
 										<Flex wrap='nowrap' align='center' spacingX={null} spacingY={null}>
-											<Flex.Col col='auto' className='pr--1'>
-												<Input
-													type='number'
-													step='0.01'
-													suffix={productEntry?.currency}
-													style={{ width: "4rem" }}
-													defaultValue={productEntry?.price}
-													onFocus={(e) => e.target.select()}
-													onKeyDown={(e) => backspaceRemoveValue(e, product, "price")}
-													onChange={({ target }) => specificProductValue(target, product, "price")}
-												/>
+											<Flex.Col col='auto' className='pr--3'>
+												<Flex wrap='nowrap' align='center'>
+													<Flex.Col col='auto'>
+														<InputComponent
+															type='number'
+															step='0.01'
+															style={{ width: "4rem" }}
+															defaultValue={productEntry?.price}
+															onFocus={(e) => e.target.select()}
+															onChange={({ target }) => specificProductValue(target, product, "price")}
+														/>
+													</Flex.Col>
+													<Flex.Col col='auto'>{productEntry?.currency}</Flex.Col>
+												</Flex>
 											</Flex.Col>
 											<Flex.Col col='auto' className='px--1'>
-												<Input
-													type='number'
-													preffix={t("common.qty")}
-													style={{ width: "4rem" }}
-													defaultValue={productEntry?.qty}
-													onFocus={(e) => e.target.select()}
-													onKeyDown={(e) => backspaceRemoveValue(e, product, "price")}
-													onChange={({ target }) => specificProductValue(target, product, "quantity")}
-												/>
+												<Flex wrap='nowrap' align='center'>
+													<Flex.Col col='auto'>
+														<InputComponent
+															type='number'
+															style={{ width: "4rem" }}
+															defaultValue={productEntry?.qty}
+															onFocus={(e) => e.target.select()}
+															onChange={({ target }) => specificProductValue(target, product, "quantity")}
+														/>
+													</Flex.Col>
+													<Flex.Col col='auto'>{t("common.qty")}</Flex.Col>
+												</Flex>
 											</Flex.Col>
 											<Flex.Col col='auto' className='pl--1 ml--base--auto ml--sm--0'>
 												<Button

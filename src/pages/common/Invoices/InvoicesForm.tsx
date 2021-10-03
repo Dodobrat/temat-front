@@ -1,10 +1,10 @@
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import { Input, Card, Portal, Form, Flex, FormControl, Text, Button } from "@dodobrat/react-ui-kit";
+import { InputComponent, Card, Portal, Form, Flex, FormControl, Text, Button } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
-import { useInvoiceAdd, useInvoiceUpdate } from "../../../actions/mutateHooks";
+import { useInvoiceAdd } from "../../../actions/mutateHooks";
 import { useCurrency, usePartners, usePaymentMethods } from "../../../actions/fetchHooks";
 import { useAuthContext } from "../../../context/AuthContext";
 
@@ -15,7 +15,7 @@ import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 import OrderStepProducts from "../Orders/order_steps/OrderStepProducts";
 import { SwitchGroup } from "@dodobrat/react-ui-kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
 	onClose: () => void;
@@ -56,6 +56,19 @@ const InvoicesForm = (props: Props) => {
 		return "partner";
 	});
 
+	useEffect(() => {
+		if (invoiceReceiver === "partner") {
+			setValue("partnerId", null);
+		} else {
+			setValue("name", "");
+			setValue("bulstat", "");
+			setValue("bulstatVAT", "");
+			setValue("city", "");
+			setValue("address", "");
+			setValue("mol", "");
+		}
+	}, [setValue, invoiceReceiver]);
+
 	const { mutate: addInvoice, isLoading: isLoadingAdd } = useInvoiceAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
@@ -66,41 +79,34 @@ const InvoicesForm = (props: Props) => {
 		},
 	});
 
-	const { mutate: updateInvoice, isLoading: isLoadingUpdate } = useInvoiceUpdate({
-		specs: {
-			id: payload?.id,
-		},
-		queryConfig: {
-			onSuccess: (res: any) => {
-				successToast(res);
-				queryClient.invalidateQueries("invoices");
-				queryClient.invalidateQueries(["invoiceById", { invoiceId: payload?.id }]);
-				onClose();
-			},
-		},
-	});
-
 	const onSubmit = (data: any) => {
 		const parsedProducts = data?.products?.reduce((prev, curr) => {
 			const renamedCurr = {
-				...curr,
+				price: curr?.price,
 				id: curr?.value,
 				qty: curr?.quantity,
 			};
 			return [...prev, renamedCurr];
 		}, []);
+
 		const parsedData = {
-			...data,
-			contragentId: data?.partnerId?.value ?? null,
 			products: parsedProducts,
 			currencyId: data?.currencyId?.value,
 			paymentMethodId: data?.paymentMethodId?.value,
 		};
+
+		const partnerReceiver = {
+			...parsedData,
+			contragentId: data?.partnerId?.value ?? null,
+		};
+
+		const customReceiver = {
+			...data,
+			...parsedData,
+		};
+
 		console.log(parsedData);
-		if (payload) {
-			return updateInvoice(parsedData);
-		}
-		return addInvoice(parsedData);
+		addInvoice(invoiceReceiver === "partner" ? partnerReceiver : customReceiver);
 	};
 
 	return (
@@ -258,18 +264,13 @@ const InvoicesForm = (props: Props) => {
 											})}
 											hintMsg={errors?.name?.message}>
 											<Controller
-												render={({ field }) => {
-													const { ref, ...fieldRest } = field;
-													return (
-														<Input
-															name='name'
-															placeholder={t("field.name")}
-															{...fieldRest}
-															innerRef={ref}
-															pigment={errors?.name ? "danger" : "primary"}
-														/>
-													);
-												}}
+												render={({ field }) => (
+													<InputComponent
+														{...field}
+														placeholder={t("field.name")}
+														pigment={errors?.name ? "danger" : "primary"}
+													/>
+												)}
 												name='name'
 												control={control}
 												defaultValue=''
@@ -295,17 +296,13 @@ const InvoicesForm = (props: Props) => {
 											})}
 											hintMsg={errors?.bulstat?.message}>
 											<Controller
-												render={({ field }) => {
-													const { ref, ...fieldRest } = field;
-													return (
-														<Input
-															placeholder={t("field.bulstat")}
-															{...fieldRest}
-															innerRef={ref}
-															pigment={errors?.bulstat ? "danger" : "primary"}
-														/>
-													);
-												}}
+												render={({ field }) => (
+													<InputComponent
+														{...field}
+														placeholder={t("field.bulstat")}
+														pigment={errors?.bulstat ? "danger" : "primary"}
+													/>
+												)}
 												name='bulstat'
 												control={control}
 												defaultValue=''
@@ -327,18 +324,13 @@ const InvoicesForm = (props: Props) => {
 											})}
 											hintMsg={errors?.bulstatVAT?.message}>
 											<Controller
-												render={({ field }) => {
-													const { ref, ...fieldRest } = field;
-													return (
-														<Input
-															name='bulstatVAT'
-															placeholder={t("field.bulstatVAT")}
-															{...fieldRest}
-															innerRef={ref}
-															pigment={errors?.bulstatVAT ? "danger" : "primary"}
-														/>
-													);
-												}}
+												render={({ field }) => (
+													<InputComponent
+														{...field}
+														placeholder={t("field.bulstatVAT")}
+														pigment={errors?.bulstatVAT ? "danger" : "primary"}
+													/>
+												)}
 												name='bulstatVAT'
 												control={control}
 												defaultValue=''
@@ -360,18 +352,13 @@ const InvoicesForm = (props: Props) => {
 											})}
 											hintMsg={errors?.city?.message}>
 											<Controller
-												render={({ field }) => {
-													const { ref, ...fieldRest } = field;
-													return (
-														<Input
-															name='city'
-															placeholder={t("field.city")}
-															{...fieldRest}
-															innerRef={ref}
-															pigment={errors?.city ? "danger" : "primary"}
-														/>
-													);
-												}}
+												render={({ field }) => (
+													<InputComponent
+														{...field}
+														placeholder={t("field.city")}
+														pigment={errors?.city ? "danger" : "primary"}
+													/>
+												)}
 												name='city'
 												control={control}
 												defaultValue=''
@@ -397,18 +384,13 @@ const InvoicesForm = (props: Props) => {
 											})}
 											hintMsg={errors?.address?.message}>
 											<Controller
-												render={({ field }) => {
-													const { ref, ...fieldRest } = field;
-													return (
-														<Input
-															name='address'
-															placeholder={t("field.address")}
-															{...fieldRest}
-															innerRef={ref}
-															pigment={errors?.address ? "danger" : "primary"}
-														/>
-													);
-												}}
+												render={({ field }) => (
+													<InputComponent
+														{...field}
+														placeholder={t("field.address")}
+														pigment={errors?.address ? "danger" : "primary"}
+													/>
+												)}
 												name='address'
 												control={control}
 												defaultValue=''
@@ -434,18 +416,13 @@ const InvoicesForm = (props: Props) => {
 											})}
 											hintMsg={errors?.mol?.message}>
 											<Controller
-												render={({ field }) => {
-													const { ref, ...fieldRest } = field;
-													return (
-														<Input
-															name='mol'
-															placeholder={t("field.mol")}
-															{...fieldRest}
-															innerRef={ref}
-															pigment={errors?.mol ? "danger" : "primary"}
-														/>
-													);
-												}}
+												render={({ field }) => (
+													<InputComponent
+														{...field}
+														placeholder={t("field.mol")}
+														pigment={errors?.mol ? "danger" : "primary"}
+													/>
+												)}
 												name='mol'
 												control={control}
 												defaultValue=''
@@ -468,7 +445,7 @@ const InvoicesForm = (props: Props) => {
 					</Form>
 				</Card.Body>
 				<Card.Footer justify='flex-end'>
-					<Button type='submit' form='partners-form' className='ml--2' isLoading={isLoadingAdd || isLoadingUpdate}>
+					<Button type='submit' form='partners-form' className='ml--2' isLoading={isLoadingAdd}>
 						{t(`action.${payload ? "update" : "add"}`, { entry: t("common.invoice") })}
 					</Button>
 				</Card.Footer>

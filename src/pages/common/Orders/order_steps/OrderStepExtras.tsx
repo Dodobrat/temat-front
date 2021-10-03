@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Input, ListGroup, Flex, FormControl } from "@dodobrat/react-ui-kit";
+import { Controller } from "react-hook-form";
+import { Button, InputComponent, ListGroup, Flex, FormControl, TextAreaComponent } from "@dodobrat/react-ui-kit";
 
 import { useOrderFileDelete } from "../../../../actions/mutateHooks";
 
@@ -7,10 +9,7 @@ import { successToast } from "../../../../helpers/toastEmitter";
 import cn from "classnames";
 
 import { IconTrash, LogoPdf } from "../../../../components/ui/icons";
-import { Controller } from "react-hook-form";
 import { imageValidator } from "../../../../helpers/formValidations";
-import { TextArea } from "@dodobrat/react-ui-kit";
-import { useEffect } from "react";
 
 const OrderStepExtras = ({
 	orderId,
@@ -92,13 +91,13 @@ const OrderStepExtras = ({
 					hintMsg={errors?.files?.message}>
 					<Controller
 						render={({ field }) => {
-							const { ref, onChange, value, ...fieldRest } = field;
+							const { onChange, value, ...fieldRest } = field;
 							return (
-								<Input
+								<InputComponent
+									{...fieldRest}
 									type='file'
 									multiple
 									accept='application/pdf'
-									{...fieldRest}
 									onChange={(e) => {
 										for (const uploadedFile of e.target.files) {
 											if (watchFiles.filter((file) => file.name === uploadedFile.name).length > 0) {
@@ -112,7 +111,6 @@ const OrderStepExtras = ({
 										setValue("files", [...getValues("files"), ...e.target.files]);
 									}}
 									value=''
-									innerRef={ref}
 									pigment={errors?.files ? "danger" : "primary"}
 								/>
 							);
@@ -142,20 +140,13 @@ const OrderStepExtras = ({
 					})}
 					hintMsg={errors?.customerNote?.message}>
 					<Controller
-						render={({ field }) => {
-							const { ref, ...fieldRest } = field;
-							return (
-								<TextArea
-									placeholder={t("field.note")}
-									{...fieldRest}
-									innerRef={ref}
-									style={{ minHeight: "unset" }}
-									// maxLength={250}
-									withCharacterCount={false}
-									pigment={errors?.customerNote ? "danger" : "primary"}
-								/>
-							);
-						}}
+						render={({ field }) => (
+							<TextAreaComponent
+								{...field}
+								placeholder={t("field.note")}
+								pigment={errors?.customerNote ? "danger" : "primary"}
+							/>
+						)}
 						name='customerNote'
 						control={control}
 						defaultValue=''

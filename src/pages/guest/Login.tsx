@@ -1,14 +1,14 @@
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
-import { Flex, Form, FormControl, Heading, Input, Button, Card, useLocalStorage } from "@dodobrat/react-ui-kit";
+import { InputComponent, Flex, Form, FormControl, Heading, Button, Card, useLocalStorage } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { useLogin } from "../../actions/mutateHooks";
 
 import { useAuthContext } from "../../context/AuthContext";
 
-import { IconEye, IconEyeCrossed, IconLock, IconUser } from "../../components/ui/icons";
+import PasswordInput from "../../components/forms/PasswordInput";
 
 const Login = () => {
 	const { t } = useTranslation();
@@ -60,18 +60,13 @@ const Login = () => {
 										})}
 										hintMsg={errors?.username?.message}>
 										<Controller
-											render={({ field }) => {
-												const { ref, ...fieldRest } = field;
-												return (
-													<Input
-														placeholder={t("field.username")}
-														preffix={<IconUser className='dui__icon' />}
-														{...fieldRest}
-														innerRef={ref}
-														pigment={errors?.username ? "danger" : "primary"}
-													/>
-												);
-											}}
+											render={({ field }) => (
+												<InputComponent
+													{...field}
+													placeholder={t("field.username")}
+													pigment={errors?.username ? "danger" : "primary"}
+												/>
+											)}
 											name='username'
 											control={control}
 											defaultValue=''
@@ -102,26 +97,9 @@ const Login = () => {
 										})}
 										hintMsg={errors?.password?.message}>
 										<Controller
-											render={({ field }) => {
-												const { ref, ...fieldRest } = field;
-												return (
-													<Input
-														type='password'
-														placeholder={t("field.password")}
-														preffix={<IconLock className='dui__icon' />}
-														passwordRevealComponent={(isVisible) =>
-															isVisible ? (
-																<IconEyeCrossed className='dui__icon' />
-															) : (
-																<IconEye className='dui__icon' />
-															)
-														}
-														{...fieldRest}
-														innerRef={ref}
-														pigment={errors?.password ? "danger" : "primary"}
-													/>
-												);
-											}}
+											render={({ field }) => (
+												<PasswordInput {...field} pigment={errors?.password ? "danger" : "primary"} />
+											)}
 											name='password'
 											control={control}
 											defaultValue=''

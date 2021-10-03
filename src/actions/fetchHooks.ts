@@ -170,6 +170,21 @@ export const useCompanies: FetchQueryType = ({ specs, queryConfig, specialKey })
 	);
 };
 
+export const useCompanyById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["companyById", specialKey],
+		async ({ queryKey }) => {
+			const companyId = queryKey[1]?.id;
+			const { data } = await axios.get(`${apiUrl}/companies/${companyId}?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			enabled: true,
+			...queryConfig,
+		}
+	);
+};
+
 //WAREHOUSES
 export const useWarehouses: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
 	return useQuery(
@@ -212,7 +227,7 @@ export const useOrderLocate: FetchQueryType = ({ queryConfig, specialKey }) => {
 			return data;
 		},
 		{
-			enabled: false,
+			enabled: true,
 			...queryConfig,
 		}
 	);
@@ -240,6 +255,23 @@ export const useOrderHistoryById: FetchQueryType = ({ specs, queryConfig, specia
 			const orderId = queryKey[1]?.order?.details?.id;
 			if (!orderId) return;
 			const { data } = await axios.get(`${apiUrl}/orders/${orderId}/history?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+export const useOrderCourierHistoryById: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderCourierHistoryById", specialKey],
+		async ({ queryKey }) => {
+			const orderId = queryKey[1]?.order?.details?.id;
+			if (!orderId) return;
+			const { data } = await axios.get(`${apiUrl}/orders/${orderId}/courier/history?${parseParams(specs)}`);
 			return data;
 		},
 		{
@@ -480,6 +512,70 @@ export const usePayAfter: FetchQueryType = ({ specs, queryConfig, specialKey }) 
 		["payAfter", specialKey],
 		async () => {
 			const { data } = await axios.get(`${apiUrl}/helpers/payAfter?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+//TAX GROUPS
+export const useTaxGroup: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["taxGroups", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/taxGroup?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+//ORDER STATUS
+export const useOrderStatus: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["orderStatus", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/orderStatus?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+//DOCUMENT TYPE
+export const useDocumentTypes: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["documentTypes", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/documentType?${parseParams(specs)}`);
+			return data;
+		},
+		{
+			keepPreviousData: true,
+			enabled: false,
+			...queryConfig,
+		}
+	);
+};
+
+//DOCUMENT TYPE
+export const useConfirmMethod: FetchQueryType = ({ specs, queryConfig, specialKey }) => {
+	return useQuery(
+		["confirmMethods", specialKey],
+		async () => {
+			const { data } = await axios.get(`${apiUrl}/helpers/confirmMethod?${parseParams(specs)}`);
 			return data;
 		},
 		{
