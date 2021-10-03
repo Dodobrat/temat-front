@@ -72,7 +72,7 @@ const PartnersForm = (props: Props) => {
 			onSuccess: (res: any) => {
 				successToast(res);
 				queryClient.invalidateQueries("partners");
-				queryClient.invalidateQueries(["partnerById", { partnerId: payload?.id }]);
+				queryClient.invalidateQueries(["partnerById", { contragentId: payload?.id }]);
 				onClose();
 			},
 		},

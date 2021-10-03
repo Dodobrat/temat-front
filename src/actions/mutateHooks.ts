@@ -195,10 +195,10 @@ export const useProductAdd = ({ queryConfig }: MutateHookType) => {
 	);
 };
 
-export const useProductUpdate = ({ specs, queryConfig }: MutateHookType) => {
+export const useProductUpdate = ({ queryConfig }: MutateHookType) => {
 	return useMutation(
 		async (data: any) => {
-			return await axios.patch(`${apiUrl}/products/${specs?.id}`, data, config).then((res) => res.data);
+			return await axios.patch(`${apiUrl}/products/${data?.id}`, data?.formData, config).then((res) => res.data);
 		},
 		{
 			...queryConfig,

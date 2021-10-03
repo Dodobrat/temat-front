@@ -66,7 +66,6 @@ const SettingsCompanyDetails = () => {
 	});
 
 	const onSubmit = (data: any) => {
-		console.log(data);
 		const formData = new FormData();
 
 		for (const entry of Object.entries(data)) {

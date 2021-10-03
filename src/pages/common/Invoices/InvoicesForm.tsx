@@ -1,11 +1,11 @@
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import { InputComponent, Card, Portal, Form, Flex, FormControl, Text, Button } from "@dodobrat/react-ui-kit";
+import { Card, Portal, Form, Flex, FormControl, Text, Button } from "@dodobrat/react-ui-kit";
 import cn from "classnames";
 
 import { useInvoiceAdd } from "../../../actions/mutateHooks";
-import { useCurrency, usePartners, usePaymentMethods } from "../../../actions/fetchHooks";
+import { useCurrency, usePaymentMethods } from "../../../actions/fetchHooks";
 import { useAuthContext } from "../../../context/AuthContext";
 
 import { IconClose } from "../../../components/ui/icons";
@@ -14,8 +14,7 @@ import WindowedAsyncSelect from "../../../components/forms/WindowedAsyncSelect";
 import { successToast } from "../../../helpers/toastEmitter";
 import { dirtyConfirmOnExit } from "../../../helpers/helpers";
 import OrderStepProducts from "../Orders/order_steps/OrderStepProducts";
-import { SwitchGroup } from "@dodobrat/react-ui-kit";
-import { useEffect, useState } from "react";
+import InvoiceStep from "./invoice_step/InvoiceStep";
 
 interface Props {
 	onClose: () => void;
@@ -35,6 +34,8 @@ const InvoicesForm = (props: Props) => {
 	const {
 		control,
 		watch,
+		reset,
+		getValues,
 		setValue,
 		clearErrors,
 		handleSubmit,
@@ -46,29 +47,6 @@ const InvoicesForm = (props: Props) => {
 		},
 	});
 
-	const [invoiceReceiver, setInvoiceReceiver] = useState(() => {
-		if (payload) {
-			if (payload?.partnerId) {
-				return "partner";
-			}
-			return "receiver";
-		}
-		return "partner";
-	});
-
-	useEffect(() => {
-		if (invoiceReceiver === "partner") {
-			setValue("partnerId", null);
-		} else {
-			setValue("name", "");
-			setValue("bulstat", "");
-			setValue("bulstatVAT", "");
-			setValue("city", "");
-			setValue("address", "");
-			setValue("mol", "");
-		}
-	}, [setValue, invoiceReceiver]);
-
 	const { mutate: addInvoice, isLoading: isLoadingAdd } = useInvoiceAdd({
 		queryConfig: {
 			onSuccess: (res: any) => {
@@ -78,6 +56,25 @@ const InvoicesForm = (props: Props) => {
 			},
 		},
 	});
+
+	const handleOnReceiverReset = (receiver) => {
+		if (receiver !== "partner") {
+			reset({
+				...getValues(),
+				contragentId: null,
+			});
+		} else {
+			reset({
+				...getValues(),
+				invoiceName: "",
+				invoiceBulstat: "",
+				invoiceBulstatVAT: "",
+				invoiceCity: "",
+				invoiceAddress: "",
+				invoiceMol: "",
+			});
+		}
+	};
 
 	const onSubmit = (data: any) => {
 		const parsedProducts = data?.products?.reduce((prev, curr) => {
@@ -90,23 +87,14 @@ const InvoicesForm = (props: Props) => {
 		}, []);
 
 		const parsedData = {
+			...data,
 			products: parsedProducts,
 			currencyId: data?.currencyId?.value,
 			paymentMethodId: data?.paymentMethodId?.value,
+			contragentId: data?.contragentId?.value ?? null,
 		};
 
-		const partnerReceiver = {
-			...parsedData,
-			contragentId: data?.partnerId?.value ?? null,
-		};
-
-		const customReceiver = {
-			...data,
-			...parsedData,
-		};
-
-		console.log(parsedData);
-		addInvoice(invoiceReceiver === "partner" ? partnerReceiver : customReceiver);
+		addInvoice(parsedData);
 	};
 
 	return (
@@ -210,237 +198,7 @@ const InvoicesForm = (props: Props) => {
 									/>
 								</FormControl>
 							</Flex.Col>
-							<Flex.Col col='12'>
-								<SwitchGroup
-									wide
-									onSwitch={({ option }) => setInvoiceReceiver(option.value)}
-									activeOption={invoiceReceiver}
-									options={[
-										{ value: "partner", label: t("common.partner") },
-										{ value: "receiver", label: t("common.receiver") },
-									]}
-								/>
-							</Flex.Col>
-							{invoiceReceiver === "partner" && (
-								<Flex.Col col='12'>
-									<FormControl
-										label={t("common.partner")}
-										htmlFor='partnerId'
-										className={cn({
-											"text--danger": errors?.partnerId,
-										})}
-										hintMsg={errors?.partnerId?.message}>
-										<Controller
-											render={({ field }) => (
-												<WindowedAsyncSelect
-													inputId='partnerId'
-													useFetch={usePartners}
-													defaultOptions={!payload}
-													isClearable={false}
-													className={cn({
-														"temat__select__container--danger": errors?.partnerId,
-													})}
-													{...field}
-												/>
-											)}
-											name='partnerId'
-											control={control}
-											defaultValue={null}
-											// rules={{
-											// 	required: t("validation.required"),
-											// }}
-										/>
-									</FormControl>
-								</Flex.Col>
-							)}
-							{invoiceReceiver === "receiver" && (
-								<>
-									<Flex.Col col='12'>
-										<FormControl
-											label={t("field.name")}
-											htmlFor='name'
-											className={cn({
-												"text--danger": errors?.name,
-											})}
-											hintMsg={errors?.name?.message}>
-											<Controller
-												render={({ field }) => (
-													<InputComponent
-														{...field}
-														placeholder={t("field.name")}
-														pigment={errors?.name ? "danger" : "primary"}
-													/>
-												)}
-												name='name'
-												control={control}
-												defaultValue=''
-												rules={{
-													minLength: {
-														value: 2,
-														message: t("validation.minLength", { value: 2 }),
-													},
-													maxLength: {
-														value: 99,
-														message: t("validation.maxLength", { value: 99 }),
-													},
-												}}
-											/>
-										</FormControl>
-									</Flex.Col>
-									<Flex.Col col={{ base: "12", xs: "6" }}>
-										<FormControl
-											label={t("field.bulstat")}
-											htmlFor='bulstat'
-											className={cn({
-												"text--danger": errors?.bulstat,
-											})}
-											hintMsg={errors?.bulstat?.message}>
-											<Controller
-												render={({ field }) => (
-													<InputComponent
-														{...field}
-														placeholder={t("field.bulstat")}
-														pigment={errors?.bulstat ? "danger" : "primary"}
-													/>
-												)}
-												name='bulstat'
-												control={control}
-												defaultValue=''
-												rules={{
-													maxLength: {
-														value: 11,
-														message: t("validation.maxLength", { value: 11 }),
-													},
-												}}
-											/>
-										</FormControl>
-									</Flex.Col>
-									<Flex.Col col={{ base: "12", xs: "6" }}>
-										<FormControl
-											label={t("field.bulstatVAT")}
-											htmlFor='bulstatVAT'
-											className={cn({
-												"text--danger": errors?.bulstatVAT,
-											})}
-											hintMsg={errors?.bulstatVAT?.message}>
-											<Controller
-												render={({ field }) => (
-													<InputComponent
-														{...field}
-														placeholder={t("field.bulstatVAT")}
-														pigment={errors?.bulstatVAT ? "danger" : "primary"}
-													/>
-												)}
-												name='bulstatVAT'
-												control={control}
-												defaultValue=''
-												rules={{
-													maxLength: {
-														value: 12,
-														message: t("validation.maxLength", { value: 12 }),
-													},
-												}}
-											/>
-										</FormControl>
-									</Flex.Col>
-									<Flex.Col col={{ base: "12", xs: "6" }}>
-										<FormControl
-											label={t("field.city")}
-											htmlFor='city'
-											className={cn({
-												"text--danger": errors?.city,
-											})}
-											hintMsg={errors?.city?.message}>
-											<Controller
-												render={({ field }) => (
-													<InputComponent
-														{...field}
-														placeholder={t("field.city")}
-														pigment={errors?.city ? "danger" : "primary"}
-													/>
-												)}
-												name='city'
-												control={control}
-												defaultValue=''
-												rules={{
-													minLength: {
-														value: 2,
-														message: t("validation.minLength", { value: 2 }),
-													},
-													maxLength: {
-														value: 60,
-														message: t("validation.maxLength", { value: 60 }),
-													},
-												}}
-											/>
-										</FormControl>
-									</Flex.Col>
-									<Flex.Col col={{ base: "12", xs: "6" }}>
-										<FormControl
-											label={t("field.address")}
-											htmlFor='address'
-											className={cn({
-												"text--danger": errors?.address,
-											})}
-											hintMsg={errors?.address?.message}>
-											<Controller
-												render={({ field }) => (
-													<InputComponent
-														{...field}
-														placeholder={t("field.address")}
-														pigment={errors?.address ? "danger" : "primary"}
-													/>
-												)}
-												name='address'
-												control={control}
-												defaultValue=''
-												rules={{
-													minLength: {
-														value: 2,
-														message: t("validation.minLength", { value: 2 }),
-													},
-													maxLength: {
-														value: 60,
-														message: t("validation.maxLength", { value: 60 }),
-													},
-												}}
-											/>
-										</FormControl>
-									</Flex.Col>
-									<Flex.Col col='12'>
-										<FormControl
-											label={t("field.mol")}
-											htmlFor='mol'
-											className={cn({
-												"text--danger": errors?.mol,
-											})}
-											hintMsg={errors?.mol?.message}>
-											<Controller
-												render={({ field }) => (
-													<InputComponent
-														{...field}
-														placeholder={t("field.mol")}
-														pigment={errors?.mol ? "danger" : "primary"}
-													/>
-												)}
-												name='mol'
-												control={control}
-												defaultValue=''
-												rules={{
-													minLength: {
-														value: 2,
-														message: t("validation.minLength", { value: 2 }),
-													},
-													maxLength: {
-														value: 60,
-														message: t("validation.maxLength", { value: 60 }),
-													},
-												}}
-											/>
-										</FormControl>
-									</Flex.Col>
-								</>
-							)}
+							<InvoiceStep payload={payload} onInputSwitch={handleOnReceiverReset} formProps={{ control, errors }} />
 						</Flex>
 					</Form>
 				</Card.Body>

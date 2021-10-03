@@ -408,6 +408,18 @@ const OrdersViewPage = () => {
 										</Flex.Col>
 									</Flex>
 								)}
+								<Flex align='center' disableNegativeSpace className='mb--2 p--2 outline flavor--default'>
+									<Flex.Col>{t("field.documentTypeId")}</Flex.Col>
+									<Flex.Col col='auto'>
+										<Text as='strong'>{order?.invoice?.documentTypeName ?? ""}</Text>
+									</Flex.Col>
+								</Flex>
+								<Flex align='center' disableNegativeSpace className='mb--2 p--2 outline flavor--default'>
+									<Flex.Col>{t("common.receiver")}</Flex.Col>
+									<Flex.Col col='auto'>
+										<Text as='strong'>{(order?.invoice?.invoiceName || order?.invoice?.contragentName) ?? ""}</Text>
+									</Flex.Col>
+								</Flex>
 								<ListGroup elevation='none' className='outline mb--2'>
 									<ListGroup.Header>{t("field.file", { count: detailsInfo(order).files?.length })}</ListGroup.Header>
 									{detailsInfo(order).files?.length > 0 ? (

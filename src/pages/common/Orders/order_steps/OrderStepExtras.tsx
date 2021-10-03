@@ -10,14 +10,18 @@ import cn from "classnames";
 
 import { IconTrash, LogoPdf } from "../../../../components/ui/icons";
 import { imageValidator } from "../../../../helpers/formValidations";
+import InvoiceStep from "../../Invoices/invoice_step/InvoiceStep";
+import WindowedAsyncSelect from "../../../../components/forms/WindowedAsyncSelect";
+import { useDocumentTypes } from "../../../../actions/fetchHooks";
 
 const OrderStepExtras = ({
 	orderId,
 	isUpdating,
 	dataFiles,
-	formProps: { control, errors, watch, setValue, getValues, setError, clearErrors },
+	formProps: { control, errors, watch, setValue, getValues, reset, setError, clearErrors },
 }: any) => {
 	const watchFiles = watch("files");
+	const watchDocType = watch("documentTypeId");
 
 	useEffect(() => {
 		if (dataFiles) {
@@ -33,6 +37,25 @@ const OrderStepExtras = ({
 		setValue("files", newFilesList);
 	};
 
+	const handleOnReceiverReset = (receiver) => {
+		if (receiver !== "partner") {
+			reset({
+				...getValues(),
+				contragentId: null,
+			});
+		} else {
+			reset({
+				...getValues(),
+				invoiceName: "",
+				invoiceBulstat: "",
+				invoiceBulstatVAT: "",
+				invoiceCity: "",
+				invoiceAddress: "",
+				invoiceMol: "",
+			});
+		}
+	};
+
 	const { mutate: deleteFile, isLoading: isLoadingDelete } = useOrderFileDelete({
 		queryConfig: {
 			onSuccess: (res: any) => successToast(res),
@@ -41,6 +64,36 @@ const OrderStepExtras = ({
 
 	return (
 		<Flex>
+			<Flex.Col col='12'>
+				<FormControl
+					label={t("field.documentTypeId")}
+					htmlFor='documentTypeId'
+					className={cn({
+						"text--danger": errors?.documentTypeId,
+					})}
+					hintMsg={errors?.documentTypeId?.message}>
+					<Controller
+						render={({ field }) => (
+							<WindowedAsyncSelect
+								inputId='documentTypeId'
+								useFetch={useDocumentTypes}
+								isClearable={false}
+								isFetchedAtOnce
+								className={cn({
+									"temat__select__container--danger": errors?.documentTypeId,
+								})}
+								{...field}
+							/>
+						)}
+						name='documentTypeId'
+						control={control}
+						defaultValue={null}
+					/>
+				</FormControl>
+			</Flex.Col>
+			{Boolean(watchDocType?.data?.documentHasReceiver) && (
+				<InvoiceStep payload={getValues()} onInputSwitch={handleOnReceiverReset} formProps={{ control, errors }} />
+			)}
 			<Flex.Col col='12'>
 				{watchFiles?.length > 0 && (
 					<ListGroup elevation='none' className='my--2 outline' isLoading={isLoadingDelete}>
@@ -62,7 +115,7 @@ const OrderStepExtras = ({
 										<Button
 											equalDimensions
 											pigment='danger'
-											type='button'
+											as='span'
 											onClick={() => {
 												const isFile = file instanceof File;
 												if (isUpdating) {

@@ -42,15 +42,19 @@ export const parseProductsToFormData = (data, formData) => {
 };
 
 export const parseExtrasToFormData = (data, formData) => {
+	Object.entries(data).forEach((entry: any) => {
+		if (typeof entry[1] === "object" && entry[1]?.value) {
+			formData.append(entry[0], entry[1]?.value);
+		} else if (typeof entry[1] === "string") {
+			formData.append(entry[0], entry[1]);
+		}
+	});
+
 	data?.files?.forEach((file: string | Blob | File) => {
 		if (file instanceof File) {
 			formData.append("files", file, file.name);
 		}
 	});
-
-	if (!!data?.customerNote) {
-		formData.append("customerNote", data?.customerNote);
-	}
 };
 
 export const parsePaymentToFormData = (data, formData) => {
@@ -172,7 +176,26 @@ export const parsedFetchedData = (order) => {
 
 	//Extras
 	parsedOrderData.extras.files = order?.files;
-	parsedOrderData.extras.customerNote = order?.details?.customerNote;
+	parsedOrderData.extras.customerNote = order?.details?.customerNote ?? "";
+	parsedOrderData.extras.invoiceName = order?.invoice?.invoiceName ?? "";
+	parsedOrderData.extras.invoiceBulstat = order?.invoice?.invoiceBulstat ?? "";
+	parsedOrderData.extras.invoiceBulstatVAT = order?.invoice?.invoiceBulstatVAT ?? "";
+	parsedOrderData.extras.invoiceCity = order?.invoice?.invoiceCity ?? "";
+	parsedOrderData.extras.invoiceAddress = order?.invoice?.invoiceAddress ?? "";
+	parsedOrderData.extras.invoiceMol = order?.invoice?.invoiceMol ?? "";
+	parsedOrderData.extras.documentTypeId = order?.invoice?.documentTypeId
+		? {
+				value: order?.invoice?.documentTypeId,
+				label: order?.invoice?.documentTypeName,
+				data: { documentHasReceiver: order?.invoice?.documentHasReceiver },
+		  }
+		: null;
+	parsedOrderData.extras.contragentId = order?.invoice?.contragentId
+		? {
+				value: order?.invoice?.contragentId,
+				label: order?.invoice?.contragentName,
+		  }
+		: null;
 
 	return parsedOrderData;
 };

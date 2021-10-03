@@ -29,6 +29,7 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 		setValue,
 		getValues,
 		setError,
+		reset,
 		clearErrors,
 		handleSubmit,
 		formState: { errors, isDirty },
@@ -79,7 +80,7 @@ const OrderFormStepExtras = ({ useContext = useOrdersContext, isUpdating = false
 			<OrderStepExtras
 				orderId={data?.orderId}
 				dataFiles={data?.extras?.files}
-				formProps={{ control, errors, setValue, getValues, setError, clearErrors, watch }}
+				formProps={{ control, errors, setValue, reset, getValues, setError, clearErrors, watch }}
 				isUpdating={isUpdating}
 			/>
 			<PortalWrapper element={formFooter ?? null}>
